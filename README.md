@@ -179,7 +179,7 @@ npm start
 | **GitHub Repo** | https://github.com/meowmellow3/automatic-octo-garbanzo |
 | **Jira Board** | <Link> |
 | **Miro Storymap** | <Link> |
-| **Discord Server** | <Invite Link> |
+| **Discord Server** | https://discord.gg/WsRa44uC |
 
 ---
 
