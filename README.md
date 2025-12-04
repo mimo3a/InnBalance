@@ -99,13 +99,13 @@ Format: **Epics → User Stories → Tasks** (INVEST-Regeln beachten)
 
 ## Sprint 01 – Artefakte
 
-### ✔ Definition of Done (DoD)
+### Definition of Done (DoD)
 Datei: `/docs/Sprint01_DoD.pdf`
 
-### ✔ Sprint Retrospective
+### Sprint Retrospective
 Datei: `/docs/Sprint01_Retro.pdf`
 
-### ✔ User Story Map (Miro)
+### User Story Map (Miro)
 Link: `<Miro-Link Sprint 01>`
 
 ---
