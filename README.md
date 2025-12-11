@@ -1,6 +1,7 @@
 # PPM & EMS Projekt – Team <07>
 Gemeinsames Semesterprojekt für **Projekt- & Prozessmanagement (PPM)** und **Entwicklung mobiler Systeme (EMS)**.  
 Ziel ist die Planung und Umsetzung einer mobilen App mit **Scrum**, **Jira**, **Miro**, **React Native** und **GitHub**.
+
 *Die Projektstrukturen sind noch nicht fixiert (nicht-fixierte Teile sind gekennzeichnet mit dem Zusatz "wird noch angepasst!").*
 
 ---
