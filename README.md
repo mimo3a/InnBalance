@@ -1,23 +1,37 @@
 # PPM & EMS Projekt – Team <07>
 Gemeinsames Semesterprojekt für **Projekt- & Prozessmanagement (PPM)** und **Entwicklung mobiler Systeme (EMS)**.  
 Ziel ist die Planung und Umsetzung einer mobilen App mit **Scrum**, **Jira**, **Miro**, **React Native** und **GitHub**.
+*Die Projektstrukturen sind noch nicht fixiert (nicht-fixierte Teile sind gekennzeichnet mit dem Zusatz "wird noch angepasst!").*
 
 ---
 
 # 1. Projektüberblick
 
 ## Projektbeschreibung
-**App Name:** *Wird nach Idea Pitch ergänzt*  
+**App Name:** InnBalance  
 **Kurzbeschreibung:**  
-*Hier kommt eine prägnante Beschreibung der App-Idee hin.*
+Der Alltag in Städten fühlt sich 2025 schneller an denn je. Stress, Zeitdruck und volle Terminkalender lassen oft kaum Raum für echte Entspannung.
+Wir brauchen Ruhe – aber wir haben kaum Zeit dafür.
+
+InnBalance setzt hier an: Die NutzerInnen geben ihre aktuelle Stimmung an, und die App schlägt darauf basierend kurze, alltagstaugliche Micro-Breaks vor. Zu den Funktionen gehören geführte Atemübungen mit sanften Animationen, GPS-basierte Empfehlungen für Ruheorte, die zur Stimmung passen, sowie eine kompakte Statistik, die zeigt, wie regelmäßig NutzerInnen achtsame Pausen einbauen.
+Ein Community-Feature ermöglicht es, neue entspannende Orte vorzuschlagen und bestehende Spots zu bewerten.
+
+**TL;DR:** InnBalance empfiehlt passende Ruheorte auf Basis von Stimmung und Standort. Ergänzend bietet die App Atemübungen sowie einen Community-Bereich zum Teilen und Bewerten von Entspannungs-Spots.
+
 
 **USP / Mehrwert:**  
-- <USP 1>  
-- <USP 2>  
-- <USP 3>
+- Kombination aus Emotion, Atemtechnik und realen GPS-basierten Orten
+- Kurze Micro-Breaks statt langer Meditationseinheiten
+- Gamification-Element: kleine Statistik zur Nutzungsfrequenz
 
 **Zielgruppe:**  
-- <Wer nutzt die App?>
+- **Hauptzielgruppen**: Studierende, Eltern, Berufstätige und Pendler*innen – Menschen, die regelmäßig Stress erleben und oft nur wenige Minuten zur Erholung haben.
+
+- **Sekundäre Zielgruppen**: Achtsamkeitsinteressierte, Stadt-Neulinge, TouristInnen
+
+- **Weitere Stakeholder** Hochschulen (Fachhochschulen, Universitäten), Tourismusorganisationen, Gesundheitsstellen, API- & Technologieanbieter.
+...und natürlich unser Projektteam!
+
 
 ---
 
@@ -25,11 +39,11 @@ Ziel ist die Planung und Umsetzung einer mobilen App mit **Scrum**, **Jira**, **
 
 | Name | Rolle | Beschreibung |
 |------|--------|---------------|
-| <Name> | **Product Owner (PO)** | Verantwortlich für Vision, Backlog & Priorisierung |
-| <Name> | **Scrum Master (SM)** | Unterstützt Team, moderiert Scrum Events |
-| <Name> | **Developer** | Implementierung |
-| <Name> | **Developer** | Implementierung |
-| <Name> | **Developer** | Implementierung |
+| Valentina Bertelsen-Schreiner | **Product Owner (PO)** | Verantwortlich für Vision, Backlog & Priorisierung |
+| Puneet Singh | **Scrum Master (SM)** | Unterstützt Team, moderiert Scrum Events |
+| Manuele Badaloni | **Developer** | Implementierung |
+| Oleksandr Demianov | **Developer** | Implementierung |
+| Andrej Radulovic | **Developer** | Implementierung |
 
 ---
 
@@ -49,7 +63,7 @@ Ziel ist die Planung und Umsetzung einer mobilen App mit **Scrum**, **Jira**, **
 
 ---
 
-# 4. Projektstruktur (Repository)
+# 4. Projektstruktur (Repository, wird noch angepasst)
 
 ```
 automatic-octo-garbanzo/
@@ -93,7 +107,7 @@ automatic-octo-garbanzo/
 ## Product Backlog
 Verwaltet in **Jira**.  
 Link: `<Jira-Link>`  
-Format: **Epics → User Stories → Tasks** (INVEST-Regeln beachten)
+Format: **Epics → User Stories → Tasks** (INVEST-Regeln beachten, wird noch angepasst!)
 
 ---
 
@@ -123,7 +137,7 @@ Link: `<Miro-Link Sprint 02>`
 
 ---
 
-# 6. Entwicklung mobile Systeme (EMS)
+# 6. Entwicklung mobile Systeme (EMS) (wird noch angepasst!)
 
 ## App-Architektur (Entwurf)
 - Navigationsstruktur:  
@@ -131,7 +145,7 @@ Link: `<Miro-Link Sprint 02>`
   - Navigation: Stack / Tabs / Drawer
 - Datenmodell
 - API-Anbindung
-- Device Features (z. B. Kamera, Location, Sensoren)
+- Device Features (z. B. Kamera, Location)
 
 ---
 
@@ -164,7 +178,7 @@ Link: `<Miro-Link Sprint 02>`
 - npm / yarn  
 - Expo CLI (optional)
 
-## Projekt starten
+## Projekt starten (wird noch angepasst!, expo?)
 ```bash
 npm install
 npm start
@@ -172,7 +186,7 @@ npm start
 
 ---
 
-# 🔗 8. Wichtige Links
+# 🔗 8. Wichtige Links (wird noch angepasst!)
 
 | Tool | Link |
 |------|------|
@@ -183,7 +197,7 @@ npm start
 
 ---
 
-# 9. Templates
+# 9. Templates (wird noch angepasst!)
 
 ## Template: Definition of Done (DoD)
 
@@ -210,7 +224,7 @@ npm start
 
 ---
 
-## Template: Sprint Retrospective
+## Template: Sprint Retrospective (wird noch angepasst!)
 
 ```md
 # Sprint Retrospective – Sprint <Nummer>
@@ -230,7 +244,7 @@ npm start
 
 ---
 
-# 10. Finale Präsentation (PPM & EMS)
+# 10. Finale Präsentation (PPM & EMS) (wird noch angepasst!)
 
 Die finale Präsentation umfasst:
 
@@ -251,5 +265,5 @@ PDF-Datei: `/docs/Final_Presentation.pdf`
 
 ---
 
-# 11. Lizenz
-MIT License oder nach Bedarf ergänzen.
+# 11. Lizenz (wird noch angepasst!)
+Nach Bedarf ergänzen.
