@@ -11,10 +11,12 @@ Ziel ist die Planung und Umsetzung einer mobilen App mit **Scrum**, **Jira**, **
 ## Projektbeschreibung
 **App Name:** InnBalance  
 **Kurzbeschreibung:**  
+
 Der Alltag in Städten fühlt sich 2025 schneller an denn je. Stress, Zeitdruck und volle Terminkalender lassen oft kaum Raum für echte Entspannung.
 Wir brauchen Ruhe – aber wir haben kaum Zeit dafür.
 
 InnBalance setzt hier an: Die NutzerInnen geben ihre aktuelle Stimmung an, und die App schlägt darauf basierend kurze, alltagstaugliche Micro-Breaks vor. Zu den Funktionen gehören geführte Atemübungen mit sanften Animationen, GPS-basierte Empfehlungen für Ruheorte, die zur Stimmung passen, sowie eine kompakte Statistik, die zeigt, wie regelmäßig NutzerInnen achtsame Pausen einbauen.
+
 Ein Community-Feature ermöglicht es, neue entspannende Orte vorzuschlagen und bestehende Spots zu bewerten.
 
 **TL;DR:** InnBalance empfiehlt passende Ruheorte auf Basis von Stimmung und Standort. Ergänzend bietet die App Atemübungen sowie einen Community-Bereich zum Teilen und Bewerten von Entspannungs-Spots.
@@ -31,6 +33,7 @@ Ein Community-Feature ermöglicht es, neue entspannende Orte vorzuschlagen und b
 - **Sekundäre Zielgruppen**: Achtsamkeitsinteressierte, Stadt-Neulinge, TouristInnen
 
 - **Weitere Stakeholder** Hochschulen (Fachhochschulen, Universitäten), Tourismusorganisationen, Gesundheitsstellen, API- & Technologieanbieter.
+
 ...und natürlich unser Projektteam!
 
 
