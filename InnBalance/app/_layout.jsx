@@ -16,7 +16,10 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        //<Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+       <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
+       <Stack.Screen name="map" options={{ title: 'Places Map' }} />
+        <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
+        <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
