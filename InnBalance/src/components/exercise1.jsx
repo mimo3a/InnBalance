@@ -1,7 +1,7 @@
 import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
 
-export default function Exercise1() {
+export default function Exercise1({ width = 200, height = 200 }) {
     return (
         <View style={styles.container}>
             <View style={styles.breathBox}>
@@ -9,7 +9,7 @@ export default function Exercise1() {
                     source={require('@/assets/animations/BreathingPraxis_1.json')}
                     autoPlay
                     loop
-                    style={{ width: 200, height: 200 }}
+                    style={{ width, height }}
                 />
             </View>
         </View>
@@ -18,17 +18,9 @@ export default function Exercise1() {
 
 const styles = StyleSheet.create({
   container: {
-    
     flex: 1,
-    alignItems: 'center', 
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-breathBox: {
-    
-    margin: 10,
-    width: '100%',
-    height: 200,
-    backgroundColor: '#ec80d8ff',
-    borderRadius: 10,
-  
-    },
+
 });
