@@ -1,20 +1,36 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import Exercise1 from '@/src/components/exercise1';
+import Exercise2 from '@/src/components/exercise_2';
+import Relax1 from '@/src/components/relax1';
 
 export default function BreathingScreen() {
     const router = useRouter();
+    const { type } = useLocalSearchParams();
+
+    const renderExercise = () => {
+        switch (type) {
+            case 'exercise2':
+                return <Exercise2 width={400} height={400} />;
+            case 'relax1':
+                return <Relax1 width={400} height={400} />;
+            case 'exercise1':
+            default:
+                return <Exercise1 width={400} height={400} />;
+        }
+    };
+
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.box}>
                 <LinearGradient
-                    colors={['#a18cd1', '#fbc2eb']}
+                    colors={['#2f8ecdff', '#89b0f36e']}
                     style={styles.gradient}
                 >
-                    <Exercise1 width={400} height={400} />
+                    {renderExercise()}
                 </LinearGradient>
             </TouchableOpacity>
         </View>
