@@ -1,11 +1,23 @@
+import { useEffect, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
 
-export default function Exercise2({ width = 200, height = 200 }) {
+export default function Exercise2({ width = 200, height = 200, isPlaying = true }) {
+    const animation = useRef(null);
+
+    useEffect(() => {
+        if (isPlaying) {
+            animation.current?.resume();
+        } else {
+            animation.current?.pause();
+        }
+    }, [isPlaying]);
+
     return (
         <View style={styles.container}>
             <View style={styles.breathBox}>
                 <LottieView
+                    ref={animation}
                     source={require('@/assets/animations/BreathingPraxis_2.json')}
                     autoPlay
                     loop
