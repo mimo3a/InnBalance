@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import SwitchTabs from '../components/SwitchTab';
 import PlacesListScreen from './PlacesListScreen';
 
@@ -18,7 +19,7 @@ export default function RuheOrteScreen() {
         {activeTab === 'map' ? (
           <View style={styles.mapContainer}>
             <Text style={styles.title}>Places Map Screen</Text>
-            {/* Map component will go here later */}
+            
           </View>
         ) : (
           <PlacesListScreen />
