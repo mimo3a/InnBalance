@@ -53,7 +53,7 @@ export default function MoodScreen() {
                                 <MaterialCommunityIcons name="weather-partly-cloudy" size={48} color="black" />
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.touchableWeatherIcon} onPress={() => router.push('/map')}>
+                        <TouchableOpacity style={styles.touchableWeatherIcon} onPress={() => router.push('/ruheorte')}>
                             <View >
                                 <MaterialCommunityIcons name="weather-sunny" size={48} color="black" />
                             </View>
