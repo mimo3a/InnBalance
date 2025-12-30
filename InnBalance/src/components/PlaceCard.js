@@ -1,102 +1,116 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function PlaceCard(props) {
+export default function PlaceCard({ name, info, image, rating, distance, category, onPress }) {
   return (
-    <View style={styles.card}>
-      
-      
-      <Text style={styles.title}>{props.name}</Text>
-
+    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.row}>
         
-       
+        
         <Image 
-          source={{ uri: props.image }} 
+          source={typeof image === 'string' ? { uri: image } : image} 
           style={styles.image}
         />
 
         
-        <View style={styles.infoArea}>
+        <View style={styles.textContainer}>
           
-          <Text style={styles.info} numberOfLines={3}>
-            {props.info}
-          </Text>
+         
+          <View style={styles.titleRow}>
+            <Text style={styles.title}>{name}</Text>
+            <Text style={styles.distance}>{distance} km</Text>
+          </View>
 
           
-          <View style={styles.rating}>
-            <Text style={styles.ratingText}>{props.rating} ★</Text>
+          <Text style={styles.description} numberOfLines={2}>
+            {info}
+          </Text>
+
+         
+          <View style={styles.ratingRow}>
+            <Ionicons name="star" size={16} color="#F4C430" />
+            <Text style={styles.rating}>{rating}</Text>
+            <Text style={styles.category}>{category}</Text>
           </View>
 
         </View>
 
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    width: '95%',
-    backgroundColor: '#fff',
-    borderRadius: 14,
+    width: "92%",
+    alignSelf: "center",
+    backgroundColor: "#fff",
     padding: 12,
-    marginVertical: 8,
-    alignSelf: 'center',
+    borderRadius: 14,
+    marginBottom: 12,
 
-    // Тень
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
-    elevation: 4,
-  },
-
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 10,
-    textAlign: 'center',
+    elevation: 3,
   },
 
   row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
   },
 
   image: {
-    width: 110,
-    height: 110,
-    borderRadius: 12,
-    backgroundColor: '#cce5ff',
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    marginRight: 12,
   },
 
-  infoArea: {
+  textContainer: {
     flex: 1,
-    marginLeft: 12,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
 
-  info: {
+  titleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  title: {
     fontSize: 16,
-    color: '#333',
-    backgroundColor: '#f2f2f2',
-    padding: 8,
-    borderRadius: 8,
+    fontWeight: "700",
+    color: "#222",
+  },
+
+  distance: {
+    fontSize: 13,
+    color: "#777",
+  },
+
+  description: {
+    marginTop: 4,
+    fontSize: 14,
+    color: "#666",
+  },
+
+  ratingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
   },
 
   rating: {
-    alignSelf: 'flex-start',
-    marginTop: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    backgroundColor: '#d4edda',
-    borderRadius: 8,
+    marginLeft: 4,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
   },
 
-  ratingText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#155724',
+  category: {
+    marginLeft: 8,
+    fontSize: 13,
+    color: "#777",
   },
 });
