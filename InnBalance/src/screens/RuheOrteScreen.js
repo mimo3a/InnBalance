@@ -1,30 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { View, StyleSheet } from 'react-native';
 import SwitchTabs from '../components/SwitchTab';
 import PlacesListScreen from './PlacesListScreen';
+import PlacesMap from '../components/PlacesMap';
 
 export default function RuheOrteScreen() {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('map');
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-         <SwitchTabs selected={activeTab} onChange={setActiveTab} />
-      </View>
       
-      <View style={styles.content}>
-        {activeTab === 'map' ? (
-          <View style={styles.mapContainer}>
-            <Text style={styles.title}>Places Map Screen</Text>
-            
-          </View>
-        ) : (
-          <PlacesListScreen />
-        )}
+      <View style={styles.header}>
+        <SwitchTabs selected={activeTab} onChange={setActiveTab} />
       </View>
+
+      <View style={styles.content}>
+        {activeTab === 'map' ? <PlacesMap /> : <PlacesListScreen />}
+      </View>
+
     </View>
   );
 }
@@ -41,13 +34,5 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  mapContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 20,
   },
 });

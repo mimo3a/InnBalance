@@ -21,17 +21,17 @@ export default function PlaceDescriptionScreen() {
     <View style={styles.screen}>
       <ScrollView contentContainerStyle={styles.card}>
         
-        {/* Картинка */}
+        
         <View style={styles.imageWrapper}>
           <Image source={place.image} style={styles.image} />
 
-          {/* Кнопка "закрыть" */}
+          
           <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
             <Ionicons name="close" size={24} color="#333" />
           </TouchableOpacity>
         </View>
 
-        {/* Название + расстояние */}
+       
         <View style={styles.titleRow}>
           <Text style={styles.title}>{place.name}</Text>
 
@@ -41,16 +41,16 @@ export default function PlaceDescriptionScreen() {
           </View>
         </View>
 
-        {/* Рейтинг */}
+        
         <View style={styles.ratingRow}>
           <Text style={styles.star}>⭐ {place.rating}</Text>
           <Text style={styles.category}>· {place.category}</Text>
         </View>
 
-        {/* Описание */}
+        
         <Text style={styles.description}>{place.info}</Text>
 
-        {/* Оценка */}
+        
         <Text style={styles.rateTitle}>Bewerte diesen Ort</Text>
         <View style={styles.starsRow}>
           {Array.from({ length: 5 }).map((_, idx) => (
@@ -58,7 +58,7 @@ export default function PlaceDescriptionScreen() {
           ))}
         </View>
 
-        {/* Кнопка */}
+        
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Navigation starten</Text>
         </TouchableOpacity>
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
 
   image: {
     width: "100%",
-    height: 200,
+    height: 250,
   },
 
   closeButton: {

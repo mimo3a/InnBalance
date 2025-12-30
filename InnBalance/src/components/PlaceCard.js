@@ -5,29 +5,30 @@ import { Ionicons } from '@expo/vector-icons';
 export default function PlaceCard({ name, info, image, rating, distance, category, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+      
       <View style={styles.row}>
         
-        
+        {/* IMAGE */}
         <Image 
           source={typeof image === 'string' ? { uri: image } : image} 
           style={styles.image}
         />
 
-        
+        {/* TEXT AREA */}
         <View style={styles.textContainer}>
           
-         
+          {/* ROW: Title + distance */}
           <View style={styles.titleRow}>
             <Text style={styles.title}>{name}</Text>
             <Text style={styles.distance}>{distance} km</Text>
           </View>
 
-          
+          {/* DESCRIPTION */}
           <Text style={styles.description} numberOfLines={2}>
             {info}
           </Text>
 
-         
+          {/* RATING */}
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={16} color="#F4C430" />
             <Text style={styles.rating}>{rating}</Text>

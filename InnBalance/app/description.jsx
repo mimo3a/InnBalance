@@ -4,7 +4,7 @@ import { Stack } from "expo-router";
 export default function DescriptionRoute() {
   return (
     <>
-    <Stack.Screen options={{ title: 'Place Description' }} />
+    <Stack.Screen options={{ headerShown: false }} />
     <PlaceDescriptionScreen />
     </>
   )
