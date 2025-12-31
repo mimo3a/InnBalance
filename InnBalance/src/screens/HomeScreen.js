@@ -38,7 +38,7 @@ export default function HomeScreen() {
                         </View>
                     </TouchableOpacity>
                 </View>
-                    <ThemedText type="title">Mood Screen</ThemedText>
+                    <ThemedText type="title">Home Screen</ThemedText>
 
                 </ThemedView>
             </ThemedView>

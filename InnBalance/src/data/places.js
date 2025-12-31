@@ -8,7 +8,8 @@ export const places = [
         category: 'Park', 
         distance: 1.2,
         lat: 47.2692,
-        lng: 11.4041
+        lng: 11.4041,
+        acces: 'Public'
     },
     { 
         id: 2, 
@@ -19,7 +20,8 @@ export const places = [
         category: 'Museum', 
         distance: 2.5,
         lat: 47.2650,
-        lng: 11.3900
+        lng: 11.3900,
+        acces: 'Public'
     },
     { 
         id: 3, 
@@ -30,7 +32,8 @@ export const places = [
         category: 'Restaurant', 
         distance: 0.8,
         lat: 47.2700,
-        lng: 11.4100
+        lng: 11.4100,
+        acces: 'Public'
     },
     { 
         id: 4, 
@@ -41,7 +44,8 @@ export const places = [
         category: 'Cafe', 
         distance: 1.0,
         lat: 47.2600,
-        lng: 11.4000
+        lng: 11.4000,
+        acces: 'Public'
     },
     { 
         id: 5, 
@@ -52,7 +56,8 @@ export const places = [
         category: 'Library', 
         distance: 3.3,
         lat: 47.2750,
-        lng: 11.3950
+        lng: 11.3950,
+        acces: 'Public'
     },
     { 
         id: 6, 
@@ -63,6 +68,7 @@ export const places = [
         category: 'Gym', 
         distance: 2.1,
         lat: 47.2550,
-        lng: 11.4050
+        lng: 11.4050,
+        acces: 'Public'
     },
 ];

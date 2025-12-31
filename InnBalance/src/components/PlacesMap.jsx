@@ -1,10 +1,19 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 // Map component
 import MapView, { Marker } from 'react-native-maps';
-import { places } from '@/src/data/places';
+import { usePlaces } from '@/src/hooks/usePlaces';
 
 export default function PlacesMap() {
+  const { places, loading } = usePlaces();
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#1d16f4ff" />
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       <MapView

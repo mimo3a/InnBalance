@@ -1,13 +1,22 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import PlaceCard from '@/src/components/PlaceCard';
-import { places } from '@/src/data/places';
+import { usePlaces } from '@/src/hooks/usePlaces';
 
 
 export default function PlacesListScreen() {
     const router = useRouter();
+    const { places, loading } = usePlaces();
+
+    if (loading) {
+        return (
+            <View style={[styles.wrapper, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color="#1d16f4ff" />
+            </View>
+        );
+    }
 
     return (
         <View style={styles.wrapper}>

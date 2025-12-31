@@ -1,13 +1,22 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { places } from '@/src/data/places';
+import { usePlaces } from '@/src/hooks/usePlaces';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function PlaceDescriptionScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const { places, loading } = usePlaces();
   const place = places.find(p => p.id === Number(id));
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#1d16f4ff" />
+      </View>
+    );
+  }
 
   if (!place) {
     return (
