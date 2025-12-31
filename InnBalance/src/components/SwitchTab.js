@@ -1,25 +1,57 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SwitchTabs({ selected, onChange }) {
   return (
     <View style={styles.container}>
+      {/* MAP */}
       <TouchableOpacity
         style={[styles.tab, selected === 'map' && styles.activeTab]}
         onPress={() => onChange('map')}
       >
-        <Text style={[styles.text, selected === 'map' && styles.activeText]}>Karte</Text>
+        <View style={styles.tabContent}>
+          <Ionicons
+            name="map-outline"
+            size={18}
+            color={selected === 'map' ? '#000' : '#7a7a7a'}
+          />
+          <Text
+            style={[
+              styles.text,
+              selected === 'map' && styles.activeText,
+            ]}
+          >
+            Karte
+          </Text>
+        </View>
       </TouchableOpacity>
 
+      {/* LIST */}
       <TouchableOpacity
         style={[styles.tab, selected === 'list' && styles.activeTab]}
         onPress={() => onChange('list')}
       >
-        <Text style={[styles.text, selected === 'list' && styles.activeText]}>Liste</Text>
+        <View style={styles.tabContent}>
+          <Ionicons
+            name="list-outline"
+            size={18}
+            color={selected === 'list' ? '#000' : '#7a7a7a'}
+          />
+          <Text
+            style={[
+              styles.text,
+              selected === 'list' && styles.activeText,
+            ]}
+          >
+            Liste
+          </Text>
+        </View>
       </TouchableOpacity>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -48,4 +80,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
   },
+  tabContent: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 6, // расстояние между иконкой и текстом
+},
 });

@@ -21,14 +21,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: (options) => <Ionicons name={options.focused ? "home" : "home-outline"} size={28} color={options.color} />,
         }}
       />
       <Tabs.Screen
-        name="mood"
+        name="statistics"
         options={{
-          title: 'Mood',
-          tabBarIcon: (options) => <Ionicons name={options.focused ? "happy" : "happy-outline"} size={24} color={options.color} />,
+          title: 'Statistics',
+          tabBarIcon: (options) => <Ionicons name={options.focused ? "stats-chart" : "stats-chart-outline"} size={22} color={options.color} />,
           
         }}
       />
