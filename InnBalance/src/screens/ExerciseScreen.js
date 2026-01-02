@@ -22,7 +22,7 @@ export default function BreathingScreen() {
                 return <Relax1 width={400} height={400} isPlaying={isPlaying} />;
             case 'exercise1':
             default:
-                return <Exercise1 width={400} height={400} isPlaying={isPlaying} />;
+                return  <Exercise1 width={400} height={400} isPlaying={isPlaying} />;
         }
     };
 
