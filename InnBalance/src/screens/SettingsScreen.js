@@ -9,16 +9,16 @@ export default function SettingsScreen() {
 
   const handleReset = () => {
     Alert.alert(
-      'Удалить пользовательские места',
-      'Вы уверены, что хотите удалить все добавленные вами места? Дефолтные места останутся.',
+      'Benutzerdefinierte Orte löschen',
+      'Sind Sie sicher, dass Sie alle von Ihnen hinzugefügten Orte löschen möchten? Die Standardorte bleiben erhalten.',
       [
-        { text: 'Отмена', style: 'cancel' },
+        { text: 'Abbrechen', style: 'cancel' },
         {
-          text: 'Удалить',
+          text: 'Löschen',
           style: 'destructive',
           onPress: async () => {
             await resetUserPlaces();
-            Alert.alert('Готово', 'Пользовательские места удалены');
+            Alert.alert('Fertig', 'Benutzerdefinierte Orte wurden gelöscht');
           },
         },
       ]
@@ -27,12 +27,12 @@ export default function SettingsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Settings</ThemedText>
+      <ThemedText type="title">Einstellungen</ThemedText>
       
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Управление местами</Text>
+        <Text style={styles.sectionTitle}>Ortsverwaltung</Text>
         <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-          <Text style={styles.resetButtonText}>Удалить мои места</Text>
+          <Text style={styles.resetButtonText}>Meine Orte löschen</Text>
         </TouchableOpacity>
       </View>
     </ThemedView>

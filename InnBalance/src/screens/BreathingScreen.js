@@ -1,65 +1,97 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 
-import Exercise1 from '@/src/components/exercise1';
-import Exercise2 from '@/src/components/exercise_2';
-import Relax1 from '@/src/components/relax1';
-
-const GRADIENT_COLORS = ['#2f8ecdff', '#89b0f36e'];
+/* === NEW BREATHING SYSTEM === */
+import BreathingExercise from '@/src/components/BreathingExercise';
+import { BREATHING_EXERCISES } from '@/src/breathing/exerciseConfigs';
 
 export default function BreathingScreen() {
-    const router = useRouter();
-    return (
+  const router = useRouter();
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  return (
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => setIsPlaying(p => !p)}
+      activeOpacity={1}
+    >
+      {/* ✅ NEW BREATHING EXERCISE */}
+      <BreathingExercise
+        config={BREATHING_EXERCISES.anti_stress}
+        isPlaying={isPlaying}
+        size={260}
+      />
+
+      {/* ===========================
+          OLD IMPLEMENTATION (DISABLED)
+          =========================== */}
+
+      {/*
       <View style={styles.mainContainer}>
-        <View style={styles.container}>
-          <TouchableOpacity style={styles.box} onPress={() => router.push({ pathname: '/exercise', params: { type: 'exercise1' } })}>
-            <LinearGradient
-              colors={GRADIENT_COLORS}
-              style={styles.gradient}>
+        <View style={styles.boxWrapper}>
+          <TouchableOpacity
+            style={styles.box}
+            onPress={() =>
+              router.push({ pathname: '/exercise', params: { type: 'exercise1' } })
+            }
+          >
+            <LinearGradient colors={GRADIENT_COLORS} style={styles.gradient}>
               <Exercise1 />
             </LinearGradient>
-
           </TouchableOpacity>
         </View>
-    
-            <View style={styles.container}>
-                <TouchableOpacity style={styles.box} onPress={() => router.push({ pathname: '/exercise', params: { type: 'exercise2' } })}>
-                    <LinearGradient
-                        colors={GRADIENT_COLORS}
-                        style={styles.gradient}>
-                        <Exercise2 />
-                    </LinearGradient>
-                </TouchableOpacity>
-            </View>
 
-            <View style={styles.container}>
-                <TouchableOpacity style={styles.box} onPress={() => router.push({ pathname: '/exercise', params: { type: 'relax1' } })}>
-                    <LinearGradient
-                        colors={GRADIENT_COLORS}
-                        style={styles.gradient}>
-                        <Relax1 />
-                    </LinearGradient>
-                </TouchableOpacity>
-            </View>
+        <View style={styles.boxWrapper}>
+          <TouchableOpacity
+            style={styles.box}
+            onPress={() =>
+              router.push({ pathname: '/exercise', params: { type: 'exercise2' } })
+            }
+          >
+            <LinearGradient colors={GRADIENT_COLORS} style={styles.gradient}>
+              <Exercise2 />
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
-    );
+
+        <View style={styles.boxWrapper}>
+          <TouchableOpacity
+            style={styles.box}
+            onPress={() =>
+              router.push({ pathname: '/exercise', params: { type: 'relax1' } })
+            }
+          >
+            <LinearGradient colors={GRADIENT_COLORS} style={styles.gradient}>
+              <Relax1 />
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </View>
+      */}
+    </TouchableOpacity>
+  );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#2f6f5f',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  /* === OLD STYLES (kept for later) === */
+  /*
   mainContainer: {
     flex: 1,
-    flexDirection: 'column',
     justifyContent: 'space-around',
   },
-  container: {
-     margin: 10,
+  boxWrapper: {
+    margin: 10,
     alignItems: 'center',
-    borderRadius: 10,
   },
   box: {
-    margin: 10,
     width: '100%',
     height: 200,
     borderRadius: 10,
@@ -70,4 +102,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  */
 });
