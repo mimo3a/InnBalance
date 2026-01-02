@@ -3,49 +3,55 @@ import { useRouter } from 'expo-router';
 import { ThemedText } from '@/src/components/themed-text';
 import { ThemedView } from '@/src/components/themed-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import WeatherCard from '@/src/components/WeatherCard';
 
 export default function HomeScreen() {
-  const router = useRouter();
+    const router = useRouter();
 
-  return (
-      <View style={styles.container}>
-          <ThemedView style={styles.moodContainer}>
-            <ThemedView style ={styles.moodBox}>
-                <View style={styles.iconsRow}>
-                    <TouchableOpacity testID="mood-dead" style={styles.touchableIcon} onPress={() => {}}>
-                        <View style={styles.iconPlaceholder}>
-                            <MaterialCommunityIcons name="emoticon-dead-outline" size={32} color="black" />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity testID="mood-sad" style={styles.touchableIcon} onPress={() => {}}>
-                        <View style={styles.iconPlaceholder}>
-                            <MaterialCommunityIcons name="emoticon-sad-outline" size={32} color="black" />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity testID="mood-neutral" style={styles.touchableIcon} onPress={() => {}}>
-                        <View style={styles.iconPlaceholder}>
-                            <MaterialCommunityIcons name="emoticon-neutral-outline" size={32} color="black" />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity testID="mood-happy" style={styles.touchableIcon} onPress={() => {}}>
-                        <View style={styles.iconPlaceholder}>
-                            <MaterialCommunityIcons name="emoticon-happy-outline" size={32} color="black" />
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity testID="mood-excited" style={styles.touchableIcon} onPress={() => {}}>
-                        <View style={styles.iconPlaceholder}>
-                            <MaterialCommunityIcons name="emoticon-excited-outline" size={32} color="black" />
-                        </View>
-                    </TouchableOpacity>
-                </View>
+    return (
+        <View style={styles.container}>
+            <ThemedView style={styles.moodContainer}>
+                <ThemedView style={styles.moodBox}>
+                    <View style={styles.iconsRow}>
+                        <TouchableOpacity testID="mood-dead" style={styles.touchableIcon} onPress={() => { }}>
+                            <View style={styles.iconPlaceholder}>
+                                <MaterialCommunityIcons name="emoticon-dead-outline" size={32} color="black" />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity testID="mood-sad" style={styles.touchableIcon} onPress={() => { }}>
+                            <View style={styles.iconPlaceholder}>
+                                <MaterialCommunityIcons name="emoticon-sad-outline" size={32} color="black" />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity testID="mood-neutral" style={styles.touchableIcon} onPress={() => { }}>
+                            <View style={styles.iconPlaceholder}>
+                                <MaterialCommunityIcons name="emoticon-neutral-outline" size={32} color="black" />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity testID="mood-happy" style={styles.touchableIcon} onPress={() => { }}>
+                            <View style={styles.iconPlaceholder}>
+                                <MaterialCommunityIcons name="emoticon-happy-outline" size={32} color="black" />
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity testID="mood-excited" style={styles.touchableIcon} onPress={() => { }}>
+                            <View style={styles.iconPlaceholder}>
+                                <MaterialCommunityIcons name="emoticon-excited-outline" size={32} color="black" />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                     <ThemedText type="title">Home Screen</ThemedText>
-
                 </ThemedView>
             </ThemedView>
             <ThemedView style={styles.weatherContainer} >
+                <View style={styles.widgetcontainer}>
+                    <WeatherCard
+                        lat={47.2692}   // Innsbruck
+                        lon={11.4041}
+                    />
+                </View>
                 <ThemedView style={styles.weatherBox}>
                     <View style={{ justifyContent: 'center' }}>
-                        <ThemedText>The weather is determined automatically.</ThemedText>
+                        
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                         <TouchableOpacity style={styles.touchableWeatherIcon} onPress={() => router.push('/breathing')}>
@@ -127,5 +133,8 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: '#e0e0e0',
         borderRadius: 10,
+    },
+    widgetcontainer: {
+        padding: 16,
     },
 });

@@ -41,6 +41,7 @@ export default function PlacesMap() {
               longitude: place.lng,
             }}
             title={place.name}
+            description={`details...`}         
             onCalloutPress={() =>
               router.push({
                 pathname: '/description',
@@ -48,34 +49,7 @@ export default function PlacesMap() {
               })
             }
           >
-            {/* <Callout
-              tooltip
-              onPress={() =>
-                router.push({
-                  pathname: '/description',
-                  params: { id: place.id },
-                })
-              }
-            >
-              <View style={styles.calloutBubble}>
-                <Text style={styles.calloutTitle}>
-                  {place.name}
-                </Text>
-
-                {place.info && (
-                  <Text
-                    style={styles.calloutDescription}
-                    numberOfLines={3}
-                  >
-                    {place.info}
-                  </Text>
-                )}
-
-                <Text style={styles.calloutHint}>
-                  Tap for details →
-                </Text>
-              </View>
-            </Callout> */}
+            
           </Marker>
         ))}
       </MapView>
