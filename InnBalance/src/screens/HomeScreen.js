@@ -6,6 +6,15 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import WeatherCard from '@/src/components/WeatherCard';
 
 export default function HomeScreen() {
+
+    const STATES = [
+        { key: 'stress', icon: 'brain', label: 'Stress' },
+        { key: 'tension', icon: 'weather-windy', label: 'Inner tension' },
+        { key: 'tired', icon: 'battery-low', label: 'Low energy' },
+        { key: 'balance', icon: 'scale-balance', label: 'Balance' },
+        { key: 'calm', icon: 'leaf', label: 'Calm' },
+    ];
+
     const router = useRouter();
 
     return (
@@ -13,33 +22,25 @@ export default function HomeScreen() {
             <ThemedView style={styles.moodContainer}>
                 <ThemedView style={styles.moodBox}>
                     <View style={styles.iconsRow}>
-                        <TouchableOpacity testID="mood-dead" style={styles.touchableIcon} onPress={() => { }}>
-                            <View style={styles.iconPlaceholder}>
-                                <MaterialCommunityIcons name="emoticon-dead-outline" size={32} color="black" />
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity testID="mood-sad" style={styles.touchableIcon} onPress={() => { }}>
-                            <View style={styles.iconPlaceholder}>
-                                <MaterialCommunityIcons name="emoticon-sad-outline" size={32} color="black" />
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity testID="mood-neutral" style={styles.touchableIcon} onPress={() => { }}>
-                            <View style={styles.iconPlaceholder}>
-                                <MaterialCommunityIcons name="emoticon-neutral-outline" size={32} color="black" />
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity testID="mood-happy" style={styles.touchableIcon} onPress={() => { }}>
-                            <View style={styles.iconPlaceholder}>
-                                <MaterialCommunityIcons name="emoticon-happy-outline" size={32} color="black" />
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity testID="mood-excited" style={styles.touchableIcon} onPress={() => { }}>
-                            <View style={styles.iconPlaceholder}>
-                                <MaterialCommunityIcons name="emoticon-excited-outline" size={32} color="black" />
-                            </View>
-                        </TouchableOpacity>
+                        {STATES.map(state => (
+                            <TouchableOpacity
+                                key={state.key}
+                                style={styles.touchableIcon}
+                                onPress={() => {/* save state */ }}
+                            >
+                                <MaterialCommunityIcons
+                                    name={state.icon}
+                                    size={32}
+                                    color="#2f6f5f"
+                                />
+                                <ThemedText style={{ fontSize: 11 }}>
+                                    {state.label}
+                                </ThemedText>
+                            </TouchableOpacity>
+                        ))}
                     </View>
-                    <ThemedText type="title">Home Screen</ThemedText>
+
+
                 </ThemedView>
             </ThemedView>
             <ThemedView style={styles.weatherContainer} >
@@ -51,7 +52,7 @@ export default function HomeScreen() {
                 </View>
                 <ThemedView style={styles.weatherBox}>
                     <View style={{ justifyContent: 'center' }}>
-                        
+
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
                         <TouchableOpacity style={styles.touchableWeatherIcon} onPress={() => router.push('/breathing')}>
