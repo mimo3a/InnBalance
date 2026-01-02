@@ -165,10 +165,10 @@ const styles = StyleSheet.create({
   },
 
   description: {
-    marginTop: 12,
-    fontSize: 16,
+    marginTop: 16,
+    fontSize: 18,
     color: "#333",
-    lineHeight: 22,
+    lineHeight: 26,
   },
 
   rateTitle: {

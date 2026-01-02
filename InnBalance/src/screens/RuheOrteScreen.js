@@ -25,7 +25,7 @@ export default function RuheOrteScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f0f0',
   },
   header: {
     alignItems: 'center',
@@ -33,6 +33,9 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   content: {
+    margin: 10,
+    borderRadius: 10,
+    overflow: 'hidden',
     flex: 1,
   },
 });
