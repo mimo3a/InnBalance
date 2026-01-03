@@ -11,13 +11,13 @@ export default function RecommendationsScreen() {
     return (
         <View style={styles.container}>
             <ThemedView style={styles.recommendationsBox}>
+                <Text style={styles.text}>{`Your state: ${state ?? 'unknown'}`}</Text>
 
                 </ThemedView>
             <ThemedView style={styles.weatherBox}>
-                    <View style={{ justifyContent: 'center' }}>
-
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                    
+                    
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
                         <TouchableOpacity style={styles.touchableWeatherIcon} onPress={() => router.push('/breathing')}>
                             <View >
                                 <MaterialCommunityIcons name="weather-partly-cloudy" size={48} color="black" />
@@ -29,8 +29,9 @@ export default function RecommendationsScreen() {
                             </View>
                         </TouchableOpacity>
                     </View>
+                    
                 </ThemedView>
-            <Text style={styles.text}>{`Recommendations Screen for state: ${state ?? 'unknown'}`}</Text>
+            
         </View>
     );
 }
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
     touchableWeatherIcon: {
         padding: 10,
         borderRadius: 10,
-        backgroundColor: '#e0e0e0',
+       
     },
     
     recommendationsBox: {

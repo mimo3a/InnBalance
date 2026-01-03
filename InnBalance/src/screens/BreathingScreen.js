@@ -1,106 +1,121 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
-
-/* === NEW BREATHING SYSTEM === */
-import BreathingExercise from '@/src/components/BreathingExercise';
-import { BREATHING_EXERCISES } from '@/src/breathing/exerciseConfigs';
+// screens/BreathingScreen.jsx
+import React, { useEffect, useState, useRef } from 'react';
+import { View, StyleSheet } from 'react-native';
+import BreathingExercise from '../components/BreathingExercise';
+import TimerControls from '../components/ui/timerControls';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function BreathingScreen() {
-  const router = useRouter();
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [sessionSeconds, setSessionSeconds] = useState(0);
+  const [statistics, setStatistics] = useState([]);
+  const isPlayingRef = useRef(isPlaying);
+  const sessionSecondsRef = useRef(sessionSeconds);
+
+
+  const intervalRef = useRef(null);
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
+    sessionSecondsRef.current = sessionSeconds;
+  }, [sessionSeconds]);
+
+
+  // ⏱️ Таймер
+  useEffect(() => {
+    if (isPlaying) {
+      intervalRef.current = setInterval(() => {
+        setSessionSeconds(prev => prev + 1);
+      }, 1000);
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [isPlaying]);
+
+  // ▶️ / ⏹ кнопка
+  const handleToggle = () => {
+    if (isPlaying) {
+      // STOP → сохранить статистику
+      setStatistics(prev => [
+        ...prev,
+        {
+          duration: sessionSeconds,
+          date: new Date().toISOString(),
+        },
+      ]);
+      console.log('Session saved:', {
+        duration: sessionSeconds,
+        date: new Date().toISOString(),
+      });
+
+      setIsPlaying(false);
+      setSessionSeconds(0); // ⬅️ СБРОС
+    } else {
+      // START → новый сеанс
+      setSessionSeconds(0);
+      setIsPlaying(true);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        // экран реально покинут
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+
+        if (isPlayingRef.current && sessionSecondsRef.current > 0) {
+          setStatistics(prev => [
+            ...prev,
+            {
+              duration: sessionSecondsRef.current,
+              date: new Date().toISOString(),
+            },
+          ]);
+        }
+      };
+    }, []) // ❗ НИКАКИХ ЗАВИСИМОСТЕЙ
+  );
+
+
+
+
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => setIsPlaying(p => !p)}
-      activeOpacity={1}
-    >
-      {/* ✅ NEW BREATHING EXERCISE */}
+    <View style={styles.screen}>
       <BreathingExercise
-        config={BREATHING_EXERCISES.anti_stress}
         isPlaying={isPlaying}
-        size={260}
+        config={{ inhale: 4, holdAfterInhale: 4, exhale: 6 }}
       />
 
-      {/* ===========================
-          OLD IMPLEMENTATION (DISABLED)
-          =========================== */}
-
-      {/*
-      <View style={styles.mainContainer}>
-        <View style={styles.boxWrapper}>
-          <TouchableOpacity
-            style={styles.box}
-            onPress={() =>
-              router.push({ pathname: '/exercise', params: { type: 'exercise1' } })
-            }
-          >
-            <LinearGradient colors={GRADIENT_COLORS} style={styles.gradient}>
-              <Exercise1 />
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.boxWrapper}>
-          <TouchableOpacity
-            style={styles.box}
-            onPress={() =>
-              router.push({ pathname: '/exercise', params: { type: 'exercise2' } })
-            }
-          >
-            <LinearGradient colors={GRADIENT_COLORS} style={styles.gradient}>
-              <Exercise2 />
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.boxWrapper}>
-          <TouchableOpacity
-            style={styles.box}
-            onPress={() =>
-              router.push({ pathname: '/exercise', params: { type: 'relax1' } })
-            }
-          >
-            <LinearGradient colors={GRADIENT_COLORS} style={styles.gradient}>
-              <Relax1 />
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      </View>
-      */}
-    </TouchableOpacity>
+      <TimerControls
+        seconds={sessionSeconds}
+        isPlaying={isPlaying}
+        onPress={handleToggle}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    backgroundColor: '#2f6f5f',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
   },
-
-  /* === OLD STYLES (kept for later) === */
-  /*
-  mainContainer: {
-    flex: 1,
-    justifyContent: 'space-around',
-  },
-  boxWrapper: {
-    margin: 10,
-    alignItems: 'center',
-  },
-  box: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  gradient: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  */
 });

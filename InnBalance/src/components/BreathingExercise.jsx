@@ -5,7 +5,7 @@ import Svg, { Circle } from 'react-native-svg';
 // ❗ ТОЛЬКО ОДИН РАЗ
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
-export default function BreathingExercise({ config, isPlaying, size = 260 }) {
+export default function BreathingExercise({ config, isPlaying, size = 220 }) {
   const radius = size / 2 - 14;
   const circumference = 2 * Math.PI * radius;
 
@@ -43,7 +43,6 @@ export default function BreathingExercise({ config, isPlaying, size = 260 }) {
     };
 
     run();
-
     return () => {
       cancelled = true;
       progress.stopAnimation();
@@ -56,43 +55,63 @@ export default function BreathingExercise({ config, isPlaying, size = 260 }) {
   });
 
   return (
-    <View style={styles.wrapper}>
-      <Svg width={size} height={size}>
-        <Circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="#d6e7e1"
-          strokeWidth={12}
-          fill="none"
-        />
-        <AnimatedCircle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          stroke="#0b4a39ff"
-          strokeWidth={12}
-          fill="none"
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
-        />
-      </Svg>
+    <View style={styles.card}>
+      <View style={styles.circleWrapper}>
+        <Svg width={size} height={size}>
+          <Circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#cfe4dd"
+            strokeWidth={12}
+            fill="none"
+          />
+          <AnimatedCircle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#0b4a39"
+            strokeWidth={10}
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+          />
+        </Svg>
 
-      <Text style={styles.label}>{phase.toUpperCase()}</Text>
+        <Text style={styles.phaseText}>{phase.toUpperCase()}</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  // 🟢 КАРТОЧКА как Recommendation
+  card: {
+    width: '90%',
+    alignSelf: 'center',
+    backgroundColor: '#dbeee9ff',
+    borderRadius: 12,
+    paddingVertical: 20,
+    marginVertical: 16,
+
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  label: {
+
+  circleWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  phaseText: {
     position: 'absolute',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
-    color: '#ffffff',
+    color: '#1e3d34',
+    letterSpacing: 1,
   },
 });
