@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+
+
+
+
 
 // ❗ ТОЛЬКО ОДИН РАЗ
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -13,12 +17,22 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
   const [phase, setPhase] = useState('inhale');
 
   useEffect(() => {
-    if (!isPlaying || !config) return;
+    // Всегда сбрасываем при остановке
+    if (!isPlaying || !config) {
+      progress.stopAnimation();
+      progress.setValue(0);
+      setPhase('inhale');
+      return;
+    }
 
     let cancelled = false;
 
     const run = () => {
+      // Сброс перед началом нового цикла
+      progress.stopAnimation();
+      progress.setValue(0);
       setPhase('inhale');
+      
       Animated.timing(progress, {
         toValue: 1,
         duration: config.inhale * 1000,
@@ -48,7 +62,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
       cancelled = true;
       progress.stopAnimation();
     };
-  }, [isPlaying, config]);
+  }, [isPlaying, config, progress]);
 
   const strokeDashoffset = progress.interpolate({
     inputRange: [0, 1],
@@ -58,6 +72,21 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
   return (
     <View style={styles.card}>
       <Svg width={size} height={size}>
+        <Defs>
+          <RadialGradient id="sphereGradient" cx="40%" cy="40%">
+            <Stop offset="0%" stopColor="#e8f5f0" stopOpacity="1" />
+            <Stop offset="50%" stopColor="#a8d5c3" stopOpacity="1" />
+            <Stop offset="100%" stopColor="#2f6f5f" stopOpacity="1" />
+          </RadialGradient>
+        </Defs>
+        
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="url(#sphereGradient)"
+        />
+        
         <Circle
           cx={size / 2}
           cy={size / 2}

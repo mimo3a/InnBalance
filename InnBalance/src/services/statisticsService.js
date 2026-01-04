@@ -10,6 +10,9 @@ export async function saveSession(session) {
   try {
     const existing = await AsyncStorage.getItem(STORAGE_KEY);
     const sessions = existing ? JSON.parse(existing) : [];
+    
+    console.log('Before save - existing sessions:', sessions.length);
+    console.log('Saving new session:', session);
 
     sessions.push(session);
 
@@ -17,6 +20,8 @@ export async function saveSession(session) {
       STORAGE_KEY,
       JSON.stringify(sessions)
     );
+    
+    console.log('After save - total sessions:', sessions.length);
   } catch (error) {
     console.error('Failed to save session', error);
   }

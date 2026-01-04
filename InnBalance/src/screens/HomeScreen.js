@@ -9,7 +9,7 @@ import { useState } from 'react';
 export default function HomeScreen() {
 
     const [selectedState, setSelectedState] = useState(null);
-    const BREATHING_STATES = ['depression', 'anxiety', 'anger', 'stress'];
+    
 
 
     const STATES = [

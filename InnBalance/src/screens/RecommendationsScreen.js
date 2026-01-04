@@ -18,7 +18,7 @@ export default function RecommendationsScreen() {
                     
                     
                     <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
-                        <TouchableOpacity style={styles.touchableWeatherIcon} onPress={() => router.push('/breathing')}>
+                        <TouchableOpacity style={styles.touchableWeatherIcon} onPress={() => router.push({ pathname: '/breathing', params: { state } })}>
                             <View >
                                 <MaterialCommunityIcons name="weather-partly-cloudy" size={48} color="black" />
                             </View>

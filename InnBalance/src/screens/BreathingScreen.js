@@ -1,14 +1,39 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useLocalSearchParams } from 'expo-router';
 
 import BreathingExercise from '../components/BreathingExercise';
 import TimerControls from '../components/ui/timerControls';
 import { saveSession } from '../services/statisticsService';
+import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
 
 export default function BreathingScreen() {
+  const { state } = useLocalSearchParams();
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionSeconds, setSessionSeconds] = useState(0);
+
+  // Выбираем конфиг в зависимости от state
+  const getConfig = () => {
+    switch (state) {
+      case 'depression':
+        return BREATHING_EXERCISES.anti_depression;
+      case 'anxiety':
+        return BREATHING_EXERCISES.anti_anxiety;
+      case 'anger':
+        return BREATHING_EXERCISES.anti_anger;
+      case 'stress':
+        return BREATHING_EXERCISES.anti_stress;
+      case 'low_energy':
+        return BREATHING_EXERCISES.anti_low_energy;
+      case 'balance':
+        return BREATHING_EXERCISES.balance;
+      default:
+        return BREATHING_EXERCISES.anti_stress; // по умолчанию
+    }
+  };
+
+  const config = getConfig();
 
   const intervalRef = useRef(null);
   const isPlayingRef = useRef(isPlaying);
@@ -44,20 +69,21 @@ export default function BreathingScreen() {
     };
   }, [isPlaying]);
 
-  // ▶️ / ⏹ кнопка Start / Stop
+  // ▶️ / ⏸️ кнопка Play / Pause
   const handleToggle = async () => {
     if (isPlaying) {
-      const session = {
-        duration: sessionSeconds,
-        date: new Date().toISOString(),
-      };
-
-      await saveSession(session);
-
-      sessionSecondsRef.current = 0;
+      // PAUSE - сохраняем текущую сессию и останавливаем
+      if (sessionSeconds > 0) {
+        console.log('Saving session on pause:', sessionSeconds);
+        await saveSession({
+          duration: sessionSeconds,
+          date: new Date().toISOString(),
+        });
+      }
       setIsPlaying(false);
       setSessionSeconds(0);
     } else {
+      // PLAY - начинаем заново
       setSessionSeconds(0);
       setIsPlaying(true);
     }
@@ -86,10 +112,14 @@ export default function BreathingScreen() {
   return (
   <View style={styles.screen}>
     {/* Центр экрана */}
+    <View style={styles.headerContainer}>
+      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{state}</Text>
+    </View>
+
     <View style={styles.exerciseContainer}>
       <BreathingExercise
         isPlaying={isPlaying}
-        config={{ inhale: 4, holdAfterInhale: 4, exhale: 6 }}
+        config={config}
       />
     </View>
 
@@ -120,6 +150,11 @@ const styles = StyleSheet.create({
 
   timerContainer: {
     paddingBottom: 24,
+  },
+  headerContainer: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
