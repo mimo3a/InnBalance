@@ -1,5 +1,5 @@
-import StatisticsScreen from '@/src/screens/StatisticScreen';
+import StatisticScreen from '@/src/screens/StatisticScreen';
 
 export default function StatisticsTab() {
-  return <StatisticsScreen />;
+  return <StatisticScreen />;
 }

@@ -43,6 +43,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
     };
 
     run();
+
     return () => {
       cancelled = true;
       progress.stopAnimation();
@@ -56,44 +57,43 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
 
   return (
     <View style={styles.card}>
-      <View style={styles.circleWrapper}>
-        <Svg width={size} height={size}>
-          <Circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke="#cfe4dd"
-            strokeWidth={12}
-            fill="none"
-          />
-          <AnimatedCircle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke="#0b4a39"
-            strokeWidth={10}
-            fill="none"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-          />
-        </Svg>
+      <Svg width={size} height={size}>
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#d6e7e1"
+          strokeWidth={12}
+          fill="none"
+        />
+        <AnimatedCircle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke="#0b4a39"
+          strokeWidth={10}
+          fill="none"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+        />
+      </Svg>
 
-        <Text style={styles.phaseText}>{phase.toUpperCase()}</Text>
-      </View>
+      <Text style={styles.label}>{phase.toUpperCase()}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // 🟢 КАРТОЧКА как Recommendation
   card: {
     width: '90%',
-    alignSelf: 'center',
     backgroundColor: '#dbeee9ff',
     borderRadius: 12,
-    paddingVertical: 20,
-    marginVertical: 16,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+
+    alignItems: 'center',
+    justifyContent: 'center',
 
     elevation: 2,
     shadowColor: '#000',
@@ -102,12 +102,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
 
-  circleWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  phaseText: {
+  label: {
     position: 'absolute',
     fontSize: 18,
     fontWeight: '600',

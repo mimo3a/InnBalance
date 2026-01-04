@@ -1,20 +1,20 @@
-// screens/BreathingScreen.jsx
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+
 import BreathingExercise from '../components/BreathingExercise';
 import TimerControls from '../components/ui/timerControls';
-import { useFocusEffect } from '@react-navigation/native';
-import { useCallback } from 'react';
+import { saveSession } from '../services/statisticsService';
 
 export default function BreathingScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionSeconds, setSessionSeconds] = useState(0);
-  const [statistics, setStatistics] = useState([]);
+
+  const intervalRef = useRef(null);
   const isPlayingRef = useRef(isPlaying);
   const sessionSecondsRef = useRef(sessionSeconds);
 
-
-  const intervalRef = useRef(null);
+  // 🔁 синхронизация refs
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
@@ -23,18 +23,17 @@ export default function BreathingScreen() {
     sessionSecondsRef.current = sessionSeconds;
   }, [sessionSeconds]);
 
-
-  // ⏱️ Таймер
+  // ⏱️ таймер
   useEffect(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
     if (isPlaying) {
       intervalRef.current = setInterval(() => {
         setSessionSeconds(prev => prev + 1);
       }, 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
     }
 
     return () => {
@@ -45,77 +44,82 @@ export default function BreathingScreen() {
     };
   }, [isPlaying]);
 
-  // ▶️ / ⏹ кнопка
-  const handleToggle = () => {
+  // ▶️ / ⏹ кнопка Start / Stop
+  const handleToggle = async () => {
     if (isPlaying) {
-      // STOP → сохранить статистику
-      setStatistics(prev => [
-        ...prev,
-        {
-          duration: sessionSeconds,
-          date: new Date().toISOString(),
-        },
-      ]);
-      console.log('Session saved:', {
+      const session = {
         duration: sessionSeconds,
         date: new Date().toISOString(),
-      });
+      };
 
+      await saveSession(session);
+
+      sessionSecondsRef.current = 0;
       setIsPlaying(false);
-      setSessionSeconds(0); // ⬅️ СБРОС
+      setSessionSeconds(0);
     } else {
-      // START → новый сеанс
       setSessionSeconds(0);
       setIsPlaying(true);
     }
   };
 
+  // ⬅️ выход с экрана = Stop
   useFocusEffect(
     useCallback(() => {
       return () => {
-        // экран реально покинут
         if (intervalRef.current) {
           clearInterval(intervalRef.current);
           intervalRef.current = null;
         }
 
         if (isPlayingRef.current && sessionSecondsRef.current > 0) {
-          setStatistics(prev => [
-            ...prev,
-            {
-              duration: sessionSecondsRef.current,
-              date: new Date().toISOString(),
-            },
-          ]);
+          saveSession({
+            duration: sessionSecondsRef.current,
+            date: new Date().toISOString(),
+          });
+          sessionSecondsRef.current = 0;
         }
       };
-    }, []) // ❗ НИКАКИХ ЗАВИСИМОСТЕЙ
+    }, [])
   );
 
-
-
-
-
   return (
-    <View style={styles.screen}>
+  <View style={styles.screen}>
+    {/* Центр экрана */}
+    <View style={styles.exerciseContainer}>
       <BreathingExercise
         isPlaying={isPlaying}
         config={{ inhale: 4, holdAfterInhale: 4, exhale: 6 }}
       />
+    </View>
 
+    {/* Низ экрана */}
+    <View style={styles.timerContainer}>
       <TimerControls
         seconds={sessionSeconds}
         isPlaying={isPlaying}
         onPress={handleToggle}
       />
     </View>
-  );
+  </View>
+);
+
 }
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    justifyContent: 'space-between',
     paddingVertical: 16,
   },
+
+  exerciseContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  timerContainer: {
+    paddingBottom: 24,
+  },
 });
+

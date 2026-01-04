@@ -3,11 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { ThemedText } from '@/src/components/themed-text';
 import { ThemedView } from '@/src/components/themed-view';
 import { usePlaces } from '@/src/hooks/usePlaces';
+import { clearSessions } from '@/src/services/statisticsService';
 
 export default function SettingsScreen() {
   const { resetUserPlaces } = usePlaces();
 
-  const handleReset = () => {
+  const handleResetOrte = () => {
     Alert.alert(
       'Benutzerdefinierte Orte löschen',
       'Sind Sie sicher, dass Sie alle von Ihnen hinzugefügten Orte löschen möchten? Die Standardorte bleiben erhalten.',
@@ -25,16 +26,44 @@ export default function SettingsScreen() {
     );
   };
 
+  const handleResetStatistics = () => {
+    Alert.alert(
+      'Benutzerdefinierte Statistics löschen',
+      'Sind Sie sicher, dass Sie alle von Ihnen hinzugefügten Statistics löschen möchten? Die Standardstatistics bleiben erhalten.',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Löschen',
+          style: 'destructive',
+          onPress: async () => {
+            await clearSessions();
+            Alert.alert('Fertig', 'Benutzerdefinierte Statistics wurden gelöscht');
+          },
+        },
+      ]
+    );
+  }
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">Einstellungen</ThemedText>
       
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Ortsverwaltung</Text>
-        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+        <TouchableOpacity style={styles.resetButton} onPress={handleResetOrte}>
           <Text style={styles.resetButtonText}>Meine Orte löschen</Text>
         </TouchableOpacity>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Statisticsverwaltung</Text>
+        <TouchableOpacity style={styles.resetButton} onPress={handleResetStatistics}>
+          <Text style={styles.resetButtonText}>Meine Statistics löschen</Text>
+        </TouchableOpacity>
+        </View>
+
+
+
       </View>
+      
     </ThemedView>
   );
 }
