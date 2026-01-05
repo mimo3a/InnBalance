@@ -78,6 +78,7 @@ export default function BreathingScreen() {
         await saveSession({
           duration: sessionSeconds,
           date: new Date().toISOString(),
+          state: state // für die Übergabe des Moods
         });
       }
       setIsPlaying(false);
@@ -102,11 +103,12 @@ export default function BreathingScreen() {
           saveSession({
             duration: sessionSecondsRef.current,
             date: new Date().toISOString(),
+            state: state // für die Übergabe des Moods
           });
           sessionSecondsRef.current = 0;
         }
       };
-    }, [])
+    }, [state])
   );
 
   return (
