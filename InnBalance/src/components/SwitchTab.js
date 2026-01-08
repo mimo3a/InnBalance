@@ -84,5 +84,6 @@ const styles = StyleSheet.create({
   flexDirection: 'row',
   alignItems: 'center',
   gap: 6, // расстояние между иконкой и текстом
+
 },
 });

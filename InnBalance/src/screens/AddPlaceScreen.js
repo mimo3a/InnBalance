@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { usePlaces } from '@/src/hooks/usePlaces';
+import { LinearGradient } from "expo-linear-gradient";
+import * as ImagePicker from 'expo-image-picker';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
   const { addPlace } = usePlaces();
-  
+
+  const [image, setImage] = useState(null); // <-- Bild aus Galerie
+
   const [formData, setFormData] = useState({
     name: '',
     info: '',
@@ -16,8 +20,23 @@ export default function AddPlaceScreen() {
     lng: 11.4041,
     rating: 0,
     distance: 0,
-    acces: 'Public'
+    acces: 'Public',
+    image: null,
   });
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setImage(uri);
+      setFormData({ ...formData, image: uri });
+    }
+  };
 
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
@@ -28,9 +47,9 @@ export default function AddPlaceScreen() {
     try {
       await addPlace({
         ...formData,
-        image: require('../Images/Places/BotanischeGarten.png'), // defolt image
+        image: formData.image || require('../Images/Places/missingPicture.png'),
       });
-      
+
       Alert.alert('Erfolgreich', 'Ort wurde hinzugefügt', [
         { text: 'OK', onPress: () => router.back() }
       ]);
@@ -39,9 +58,21 @@ export default function AddPlaceScreen() {
     }
   };
 
+  const fallbackImage = require('../Images/Places/missingPicture.png');
+
   return (
     <View style={styles.container}>
-      
+      <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+        <ImageBackground
+          style={styles.image}
+          source={image ? { uri: image } : fallbackImage}
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)']}
+            style={styles.linearGradient}
+          />
+        </ImageBackground>
+      </TouchableOpacity>
 
       <ScrollView style={styles.form}>
         <Text style={styles.label}>Name</Text>
@@ -101,52 +132,37 @@ export default function AddPlaceScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  form: {
-    flex: 1,
-    padding: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
-    color: '#333',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  imageContainer: { width: '100%', height: '40%' },
+  image: { flex: 1, resizeMode: 'cover' },
+  linearGradient: { flex: 1 },
+  form: { flex: 1, padding: 20 },
+  label: { fontSize: 16, fontWeight: '500', marginBottom: 8, color: '#333' },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 20,
-    backgroundColor: '#f9f9f9',
+    marginBottom: 24,
+    backgroundColor: '#eef3ef',
+    borderRadius: 16,
+    padding: 16,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
   },
   textArea: {
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: 'top'
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   halfInput: {
-    width: '48%',
+    width: '48%'
   },
   submitButton: {
-    backgroundColor: '#1d16f4ff',
+    backgroundColor: '#2f6f5f',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -156,6 +172,6 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: '#fff',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '600'
   },
 });

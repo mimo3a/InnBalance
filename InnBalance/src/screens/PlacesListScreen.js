@@ -39,7 +39,7 @@ export default function PlacesListScreen() {
                 style={styles.addButton}
                 onPress={() => router.push('/add-place')}
             >
-                <Ionicons name="add-circle-outline" size={70} color="#1d16f4ff" />
+                <Ionicons name="add-circle" size={70} color="#2f6f5f"  />
             </TouchableOpacity>
         </View>
     );
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     },
     addButton: {
         position: 'absolute',
-        bottom: 20,
-        right: 20,
+        bottom: 10,
+        right: 10,
     },
 });
