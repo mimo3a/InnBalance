@@ -1,3 +1,13 @@
+/**
+ * SettingsScreen Component
+ * 
+ * Provides user settings and data management options:
+ * - Delete all user-added places (keeps default places intact)
+ * - Clear all session statistics
+ * 
+ * Both actions require confirmation before execution.
+ */
+
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { ThemedText } from '@/src/components/themed-text';
@@ -5,9 +15,20 @@ import { ThemedView } from '@/src/components/themed-view';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { clearSessions } from '@/src/services/statisticsService';
 
+/**
+ * SettingsScreen Component
+ * Main settings interface for data management
+ */
 export default function SettingsScreen() {
+  // Hook for managing user places
+  // Hook for managing user places
   const { resetUserPlaces } = usePlaces();
 
+  /**
+   * Handle deletion of user-added places
+   * Shows confirmation dialog before proceeding
+   * Default places are preserved
+   */
   const handleResetOrte = () => {
     Alert.alert(
       'Benutzerdefinierte Orte löschen',
@@ -26,6 +47,10 @@ export default function SettingsScreen() {
     );
   };
 
+  /**
+   * Handle deletion of session statistics
+   * Shows confirmation dialog before clearing all session data
+   */
   const handleResetStatistics = () => {
     Alert.alert(
       'Benutzerdefinierte Statistics löschen',
@@ -48,20 +73,20 @@ export default function SettingsScreen() {
     <ThemedView style={styles.container}>
       <ThemedText type="title">Einstellungen</ThemedText>
       
+      {/* Place Management Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Ortsverwaltung</Text>
         <TouchableOpacity style={styles.resetButton} onPress={handleResetOrte}>
           <Text style={styles.resetButtonText}>Meine Orte löschen</Text>
         </TouchableOpacity>
+      </View>
+      
+      {/* Statistics Management Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Statisticsverwaltung</Text>
         <TouchableOpacity style={styles.resetButton} onPress={handleResetStatistics}>
           <Text style={styles.resetButtonText}>Meine Statistics löschen</Text>
         </TouchableOpacity>
-        </View>
-
-
-
       </View>
       
     </ThemedView>

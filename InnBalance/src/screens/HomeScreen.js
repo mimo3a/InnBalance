@@ -1,3 +1,14 @@
+/**
+ * HomeScreen Component
+ * 
+ * Main landing screen where users can:
+ * - Select their current mood/state (depression, anxiety, anger, stress, low energy, balance)
+ * - View current weather conditions
+ * - Get recommendations for breathing exercises or outdoor activities
+ * 
+ * The selected state is passed to the recommendation screen for personalized suggestions.
+ */
+
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/src/components/themed-text';
@@ -6,12 +17,20 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import WeatherCard from '@/src/components/WeatherCard';
 import { useState } from 'react';
 
+/**
+ * HomeScreen Component
+ * Primary screen for mood selection and weather display
+ */
 export default function HomeScreen() {
-
+    // Track the currently selected mood state
+    // Track the currently selected mood state
     const [selectedState, setSelectedState] = useState(null);
     
 
-
+    /**
+     * Available mood states with their corresponding icons and labels
+     * Each state maps to specific breathing exercises and recommendations
+     */
     const STATES = [
         { key: 'depression', icon: 'emoticon-dead-outline', label: 'Depression' },
         { key: 'anxiety', icon: 'alert-circle-outline', label: 'Anxiety' },
@@ -21,17 +40,19 @@ export default function HomeScreen() {
         { key: 'balance', icon: 'scale-balance', label: 'Balance' },
     ];
 
-
+    // Router for navigation to recommendation screen
     const router = useRouter();
 
     return (
         <View style={styles.container}>
+            {/* Mood Selection Container */}
             <ThemedView style={styles.moodContainer}>
                 <ThemedView style={styles.moodBox}>
 
-                    {/* ИКОНКИ */}
+                    {/* Mood Icons Grid */}
                     <View style={styles.iconsRow}>
                         {STATES.map(state => {
+                            // Check if this state is currently selected
                             const isSelected = selectedState === state.key;
 
                             return (
@@ -44,11 +65,13 @@ export default function HomeScreen() {
                                     onPress={() => setSelectedState(state.key)}
                                     activeOpacity={0.8}
                                 >
+                                    {/* Icon with dynamic color based on selection */}
                                     <MaterialCommunityIcons
                                         name={state.icon}
                                         size={32}
                                         color={isSelected ? '#ffffff' : '#2f6f5f'}
                                     />
+                                    {/* Label with dynamic color */}
                                     <ThemedText
                                         style={[
                                             styles.iconLabel,
@@ -62,9 +85,10 @@ export default function HomeScreen() {
                         })}
                     </View>
 
+                    {/* Visual separator */}
                     <View style={styles.divider} />
 
-                    {/* КНОПКА */}
+                    {/* Navigation Button */}
                     <View style={styles.footer}>
                         <TouchableOpacity
                             style={[
@@ -73,7 +97,7 @@ export default function HomeScreen() {
                             ]}
                             disabled={!selectedState}
                             onPress={() => {
-
+                                // Navigate to recommendation screen with selected mood
                                 router.push(`recommendation?state=${selectedState}`);
                             }}
                         >
@@ -87,19 +111,24 @@ export default function HomeScreen() {
                 </ThemedView>
 
             </ThemedView>
+            
+            {/* Weather Widget */}
             <ThemedView style={styles.weatherContainer} >
                 <View style={styles.widgetcontainer}>
+                    {/* Weather data for Innsbruck coordinates */}
                     <WeatherCard
-                        lat={47.2692}   // Innsbruck
-                        lon={11.4041}
+                        lat={47.2692}   // Innsbruck latitude
+                        lon={11.4041}   // Innsbruck longitude
                     />
                 </View>
                 
             </ThemedView>
+            
+            {/* Information/Advance Section */}
             <ThemedView style={styles.anvanceContainer}>
-                
-                    <ThemedText>Choose your mood and get a preliminary recommendation for breathing exercises or a walk in the fresh air, depending on the weather. .</ThemedText>
-                
+                <ThemedText>
+                    Choose your mood and get a preliminary recommendation for breathing exercises or a walk in the fresh air, depending on the weather.
+                </ThemedText>
             </ThemedView>
         </View>
     );

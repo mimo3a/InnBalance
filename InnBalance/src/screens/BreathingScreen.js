@@ -1,3 +1,17 @@
+/**
+ * BreathingScreen Component
+ * 
+ * Displays an interactive breathing exercise based on the user's selected mood.
+ * Features:
+ * - Animated breathing circle that guides inhale/exhale cycles
+ * - Timer to track session duration
+ * - Play/Pause controls
+ * - Automatic session saving to statistics
+ * - Different exercise configurations per mood state
+ * 
+ * The screen automatically saves completed sessions when pausing or exiting.
+ */
+
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
@@ -13,7 +27,7 @@ export default function BreathingScreen() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionSeconds, setSessionSeconds] = useState(0);
 
-  // Выбираем конфиг в зависимости от state
+  // Select config based on mood state
   const getConfig = () => {
     switch (state) {
       case 'depression':
@@ -29,7 +43,7 @@ export default function BreathingScreen() {
       case 'balance':
         return BREATHING_EXERCISES.balance;
       default:
-        return BREATHING_EXERCISES.anti_stress; // по умолчанию
+        return BREATHING_EXERCISES.anti_stress; // Default fallback
     }
   };
 
@@ -39,7 +53,7 @@ export default function BreathingScreen() {
   const isPlayingRef = useRef(isPlaying);
   const sessionSecondsRef = useRef(sessionSeconds);
 
-  // 🔁 синхронизация refs
+  // Synchronize refs with state
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
@@ -48,7 +62,7 @@ export default function BreathingScreen() {
     sessionSecondsRef.current = sessionSeconds;
   }, [sessionSeconds]);
 
-  // ⏱️ таймер
+  // Timer: increment session seconds every second when playing
   useEffect(() => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -69,28 +83,28 @@ export default function BreathingScreen() {
     };
   }, [isPlaying]);
 
-  // ▶️ / ⏸️ кнопка Play / Pause
+  // Handle Play/Pause button press
   const handleToggle = async () => {
     if (isPlaying) {
-      // PAUSE - сохраняем текущую сессию и останавливаем
+      // PAUSE - Save current session and stop
       if (sessionSeconds > 0) {
         console.log('Saving session on pause:', sessionSeconds);
         await saveSession({
           duration: sessionSeconds,
           date: new Date().toISOString(),
-          state: state // für die Übergabe des Moods
+          state: state // Pass the mood for statistics
         });
       }
       setIsPlaying(false);
       setSessionSeconds(0);
     } else {
-      // PLAY - начинаем заново
+      // PLAY - Start new session
       setSessionSeconds(0);
       setIsPlaying(true);
     }
   };
 
-  // ⬅️ выход с экрана = Stop
+  // Screen exit handler - Save session when user navigates away
   useFocusEffect(
     useCallback(() => {
       return () => {
@@ -103,7 +117,7 @@ export default function BreathingScreen() {
           saveSession({
             duration: sessionSecondsRef.current,
             date: new Date().toISOString(),
-            state: state // für die Übergabe des Moods
+            state: state // Pass the mood for statistics
           });
           sessionSecondsRef.current = 0;
         }
@@ -113,7 +127,7 @@ export default function BreathingScreen() {
 
   return (
   <View style={styles.screen}>
-    {/* Центр экрана */}
+    {/* Header showing current mood */}
     <View style={styles.headerContainer}>
       <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{state}</Text>
     </View>
@@ -125,7 +139,7 @@ export default function BreathingScreen() {
       />
     </View>
 
-    {/* Низ экрана */}
+    {/* Timer and controls at bottom */}
     <View style={styles.timerContainer}>
       <TimerControls
         seconds={sessionSeconds}

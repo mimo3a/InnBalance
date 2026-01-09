@@ -1,19 +1,37 @@
-// components/TimerControls.jsx
+/**
+ * TimerControls Component
+ * 
+ * Displays the session timer and play/stop control button.
+ * Shows elapsed time in MM:SS format with a toggle button.
+ * 
+ * Props:
+ * @param {number} seconds - Total elapsed seconds
+ * @param {boolean} isPlaying - Whether the timer is currently running
+ * @param {Function} onPress - Callback for play/stop button press
+ */
+
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+/**
+ * TimerControls Component
+ * Renders timer display and control button
+ */
 export default function TimerControls({ seconds, isPlaying, onPress }) {
+  // Convert total seconds to minutes and seconds
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
 
   return (
     <View style={styles.card}>
+      {/* Timer display in MM:SS format */}
       <Text style={styles.time}>
         {minutes.toString().padStart(2, '0')}:
         {secs.toString().padStart(2, '0')}
       </Text>
 
+      {/* Play/Stop toggle button */}
       <TouchableOpacity style={styles.button} onPress={onPress}>
         <Ionicons
           name={isPlaying ? 'stop' : 'play'}

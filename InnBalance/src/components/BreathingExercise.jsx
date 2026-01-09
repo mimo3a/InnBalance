@@ -1,3 +1,22 @@
+/**
+ * BreathingExercise Component
+ * 
+ * An animated breathing guide that displays a pulsating circle with visual feedback.
+ * The circle fills and empties following the breathing pattern (inhale/hold/exhale).
+ * 
+ * Features:
+ * - Smooth animations using React Native Animated API
+ * - SVG-based circular progress indicator
+ * - Dynamic phase labels (INHALE, HOLD, EXHALE)
+ * - Configurable timing through exercise config objects
+ * - Gradient fill effect for visual appeal
+ * 
+ * Props:
+ * @param {Object} config - Exercise configuration with inhale, exhale, and holdAfterInhale durations
+ * @param {boolean} isPlaying - Whether the exercise is currently active
+ * @param {number} size - Diameter of the breathing circle (default: 220)
+ */
+
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
@@ -6,7 +25,7 @@ import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 
 
 
-// ❗ ТОЛЬКО ОДИН РАЗ
+// Create animated circle component only once (outside component to avoid recreation)
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function BreathingExercise({ config, isPlaying, size = 220 }) {
@@ -71,7 +90,9 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
 
   return (
     <View style={styles.card}>
+      {/* SVG circle with gradient and progress indicator */}
       <Svg width={size} height={size}>
+        {/* Define gradient for 3D sphere effect */}
         <Defs>
           <RadialGradient id="sphereGradient" cx="40%" cy="40%">
             <Stop offset="0%" stopColor="#e8f5f0" stopOpacity="1" />
@@ -80,6 +101,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
           </RadialGradient>
         </Defs>
         
+        {/* Background circle with gradient fill */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -87,6 +109,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
           fill="url(#sphereGradient)"
         />
         
+        {/* Background stroke (light gray track) */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -95,6 +118,8 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
           strokeWidth={12}
           fill="none"
         />
+        
+        {/* Animated progress stroke */}
         <AnimatedCircle
           cx={size / 2}
           cy={size / 2}
@@ -108,6 +133,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
         />
       </Svg>
 
+      {/* Phase label (INHALE, HOLD, EXHALE) */}
       <Text style={styles.label}>{phase.toUpperCase()}</Text>
     </View>
   );

@@ -1,12 +1,37 @@
+/**
+ * WeatherCard Component
+ * 
+ * Displays current weather information for a given location.
+ * Fetches data from Open-Meteo API using the useWeather hook.
+ * 
+ * Features:
+ * - Temperature display
+ * - Weather condition icon and label
+ * - Wind speed
+ * - Loading state
+ * - Error handling with retry option
+ * 
+ * Props:
+ * @param {number} lat - Latitude coordinate
+ * @param {number} lon - Longitude coordinate
+ */
+
 import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useWeather } from '@/src/hooks/useWeather';
 import { getWeatherLabel, getWeatherIcon } from '@/src/utils/weatherCodes';
 
+/**
+ * WeatherCard Component
+ * Displays current weather conditions in a styled card
+ */
 export default function WeatherCard({ lat, lon }) {
+  // Fetch weather data using custom hook
+  // Fetch weather data using custom hook
   const { weather, loading, error, refresh } = useWeather(lat, lon);
 
+  // Show loading spinner while fetching
   if (loading) {
     return (
       <View style={styles.card}>
@@ -15,6 +40,7 @@ export default function WeatherCard({ lat, lon }) {
     );
   }
 
+  // Show error message with retry button if fetch fails
   if (error || !weather) {
     return (
       <View style={styles.card}>
@@ -26,15 +52,19 @@ export default function WeatherCard({ lat, lon }) {
     );
   }
 
+  // Display weather data
   return (
     <View style={styles.card}>
+      {/* Temperature and weather icon row */}
       <View style={styles.row}>
+        {/* Weather condition icon */}
         <MaterialCommunityIcons
           name={getWeatherIcon(weather.weathercode)}
           size={48}
           color="#2f6f5f"
         />
 
+        {/* Temperature and condition label */}
         <View style={styles.tempBlock}>
           <Text style={styles.temp}>
             {Math.round(weather.temperature)}°
@@ -45,8 +75,10 @@ export default function WeatherCard({ lat, lon }) {
         </View>
       </View>
 
+      {/* Divider line */}
       <View style={styles.divider} />
 
+      {/* Wind speed row */}
       <View style={styles.rowSmall}>
         <MaterialCommunityIcons
           name="weather-windy"
