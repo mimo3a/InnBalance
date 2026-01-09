@@ -1,3 +1,16 @@
+/**
+ * PlacesMap Component
+ * 
+ * Displays an interactive map showing all saved relaxation places.
+ * Users can tap on markers to view place details and navigate to the description screen.
+ * 
+ * Features:
+ * - Interactive map centered on Innsbruck
+ * - Markers for each saved place
+ * - Loading state with spinner
+ * - Tap callouts to navigate to place details
+ */
+
 import React from 'react';
 import {
   StyleSheet,
@@ -14,6 +27,7 @@ export default function PlacesMap() {
   const { places, loading } = usePlaces();
   const router = useRouter();
 
+  // Show loading indicator while fetching places
   if (loading) {
     return (
       <View style={[styles.container, styles.center]}>
@@ -24,6 +38,7 @@ export default function PlacesMap() {
 
   return (
     <View style={styles.container}>
+      {/* Map view centered on Innsbruck with initial zoom level */}
       <MapView
         style={styles.map}
         initialRegion={{
@@ -33,6 +48,7 @@ export default function PlacesMap() {
           longitudeDelta: 0.06,
         }}
       >
+        {/* Render a marker for each saved place */}
         {places.map(place => (
           <Marker
             key={place.id}
@@ -42,6 +58,7 @@ export default function PlacesMap() {
             }}
             title={place.name}
             description={`details...`}         
+            // Navigate to place description when callout is pressed
             onCalloutPress={() =>
               router.push({
                 pathname: '/description',

@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
@@ -33,8 +34,24 @@ export default function AddPlaceScreen() {
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      setImage(uri);
-      setFormData({ ...formData, image: uri });
+      
+      // Copy image to permanent storage
+      const filename = `place_${Date.now()}.jpg`;
+      const newPath = `${FileSystem.documentDirectory}${filename}`;
+      
+      try {
+        await FileSystem.copyAsync({
+          from: uri,
+          to: newPath
+        });
+        
+        // Use permanent path instead of temporary URI
+        setImage(newPath);
+        setFormData({ ...formData, image: newPath });
+      } catch (error) {
+        console.error('Error copying image:', error);
+        Alert.alert('Fehler', 'Bild konnte nicht gespeichert werden');
+      }
     }
   };
 

@@ -36,7 +36,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
   const [phase, setPhase] = useState('inhale');
 
   useEffect(() => {
-    // Всегда сбрасываем при остановке
+    // Always reset on stop
     if (!isPlaying || !config) {
       progress.stopAnimation();
       progress.setValue(0);
@@ -47,7 +47,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
     let cancelled = false;
 
     const run = () => {
-      // Сброс перед началом нового цикла
+      // Reset before starting new cycle
       progress.stopAnimation();
       progress.setValue(0);
       setPhase('inhale');
