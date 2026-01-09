@@ -15,7 +15,23 @@ Ziel ist die Planung und Umsetzung einer mobilen App mit **Scrum**, **Jira**, **
 Der Alltag in Städten fühlt sich 2025 schneller an denn je. Stress, Zeitdruck und volle Terminkalender lassen oft kaum Raum für echte Entspannung.
 Wir brauchen Ruhe – aber wir haben kaum Zeit dafür.
 
-InnBalance setzt hier an: Die NutzerInnen geben ihre aktuelle Stimmung an, und die App schlägt darauf basierend kurze, alltagstaugliche Micro-Breaks vor. Zu den Funktionen gehören geführte Atemübungen mit sanften Animationen, GPS-basierte Empfehlungen für Ruheorte, die zur Stimmung passen, sowie eine kompakte Statistik, die zeigt, wie regelmäßig NutzerInnen achtsame Pausen einbauen.
+InnBalance setzt hier an: Die Nutzer:innen geben ihren aktuellen Zustand an, und die App schlägt darauf basierend kurze, alltagstaugliche Micro-Breaks vor.
+
+Zu den Funktionen gehören geführte Atemübungen mit sanften Animationen, GPS-basierte Empfehlungen für Ruheorte, die zum aktuellen Zustand passen, sowie eine kompakte Statistik, die zeigt, wie regelmäßig Nutzer:innen achtsame Pausen in ihren Alltag integrieren.
+
+Abhängig von Tageszeit und Wetter empfiehlt die App entweder Atemübungen oder einen Spaziergang zu einem ruhigen Ort. Jede Übung ist individuell gestaltet und darauf ausgerichtet, den aktuellen Zustand der Nutzer:innen wieder in Balance zu bringen.
+
+Die Statistik der absolvierten Übungen kann im StatisticsScreen eingesehen und im SettingsScreen zurückgesetzt werden.
+
+Wählt der/die Benutzer:in einen Spaziergang, gelangt er/sie in den RuheorteScreen, der in zwei Modi unterteilt ist:
+
+Kartenmodus: Die Ruheorte werden auf einer Karte dargestellt. Beim Anklicken eines Markers erscheinen der Name und eine kurze Beschreibung des Ortes. Bei erneutem Klick öffnet sich eine OrteCard mit vollständiger Beschreibung, Fotos, Bewertung und Entfernung.
+
+Listenmodus: Die Benutzer:innen sehen eine Liste der Ruheorte mit einem kleinen Foto, kurzer Beschreibung, Bewertung und Entfernung. Beim Anklicken eines Listeneintrags wird ebenfalls die OrteCard geöffnet.
+
+Im Listenmodus können eigene Lieblingsorte über ein Plus-Symbol hinzugefügt werden. In einem Formular lassen sich Name, Beschreibung, Koordinaten und Fotos des neuen Ruheortes erfassen. Diese Orte werden anschließend zu allen verfügbaren Ruheorten hinzugefügt.
+
+Im SettingsScreen können selbst erstellte Ruheorte wieder gelöscht werden.
 
 Ein Community-Feature ermöglicht es, neue entspannende Orte vorzuschlagen und bestehende Spots zu bewerten.
 
@@ -55,8 +71,8 @@ Ein Community-Feature ermöglicht es, neue entspannende Orte vorzuschlagen und b
 
 ### **Frontend / Mobile**
 - React Native  
-- TypeScript oder JavaScript  
-- Expo (optional)
+- JavaScript  
+- Expo 
 
 ### **Tools**
 - Jira (Scrum Board & Backlog)
@@ -141,56 +157,96 @@ Link: `<Miro-Link Sprint 02>`
 
 ---
 
-# 6. Entwicklung mobile Systeme (EMS) (wird noch angepasst!)
+# 6. Entwicklung mobile Systeme (EMS) 
 
-## App-Architektur (Entwurf)
-- Navigationsstruktur:  
-  - Hauptscreens: <Screen 1>, <Screen 2>, <Screen 3>  
-  - Navigation: Stack / Tabs / Drawer
-- Datenmodell
-- API-Anbindung
-- Device Features (z. B. Kamera, Location)
+App-Architektur (Sprint 1)
+Navigation
 
+Die App verwendet eine Bottom-Tab-Navigation mit drei Hauptbereichen:
+Home
+Statistic
+Settings
+
+Innerhalb der Tabs wird Stack-Navigation für Detail- und Flow-Screens genutzt.
+
+Zentrale Screens
+Home
+Auswahl des aktuellen Zustands (z. B. Stress, Anxiety, Low Energy)
+Anzeige der aktuellen Wetterdaten
+Weiterleitung zu einer passenden Empfehlung
+
+Recommendation
+Entscheidung zwischen:
+Atemübung
+Spaziergang zu einem Ruhe-Ort
+basierend auf Zustand, Tageszeit und Wetter
+
+Breathing Exercise
+Geführte Atemübung mit Animation
+Zeitmessung
+Speicherung der Session für die Statistik
+
+Ruhe-Orte
+Zwei Ansichten:
+Karte mit Markern
+Liste mit Kurzinfos
+Detailansicht eines Ortes (Beschreibung, Bild, Bewertung, Distanz)
+Möglichkeit, eigene Orte hinzuzufügen
+
+Statistics
+Übersicht über:
+Anzahl Sessions
+Gesamtdauer
+Wochenübersicht und Verlauf
+
+Settings
+Löschen eigener Ruhe-Orte
+Zurücksetzen der Statistik
+
+Eingesetzte Device-Features
+Standort (Entfernung zu Ruhe-Orten)
+Kartenansicht
+Timer für Atemübungen
+
+Diese Architektur bildet die Grundlage für die Kernfunktionen und wird in Sprint 2 weiter ausgebaut.
 ---
 
 ## API & Backend
-- API: `<URL>`
-- Authentifizierung: `<OAuth, API Key, etc.>`
-- Datenfluss:  
-  - Client → API → Response → UI
-
+Backend: noch nicht angebunden
+- Daten werden aktuell lokal (Mock-Daten) verwaltet
+- Geplante Architektur:
+  Client → REST API → Backend → Response → UI
 ---
 
 ## UI / UX
-- Farbkonzept  
-- Layout  
-- Wireframes / Mockups  
+- Ruhiges, reduziertes Farbkonzept (Grün- und Pastelltöne)
+- Klare Kartenstruktur mit Fokus auf Übersichtlichkeit
+- Mobile-first Design
+- Umsetzung orientiert sich an einfachen Mockups
 
 ---
 
 ## Testing
-- Kein kritischer Bug offen  
-- UI getestet  
-- Testfälle dokumentiert
+- Manuelle Tests der Kernfunktionen
+- Navigation und UI geprüft
+- Keine kritischen Fehler bekannt
 
 ---
 
 # 7. Setup & Installation
 
-## Voraussetzungen
-- Node.js  
-- npm / yarn  
-- Expo CLI (optional)
+- Node.js
+- npm
+- Expo (lokale Entwicklung)
 
-## Projekt starten (wird noch angepasst!, expo?)
+## Projekt starten
+
 ```bash
 npm install
-npm start
-```
-
+npx expo start
 ---
 
-# 🔗 8. Wichtige Links (wird noch angepasst!)
+# 🔗 8. Wichtige Links 
 
 | Tool | Link |
 |------|------|
@@ -201,7 +257,7 @@ npm start
 
 ---
 
-# 9. Templates (wird noch angepasst!)
+# 9. Templates 
 
 ## Template: Definition of Done (DoD)
 
@@ -228,8 +284,7 @@ npm start
 
 ---
 
-## Template: Sprint Retrospective (wird noch angepasst!)
-
+## Template: Sprint Retrospective 
 ```md
 # Sprint Retrospective – Sprint <Nummer>
 
@@ -248,7 +303,7 @@ npm start
 
 ---
 
-# 10. Finale Präsentation (PPM & EMS) (wird noch angepasst!)
+# 10. Finale Präsentation (PPM & EMS) 
 
 Die finale Präsentation umfasst:
 
