@@ -2,7 +2,7 @@ import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '@/src/components/themed-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { BREATHING_EXERCISES_DESCRIPTION } from '../breathing/ExerciseDescription';
+import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
 
 export default function RecommendationsScreen() {
     const { state } = useLocalSearchParams();
@@ -12,19 +12,19 @@ export default function RecommendationsScreen() {
     const getDescription = () => {
         switch (state) {
             case 'depression':
-                return BREATHING_EXERCISES_DESCRIPTION.anti_depression;
+                return BREATHING_EXERCISES.anti_depression;
             case 'anxiety':
-                return BREATHING_EXERCISES_DESCRIPTION.anti_anxiety;
+                return BREATHING_EXERCISES.anti_anxiety;
             case 'anger':
-                return BREATHING_EXERCISES_DESCRIPTION.anti_anger;
+                return BREATHING_EXERCISES.anti_anger;
             case 'stress':
-                return BREATHING_EXERCISES_DESCRIPTION.anti_stress;
+                return BREATHING_EXERCISES.anti_stress;
             case 'low_energy':
-                return BREATHING_EXERCISES_DESCRIPTION.anti_low_energy;
+                return BREATHING_EXERCISES.anti_low_energy;
             case 'balance':
-                return BREATHING_EXERCISES_DESCRIPTION.balance;
+                return BREATHING_EXERCISES.balance;
             default:
-                return BREATHING_EXERCISES_DESCRIPTION.anti_stress;
+                return BREATHING_EXERCISES.anti_stress;
         }
     };
 
@@ -37,7 +37,7 @@ export default function RecommendationsScreen() {
     <View style={styles.header}>
       <Text style={styles.title}>{description.title}</Text>
       <Text style={styles.subtitle}>
-        Рекомендованное упражнение
+        Recommended Exercise
       </Text>
     </View>
 
@@ -53,7 +53,7 @@ export default function RecommendationsScreen() {
     {/* ACTIONS — ПРИЖАТЫ К НИЗУ */}
     <ThemedView style={styles.actionBox}>
       <Text style={styles.actionTitle}>
-        Что вы хотите сделать?
+        What would you like to do?
       </Text>
 
       <View style={styles.actionsRow}>
@@ -63,12 +63,12 @@ export default function RecommendationsScreen() {
             router.push({ pathname: '/breathing', params: { state } })
           }
         >
-          <MaterialCommunityIcons
-            name="weather-partly-cloudy"
-            size={42}
-            color="#2f6f62"
+          <MaterialCommunityIcons 
+          name="lungs" 
+          size={42} 
+          color="#2f6f62" 
           />
-          <Text style={styles.actionText}>Дыхание</Text>
+          <Text style={styles.actionText}>Breathing</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -80,7 +80,7 @@ export default function RecommendationsScreen() {
             size={42}
             color="#2f6f62"
           />
-          <Text style={styles.actionText}>Прогулка</Text>
+          <Text style={styles.actionText}>Walk</Text>
         </TouchableOpacity>
       </View>
     </ThemedView>

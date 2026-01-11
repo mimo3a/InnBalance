@@ -131,7 +131,7 @@ export default function BreathingScreen() {
   <View style={styles.screen}>
     {/* Header showing current mood */}
     <View style={styles.headerContainer}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{state}</Text>
+      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{config.title}</Text>
     </View>
 
     <View style={styles.exerciseContainer}>
