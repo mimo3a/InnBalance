@@ -125,6 +125,8 @@ export default function BreathingScreen() {
     }, [state])
   );
 
+  // Render the breathing screenc
+
   return (
   <View style={styles.screen}>
     {/* Header showing current mood */}
