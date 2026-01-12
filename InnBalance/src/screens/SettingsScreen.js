@@ -18,6 +18,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { clearSessions } from '@/src/services/statisticsService';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { useRouter } from 'expo-router';
 
 /**
  * SettingsScreen Component
@@ -27,6 +28,7 @@ export default function SettingsScreen() {
   // Hook for managing user places
   const { resetUserPlaces } = usePlaces();
   const { theme, isDark, toggleTheme } = useTheme();
+  const router = useRouter();
   
   // State for toggles
   const [locationEnabled, setLocationEnabled] = useState(true);
@@ -79,21 +81,16 @@ export default function SettingsScreen() {
   const handleLanguageSelect = () => {
     Alert.alert('Language', 'Language selection feature coming soon!');
   };
-
-  const handleDefaultExercise = () => {
-    Alert.alert('Default Exercise', 'Exercise selection feature coming soon!');
-  };
-
-  const handleAccount = () => {
+const handleAccount = () => {
     Alert.alert('Account', 'Account management feature coming soon!');
   };
 
   const handleAbout = () => {
-    Alert.alert('About InnBalance', 'Version 1.0.0\n\nA mental wellness app for breathing exercises and mindful places.', [{ text: 'OK' }]);
+    router.push('/about');
   };
 
   const handleTutorial = () => {
-    Alert.alert('Tutorial', 'Tutorial feature coming soon!');
+    router.push('/help');
   };
 
   const handleResetAll = () => {
@@ -160,7 +157,7 @@ export default function SettingsScreen() {
         </View>
       </ThemedView>
 
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+      {/* <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <TouchableOpacity style={styles.settingRow} onPress={handleDefaultExercise}>
           <View style={styles.settingLeft}>
             <MaterialCommunityIcons name="lungs" size={24} color={theme.primary} />
@@ -171,7 +168,7 @@ export default function SettingsScreen() {
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
         </TouchableOpacity>
-      </ThemedView>
+      </ThemedView> */}
 
       {/* ACCOUNT */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>Account</Text>
