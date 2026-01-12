@@ -17,6 +17,7 @@ import { ThemedView } from '@/src/components/themed-view';
 import { getSessions } from '../services/statisticsService';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 /**
  * StatisticScreen Component
@@ -29,6 +30,7 @@ export default function StatisticScreen() {
   // Loading state for data fetch
   // Loading state for data fetch
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
 
   /**
    * Load sessions from storage
@@ -101,32 +103,32 @@ export default function StatisticScreen() {
   // Show loading spinner while fetching data
   if (loading) {
     return (
-      <View style={[styles.container, styles.center]}>
-        <ActivityIndicator size="large" color="#2f6f5f" />
-        <ThemedText style={{ marginTop: 10, color: '#2f6f5f' }}>Lade Statistik...</ThemedText>
+      <View style={[styles.container, styles.center, { backgroundColor: theme.background }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
+        <ThemedText style={{ marginTop: 10, color: theme.primary }}>Lade Statistik...</ThemedText>
       </View>
     );
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: '#fff' }}>
-      <View style={styles.container}>
+    <ScrollView style={{ flex: 1, backgroundColor: theme.background }}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         
-        <ThemedText type="title" style={{ marginBottom: 20 }}>Statistics</ThemedText>
+        <ThemedText type="title" style={[{ marginBottom: 20 }, { color: theme.text }]}>Statistics</ThemedText>
 
         {/* SECTION 1 - Summary Cards */}
-        <View style={styles.cardContainer}>
-          <ThemedText type="subtitle" style={styles.sectionHeader}>Zusammenfassung</ThemedText>
+        <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
+          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Zusammenfassung</ThemedText>
           
           <View style={styles.statsRow}>
             {/* Card 1 - Total Minutes (Light Green) */}
-            <View style={[styles.statBox, { backgroundColor: '#8baea4' }]}>
+            <View style={[styles.statBox, { backgroundColor: theme.primaryLight }]}>
               <Text style={styles.statValueLight}>{totalDurationMinutes}</Text>
               <Text style={styles.statLabelLight}>Minuten</Text>
             </View>
             
             {/* Card 2 - Total Sessions (Dark Green) */}
-            <View style={[styles.statBox, { backgroundColor: '#2f6f5f' }]}>
+            <View style={[styles.statBox, { backgroundColor: theme.primary }]}>
               <Text style={styles.statValueLight}>{totalSessions}</Text>
               <Text style={styles.statLabelLight}>Sessions</Text>
             </View>
@@ -134,8 +136,8 @@ export default function StatisticScreen() {
         </View>
 
         {/* SECTION 2 - Weekly Chart */}
-        <View style={styles.cardContainer}>
-          <ThemedText type="subtitle" style={styles.sectionHeader}>Wochenübersicht</ThemedText>
+        <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
+          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Wochenübersicht</ThemedText>
           
           {/* Legend for chart colors */}
           <View style={styles.legendContainer}>
@@ -200,11 +202,11 @@ export default function StatisticScreen() {
         </View>
 
         {/* SECTION 3 - Session History */}
-        <View style={styles.historyContainer}>
-          <ThemedText type="subtitle" style={styles.sectionHeader}>Verlauf</ThemedText>
+        <View style={[styles.historyContainer, { backgroundColor: theme.cardBackground }]}>
+          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Verlauf</ThemedText>
           
           {sessions.length === 0 ? (
-            <ThemedText style={{ color: '#666', fontStyle: 'italic' }}>
+            <ThemedText style={{ color: theme.textSecondary, fontStyle: 'italic' }}>
               Noch keine Übungen absolviert.
             </ThemedText>
           ) : (
@@ -225,19 +227,19 @@ export default function StatisticScreen() {
                   <View style={styles.historyRow}>
                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
                       {iconName && (
-                        <View style={{ backgroundColor: '#eef5f2', padding: 6, borderRadius: 8 }}>
-                          <MaterialCommunityIcons name={iconName} size={18} color="#2f6f5f" />
+                        <View style={{ backgroundColor: theme.background, padding: 6, borderRadius: 8 }}>
+                          <MaterialCommunityIcons name={iconName} size={18} color={theme.primary} />
                         </View>
                       )}
-                      <ThemedText style={styles.historyDate}>
+                      <ThemedText style={[styles.historyDate, { color: theme.text }]}>
                         {new Date(s.date).toLocaleDateString()}
                       </ThemedText>
                     </View>
-                    <View style={styles.historyBadge}>
+                    <View style={[styles.historyBadge, { backgroundColor: theme.primaryLight }]}>
                       <Text style={styles.historyDuration}>{s.duration} Sek.</Text>
                     </View>
                   </View>
-                  {index < sessions.length - 1 && <View style={styles.divider} />}
+                  {index < sessions.length - 1 && <View style={[styles.divider, { backgroundColor: theme.border }]} />}
                 </View>
               );
             })

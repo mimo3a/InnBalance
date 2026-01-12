@@ -16,6 +16,7 @@ import { ThemedView } from '@/src/components/themed-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import WeatherCard from '@/src/components/WeatherCard';
 import { useState } from 'react';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 /**
  * HomeScreen Component
@@ -25,6 +26,7 @@ export default function HomeScreen() {
     // Track the currently selected mood state
     // Track the currently selected mood state
     const [selectedState, setSelectedState] = useState(null);
+    const { theme } = useTheme();
     
 
     /**
@@ -44,10 +46,10 @@ export default function HomeScreen() {
     const router = useRouter();
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
             {/* Mood Selection Container */}
-            <ThemedView style={styles.moodContainer}>
-                <ThemedView style={styles.moodBox}>
+            <ThemedView style={[styles.moodContainer, { backgroundColor: theme.cardBackground }]}>
+                <ThemedView style={[styles.moodBox, { backgroundColor: theme.cardBackground }]}>
 
                     {/* Mood Icons Grid */}
                     <View style={styles.iconsRow}>
@@ -60,7 +62,7 @@ export default function HomeScreen() {
                                     key={state.key}
                                     style={[
                                         styles.touchableIcon,
-                                        isSelected && styles.iconSelected,
+                                        { backgroundColor: isSelected ? theme.primary : theme.primary + '15' },
                                     ]}
                                     onPress={() => setSelectedState(state.key)}
                                     activeOpacity={0.8}
@@ -69,13 +71,13 @@ export default function HomeScreen() {
                                     <MaterialCommunityIcons
                                         name={state.icon}
                                         size={32}
-                                        color={isSelected ? '#ffffff' : '#2f6f5f'}
+                                        color={isSelected ? '#ffffff' : theme.primary}
                                     />
                                     {/* Label with dynamic color */}
                                     <ThemedText
                                         style={[
                                             styles.iconLabel,
-                                            isSelected && { color: '#ffffff' },
+                                            { color: isSelected ? '#ffffff' : theme.text },
                                         ]}
                                     >
                                         {state.label}
@@ -86,14 +88,14 @@ export default function HomeScreen() {
                     </View>
 
                     {/* Visual separator */}
-                    <View style={styles.divider} />
+                    <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
                     {/* Navigation Button */}
                     <View style={styles.footer}>
                         <TouchableOpacity
                             style={[
                                 styles.nextButton,
-                                !selectedState && styles.nextButtonDisabled,
+                                { backgroundColor: selectedState ? theme.primary : theme.border },
                             ]}
                             disabled={!selectedState}
                             onPress={() => {
@@ -113,7 +115,7 @@ export default function HomeScreen() {
             </ThemedView>
             
             {/* Weather Widget */}
-            <ThemedView style={styles.weatherContainer} >
+            <ThemedView style={[styles.weatherContainer, { backgroundColor: theme.cardBackground }]} >
                 <View style={styles.widgetcontainer}>
                     {/* Weather data for Innsbruck coordinates */}
                     <WeatherCard
@@ -125,8 +127,8 @@ export default function HomeScreen() {
             </ThemedView>
             
             {/* Information/Advance Section */}
-            <ThemedView style={styles.anvanceContainer}>
-                <ThemedText>
+            <ThemedView style={[styles.anvanceContainer, { backgroundColor: theme.cardBackground }]}>
+                <ThemedText style={{ color: theme.text }}>
                     Choose your mood and get a preliminary recommendation for breathing exercises or a walk in the fresh air, depending on the weather.
                 </ThemedText>
             </ThemedView>
@@ -139,39 +141,31 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 16,
         paddingTop: 40,
-        backgroundColor: '#fff',
     },
     moodContainer: {
-        // width: '100%',
-         marginBottom: 24,
-        backgroundColor: '#eef3ef',
-    borderRadius: 16,
-    padding: 16,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 4,
-  
+        marginBottom: 24,
+        borderRadius: 16,
+        padding: 16,
+        width: '100%',
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 4,
     },
     moodBox: {
         padding: 16,
-        backgroundColor: '#f0f0f0',
         borderRadius: 12,
         alignItems: 'center',
     },
     nextButton: {
-        backgroundColor: '#2f6f5f',
-        paddingVertical: 14,
+        paddingVertical: 16,
         paddingHorizontal: 24,
-        borderRadius: 10,
+        borderRadius: 16,
         alignItems: 'center',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+        elevation: 4,
+        shadowOpacity: 0.15,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 6,
     },
     nextButtonText: {
         color: '#ffffff',
@@ -189,7 +183,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingVertical: 10,
         borderRadius: 14,
-        backgroundColor: '#eef5f2',
         width: '30%',
         minHeight: 80,
         marginBottom: 12,
@@ -197,50 +190,40 @@ const styles = StyleSheet.create({
     weatherContainer: {
         width: '100%',
         marginBottom: 24,
+        borderRadius: 16,
+        padding: 16,
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 4,
     },
     
     anvanceContainer: {
-    backgroundColor: '#eef3ef',
-    borderRadius: 16,
-    padding: 16,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 4,
-  
+        borderRadius: 16,
+        padding: 16,
+        width: '100%',
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 4,
     },
-    // anvanceBox: {
-    //     padding: 16,
-    //     backgroundColor: '#e0e0e0',
-    //     borderRadius: 12,
-    // },
     
     footer: {
         width: '100%',
         marginTop: 20,
         alignItems: 'center',
     },
-    nextButtonDisabled: {
-        backgroundColor: '#a0a0a0',
-    },
-    iconSelected: {
-        backgroundColor: '#2f6f5f',
-    },
     iconLabel: {
         marginTop: 4,
         fontSize: 12,
         textAlign: 'center',
-        color: '#2f6f5f',
     },
     touchableWeatherIcon: {
         alignItems: 'center',
     },
     divider: {
         width: '100%',
-    height: 1,
-    backgroundColor: '#d0d8d3',
-    marginVertical: 12,
-  },
+        height: 1,
+        marginVertical: 12,
+    },
 });

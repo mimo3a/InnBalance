@@ -3,10 +3,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ThemedView } from '@/src/components/themed-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function RecommendationsScreen() {
     const { state } = useLocalSearchParams();
     const router = useRouter();
+    const { theme } = useTheme();
     
     // Get description based on state
     const getDescription = () => {
@@ -31,34 +33,34 @@ export default function RecommendationsScreen() {
     const description = getDescription();
 
     return (
-  <View style={styles.container}>
+  <View style={[styles.container, { backgroundColor: theme.background }]}>
 
     {/* HEADER */}
     <View style={styles.header}>
-      <Text style={styles.title}>{description.title}</Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.title, { color: theme.text }]}>{description.title}</Text>
+      <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
         Recommended Exercise
       </Text>
     </View>
 
     {/* DESCRIPTION — РАСТЯГИВАЕТСЯ */}
-    <ThemedView style={styles.descriptionBox}>
+    <ThemedView style={[styles.descriptionBox, { backgroundColor: theme.cardBackground }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.description}>
+        <Text style={[styles.description, { color: theme.text }]}>
           {description.description}
         </Text>
       </ScrollView>
     </ThemedView>
 
     {/* ACTIONS — ПРИЖАТЫ К НИЗУ */}
-    <ThemedView style={styles.actionBox}>
-      <Text style={styles.actionTitle}>
+    <ThemedView style={[styles.actionBox, { backgroundColor: theme.cardBackground }]}>
+      <Text style={[styles.actionTitle, { color: theme.text }]}>
         What would you like to do?
       </Text>
 
       <View style={styles.actionsRow}>
         <TouchableOpacity
-          style={styles.actionCard}
+          style={[styles.actionCard, { backgroundColor: theme.primary + '15' }]}
           onPress={() =>
             router.push({ pathname: '/breathing', params: { state } })
           }
@@ -66,21 +68,21 @@ export default function RecommendationsScreen() {
           <MaterialCommunityIcons 
           name="lungs" 
           size={42} 
-          color="#2f6f62" 
+          color={theme.primary} 
           />
-          <Text style={styles.actionText}>Breathing</Text>
+          <Text style={[styles.actionText, { color: theme.text }]}>Breathing</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.actionCard}
+          style={[styles.actionCard, { backgroundColor: theme.primary + '15' }]}
           onPress={() => router.push('/ruheorte')}
         >
           <MaterialCommunityIcons
             name="walk"
             size={42}
-            color="#2f6f62"
+            color={theme.primary}
           />
-          <Text style={styles.actionText}>Walk</Text>
+          <Text style={[styles.actionText, { color: theme.text }]}>Walk</Text>
         </TouchableOpacity>
       </View>
     </ThemedView>

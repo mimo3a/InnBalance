@@ -17,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/src/hooks/use-color-scheme';
+import { ThemeProvider as CustomThemeProvider } from '@/src/contexts/ThemeContext';
 
 // Configure the anchor for navigation
 export const unstable_settings = {
@@ -32,25 +33,27 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    // Apply theme provider with automatic dark/light mode switching
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      {/* Stack navigator for screen transitions */}
-      <Stack>
-        {/* Main tab navigation - hidden header */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    <CustomThemeProvider>
+      {/* Apply theme provider with automatic dark/light mode switching */}
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        {/* Stack navigator for screen transitions */}
+        <Stack>
+          {/* Main tab navigation - hidden header */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          
+          {/* Breathing exercise screen */}
+          <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
+          
+          {/* List of all places */}
+          <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
+          
+          {/* Add new place screen */}
+          <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
+        </Stack>
         
-        {/* Breathing exercise screen */}
-        <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
-        
-        {/* List of all places */}
-        <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
-        
-        {/* Add new place screen */}
-        <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
-      </Stack>
-      
-      {/* Status bar with automatic styling */}
-      <StatusBar style="auto" />
-    </ThemeProvider>
+        {/* Status bar with automatic styling */}
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </CustomThemeProvider>
   );
 }

@@ -3,72 +3,77 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIn
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function PlaceDescriptionScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const { places, loading } = usePlaces();
   const place = places.find(p => p.id === Number(id));
+  const { theme } = useTheme();
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#1d16f4ff" />
+      <View style={[styles.center, { backgroundColor: theme.background }]}>
+        <ActivityIndicator size="large" color={theme.primary} />
       </View>
     );
   }
 
   if (!place) {
     return (
-      <View style={styles.center}>
-        <Text>Ort nicht gefunden</Text>
+      <View style={[styles.center, { backgroundColor: theme.background }]}>
+        <Text style={{ color: theme.text }}>Ort nicht gefunden</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.card}>
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <ScrollView contentContainerStyle={[styles.card, { backgroundColor: theme.cardBackground }]}>
         
         
         <View style={styles.imageWrapper}>
           <Image source={place.image} style={styles.image} />
 
           
-          <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-            <Ionicons name="close" size={24} color="#333" />
+          <TouchableOpacity 
+            style={[styles.closeButton, { backgroundColor: theme.cardBackground }]} 
+            onPress={() => router.back()}
+          >
+            <Ionicons name="close" size={24} color={theme.text} />
           </TouchableOpacity>
         </View>
 
        
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{place.name}</Text>
+          <Text style={[styles.title, { color: theme.text }]}>{place.name}</Text>
 
-          <View style={styles.distancePill}>
-            <Ionicons name="navigate-outline" size={14} color="#4a4a4a" />
-            <Text style={styles.distanceText}>{place.distance} km</Text>
+          <View style={[styles.distancePill, { backgroundColor: theme.primary + '20' }]}>
+            <Ionicons name="navigate-outline" size={14} color={theme.primary} />
+            <Text style={[styles.distanceText, { color: theme.text }]}>{place.distance} km</Text>
           </View>
         </View>
 
         
         <View style={styles.ratingRow}>
-          <Text style={styles.star}>⭐ {place.rating}</Text>
-          <Text style={styles.category}>· {place.category}</Text>
+          <Text style={[styles.star, { color: theme.text }]}>⭐ {place.rating}</Text>
+          <Text style={[styles.category, { color: theme.textSecondary }]}>· {place.category}</Text>
         </View>
 
         
-        <Text style={styles.description}>{place.info}</Text>
+        <Text style={[styles.description, { color: theme.text }]}>{place.info}</Text>
 
         
-        <Text style={styles.rateTitle}>Bewerte diesen Ort</Text>
+        <Text style={[styles.rateTitle, { color: theme.text }]}>Bewerte diesen Ort</Text>
         <View style={styles.starsRow}>
           {Array.from({ length: 5 }).map((_, idx) => (
-            <Ionicons key={idx} name="star-outline" size={26} color="#555" />
+            <Ionicons key={idx} name="star-outline" size={26} color={theme.textSecondary} />
           ))}
         </View>
 
         
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]}>
           <Text style={styles.buttonText}>Navigation starten</Text>
         </TouchableOpacity>
 
@@ -80,20 +85,15 @@ export default function PlaceDescriptionScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#00000055", // легкое затемнение фона
   },
 
   card: {
     marginTop: 90,
-    backgroundColor: "#fff",
     borderTopLeftRadius: 26,
     borderTopRightRadius: 26,
     paddingBottom: 40,
     paddingHorizontal: 20,
-
-    // тень / приподнятая карточка
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.15,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: -2 },
     elevation: 6,
@@ -115,10 +115,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 12,
     right: 12,
-    backgroundColor: "#fff",
     padding: 8,
     borderRadius: 20,
     elevation: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
   },
 
   titleRow: {
@@ -136,7 +138,6 @@ const styles = StyleSheet.create({
   distancePill: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#e8f0ec",
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 14,
@@ -145,7 +146,6 @@ const styles = StyleSheet.create({
   distanceText: {
     marginLeft: 4,
     fontSize: 14,
-    color: "#333",
   },
 
   ratingRow: {
@@ -155,19 +155,16 @@ const styles = StyleSheet.create({
 
   star: {
     fontSize: 16,
-    color: "#333",
   },
 
   category: {
     fontSize: 16,
-    color: "#666",
     marginLeft: 6,
   },
 
   description: {
     marginTop: 16,
     fontSize: 18,
-    color: "#333",
     lineHeight: 26,
   },
 
@@ -185,10 +182,13 @@ const styles = StyleSheet.create({
 
   button: {
     marginTop: 26,
-    backgroundColor: "#4a7f68",
-    paddingVertical: 14,
-    borderRadius: 20,
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: "center",
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
   },
 
   buttonText: {
