@@ -15,6 +15,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Switch } from 'react-native';
 import { ThemedView } from '@/src/components/themed-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { clearSessions } from '@/src/services/statisticsService';
 import { useTheme } from '@/src/contexts/ThemeContext';
@@ -81,8 +82,9 @@ export default function SettingsScreen() {
   const handleLanguageSelect = () => {
     Alert.alert('Language', 'Language selection feature coming soon!');
   };
-const handleAccount = () => {
-    Alert.alert('Account', 'Account management feature coming soon!');
+
+  const handleAccount = () => {
+    router.push('/account');
   };
 
   const handleAbout = () => {
@@ -107,6 +109,24 @@ const handleAccount = () => {
             await clearSessions();
             setLocationEnabled(true);
             Alert.alert('Done', 'All settings have been reset to defaults');
+          },
+        },
+      ]
+    );
+  };
+
+  const handleClearAuth = () => {
+    Alert.alert(
+      'Clear Authentication',
+      'This will log you out and return to the login screen. For testing only.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: async () => {
+            await AsyncStorage.removeItem('authToken');
+            router.replace('/login');
           },
         },
       ]
@@ -255,6 +275,22 @@ const handleAccount = () => {
         </TouchableOpacity>
       </ThemedView>
 
+      {/* HELP & SUPPORT */}
+      <Text style={[styles.categoryTitle, { color: theme.text }]}>Help & Support</Text>
+
+      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+        <TouchableOpacity style={styles.settingRow} onPress={handleAbout}>
+          <View style={styles.settingLeft}>
+            <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
+            <View style={styles.settingTextContainer}>
+              <Text style={[styles.settingTitle, { color: theme.text }]}>About App</Text>
+              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Version and info</Text>
+            </View>
+          </View>
+          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
+        </TouchableOpacity>
+      </ThemedView>
+
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <TouchableOpacity style={styles.settingRow} onPress={handleTutorial}>
           <View style={styles.settingLeft}>
@@ -270,6 +306,20 @@ const handleAccount = () => {
 
       {/* RESET ALL */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>Reset</Text>
+
+      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+        <View style={styles.settingHeader}>
+          <MaterialCommunityIcons name="logout" size={24} color={theme.danger} />
+          <Text style={[styles.sectionTitle, { color: theme.danger }]}>Clear Authentication (Testing)</Text>
+        </View>
+        <Text style={[styles.sectionDescription, { color: theme.textSecondary }]}>
+          Clear auth token and return to login screen. For testing purposes only.
+        </Text>
+        <TouchableOpacity style={[styles.deleteButton, { backgroundColor: theme.dangerDark }]} onPress={handleClearAuth}>
+          <MaterialCommunityIcons name="logout" size={20} color="#fff" />
+          <Text style={styles.deleteButtonText}>Clear Auth Token</Text>
+        </TouchableOpacity>
+      </ThemedView>
 
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <View style={styles.settingHeader}>
@@ -386,5 +436,5 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     marginLeft: 8,
-  },
+  }, 
 });
