@@ -31,27 +31,27 @@ export default function AddPlaceScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 1,
+      quality: 0.8,
     });
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       
-      // Copy image to permanent storage
-      const filename = `place_${Date.now()}.jpg`;
-      const newPath = `${FileSystem.documentDirectory}${filename}`;
-      
       try {
+        // Save image to permanent storage (like default places)
+        const filename = `place_${Date.now()}.jpg`;
+        const newPath = `${FileSystem.documentDirectory}${filename}`;
+        
         await FileSystem.copyAsync({
           from: uri,
           to: newPath
         });
         
-        // Use permanent path instead of temporary URI
+        // Store file path in AsyncStorage (like places.js stores require() paths)
         setImage(newPath);
         setFormData({ ...formData, image: newPath });
       } catch (error) {
-        console.error('Error copying image:', error);
+        console.error('Error saving image:', error);
         Alert.alert('Fehler', 'Bild konnte nicht gespeichert werden');
       }
     }
