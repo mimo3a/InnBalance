@@ -21,11 +21,13 @@ import BreathingExercise from '../components/BreathingExercise';
 import TimerControls from '../components/ui/timerControls';
 import { saveSession } from '../services/statisticsService';
 import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function BreathingScreen() {
   const { state } = useLocalSearchParams();
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionSeconds, setSessionSeconds] = useState(0);
+  const { theme } = useTheme();
 
   // Select config based on mood state
   const getConfig = () => {
@@ -125,11 +127,13 @@ export default function BreathingScreen() {
     }, [state])
   );
 
+  // Render the breathing screenc
+
   return (
-  <View style={styles.screen}>
+  <View style={[styles.screen, { backgroundColor: theme.background }]}>
     {/* Header showing current mood */}
     <View style={styles.headerContainer}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{state}</Text>
+      <Text style={[{ fontSize: 24, fontWeight: 'bold' }, { color: theme.text }]}>{config.title}</Text>
     </View>
 
     <View style={styles.exerciseContainer}>

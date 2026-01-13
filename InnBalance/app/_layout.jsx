@@ -11,12 +11,11 @@
  * - Route definitions for all screens
  */
 
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/src/hooks/use-color-scheme';
+import { ThemeProvider } from '@/src/contexts/ThemeContext';
 
 // Configure the anchor for navigation
 export const unstable_settings = {
@@ -28,29 +27,25 @@ export const unstable_settings = {
  * Main entry point for the application's navigation structure
  */
 export default function RootLayout() {
-  // Get the current color scheme (light or dark)
-  const colorScheme = useColorScheme();
-
   return (
-    // Apply theme provider with automatic dark/light mode switching
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider>
       {/* Stack navigator for screen transitions */}
       <Stack>
-        {/* Main tab navigation - hidden header */}
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          {/* Main tab navigation - hidden header */}
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          
+          {/* Breathing exercise screen */}
+          <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
+          
+          {/* List of all places */}
+          <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
+          
+          {/* Add new place screen */}
+          <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
+        </Stack>
         
-        {/* Breathing exercise screen */}
-        <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
-        
-        {/* List of all places */}
-        <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
-        
-        {/* Add new place screen */}
-        <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
-      </Stack>
-      
-      {/* Status bar with automatic styling */}
-      <StatusBar style="auto" />
+        {/* Status bar with automatic styling */}
+        <StatusBar style="auto" />
     </ThemeProvider>
   );
 }

@@ -6,10 +6,12 @@ import { usePlaces } from '@/src/hooks/usePlaces';
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
   const { addPlace } = usePlaces();
+  const { theme } = useTheme();
 
   const [image, setImage] = useState(null); // <-- Bild aus Galerie
 
@@ -78,7 +80,7 @@ export default function AddPlaceScreen() {
   const fallbackImage = require('../Images/Places/missingPicture.png');
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
         <ImageBackground
           style={styles.image}
@@ -91,56 +93,61 @@ export default function AddPlaceScreen() {
         </ImageBackground>
       </TouchableOpacity>
 
-      <ScrollView style={styles.form}>
-        <Text style={styles.label}>Name</Text>
+      <ScrollView style={[styles.form, { backgroundColor: theme.background }]}>
+        <Text style={[styles.label, { color: theme.text }]}>Name</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
           value={formData.name}
           onChangeText={(text) => setFormData({ ...formData, name: text })}
           placeholder="Name des Ortes"
+          placeholderTextColor={theme.textSecondary}
         />
 
-        <Text style={styles.label}>Beschreibung</Text>
+        <Text style={[styles.label, { color: theme.text }]}>Beschreibung</Text>
         <TextInput
-          style={[styles.input, styles.textArea]}
+          style={[styles.input, styles.textArea, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
           value={formData.info}
           onChangeText={(text) => setFormData({ ...formData, info: text })}
           placeholder="Beschreibung des Ortes"
+          placeholderTextColor={theme.textSecondary}
           multiline
           numberOfLines={4}
         />
 
-        <Text style={styles.label}>Kategorie</Text>
+        <Text style={[styles.label, { color: theme.text }]}>Kategorie</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
           value={formData.category}
           onChangeText={(text) => setFormData({ ...formData, category: text })}
           placeholder="Park, Museum, Café..."
+          placeholderTextColor={theme.textSecondary}
         />
 
         <View style={styles.row}>
           <View style={styles.halfInput}>
-            <Text style={styles.label}>Breitengrad</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Breitengrad</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
               value={String(formData.lat)}
               onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
               keyboardType="numeric"
+              placeholderTextColor={theme.textSecondary}
             />
           </View>
 
           <View style={styles.halfInput}>
-            <Text style={styles.label}>Längengrad</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Längengrad</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
               value={String(formData.lng)}
               onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
               keyboardType="numeric"
+              placeholderTextColor={theme.textSecondary}
             />
           </View>
         </View>
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <TouchableOpacity style={[styles.submitButton, { backgroundColor: theme.primary }]} onPress={handleSubmit}>
           <Text style={styles.submitButtonText}>Ort hinzufügen</Text>
         </TouchableOpacity>
       </ScrollView>

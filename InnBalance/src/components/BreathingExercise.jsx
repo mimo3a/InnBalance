@@ -20,6 +20,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 
 
@@ -29,6 +30,7 @@ import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function BreathingExercise({ config, isPlaying, size = 220 }) {
+  const { theme } = useTheme();
   const radius = size / 2 - 14;
   const circumference = 2 * Math.PI * radius;
 
@@ -89,15 +91,15 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
   });
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
       {/* SVG circle with gradient and progress indicator */}
       <Svg width={size} height={size}>
         {/* Define gradient for 3D sphere effect */}
         <Defs>
           <RadialGradient id="sphereGradient" cx="40%" cy="40%">
-            <Stop offset="0%" stopColor="#e8f5f0" stopOpacity="1" />
-            <Stop offset="50%" stopColor="#a8d5c3" stopOpacity="1" />
-            <Stop offset="100%" stopColor="#2f6f5f" stopOpacity="1" />
+            <Stop offset="0%" stopColor={theme.primary + '30'} stopOpacity="1" />
+            <Stop offset="50%" stopColor={theme.primary + '80'} stopOpacity="1" />
+            <Stop offset="100%" stopColor={theme.primary} stopOpacity="1" />
           </RadialGradient>
         </Defs>
         
@@ -114,7 +116,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#d6e7e1"
+          stroke={theme.border}
           strokeWidth={12}
           fill="none"
         />
@@ -124,7 +126,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#0b4a39"
+          stroke={theme.primary}
           strokeWidth={10}
           fill="none"
           strokeDasharray={circumference}
@@ -134,7 +136,7 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
       </Svg>
 
       {/* Phase label (INHALE, HOLD, EXHALE) */}
-      <Text style={styles.label}>{phase.toUpperCase()}</Text>
+      <Text style={[styles.label, { color: theme.text }]}>{phase.toUpperCase()}</Text>
     </View>
   );
 }
@@ -142,26 +144,21 @@ export default function BreathingExercise({ config, isPlaying, size = 220 }) {
 const styles = StyleSheet.create({
   card: {
     width: '90%',
-    backgroundColor: '#dbeee9ff',
-    borderRadius: 12,
+    borderRadius: 16,
     paddingVertical: 24,
     paddingHorizontal: 16,
-
     alignItems: 'center',
     justifyContent: 'center',
-
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    elevation: 4,
+    shadowOpacity: 0.15,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 6,
   },
 
   label: {
     position: 'absolute',
     fontSize: 18,
     fontWeight: '600',
-    color: '#1e3d34',
     letterSpacing: 1,
   },
 });
