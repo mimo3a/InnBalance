@@ -66,10 +66,10 @@ export default function RecommendationsScreen() {
           }
         >
           <MaterialCommunityIcons 
-          name="lungs" 
-          size={42} 
-          color={theme.primary} 
-          />
+  name="circle-slice-8"
+  size={44} 
+  color={theme.primary}
+/>
           <Text style={[styles.actionText, { color: theme.text }]}>Breathing</Text>
         </TouchableOpacity>
 
@@ -78,10 +78,10 @@ export default function RecommendationsScreen() {
           onPress={() => router.push('/ruheorte')}
         >
           <MaterialCommunityIcons
-            name="walk"
-            size={42}
-            color={theme.primary}
-          />
+  name="walk"
+  size={44}
+  color={theme.primary}
+/>
           <Text style={[styles.actionText, { color: theme.text }]}>Walk</Text>
         </TouchableOpacity>
       </View>
@@ -138,6 +138,14 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 18,
     marginTop: 'auto',      // 🔥 прижимает вниз
+    // iOS
+  shadowColor: '#000',
+  shadowOpacity: 0.12,
+  shadowOffset: { width: 0, height: 2 },
+  shadowRadius: 6,
+
+  // Android
+  elevation: 3,
   },
 
   actionTitle: {
@@ -153,14 +161,16 @@ const styles = StyleSheet.create({
   },
 
   actionCard: {
-    alignItems: 'center',
-    padding: 14,
-    borderRadius: 12,
-    width: 120,
-    backgroundColor: '#ffffff',
-    elevation: 1,
-  },
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingVertical: 18,
+  paddingHorizontal: 16,
+  borderRadius: 14,          // как у descriptionBox
+  width: 130,
 
+  backgroundColor: '#dbeee9ff', // тот же фон, что сверху
+  
+},
   actionText: {
     marginTop: 8,
     fontSize: 14,
