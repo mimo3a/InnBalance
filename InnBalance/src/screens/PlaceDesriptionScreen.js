@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator, Linking, Platform, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePlaces } from '@/src/hooks/usePlaces';
@@ -8,9 +8,18 @@ import { useTheme } from '@/src/contexts/ThemeContext';
 export default function PlaceDescriptionScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const { places, loading } = usePlaces();
+  const { places, loading, updatePlace } = usePlaces();
   const place = places.find(p => p.id === Number(id));
   const { theme } = useTheme();
+
+  const [userRating, setUserRating] = useState(place?.rating || 0);
+
+  // Update local rating when place changes
+  useEffect(() => {
+    if (place) {
+      setUserRating(place.rating);
+    }
+  }, [place?.rating]);
 
   const openNavigation = () => {
     if (!place) return;
@@ -37,6 +46,13 @@ export default function PlaceDescriptionScreen() {
     }).catch(() => {
       Alert.alert('Fehler', 'Navigation konnte nicht gestartet werden');
     });
+  };
+
+  const handleRating = async (rating) => {
+    if (!place) return;
+    
+    setUserRating(rating);
+    await updatePlace(place.id, { rating });
   };
 
   if (loading) {
@@ -84,7 +100,7 @@ export default function PlaceDescriptionScreen() {
 
         
         <View style={styles.ratingRow}>
-          <Text style={[styles.star, { color: theme.text }]}>⭐ {place.rating}</Text>
+          <Text style={[styles.star, { color: theme.text }]}>⭐ {userRating.toFixed(1)}</Text>
           <Text style={[styles.category, { color: theme.textSecondary }]}>· {place.category}</Text>
         </View>
 
@@ -94,22 +110,31 @@ export default function PlaceDescriptionScreen() {
         
         <Text style={[styles.rateTitle, { color: theme.text }]}>Bewerte diesen Ort</Text>
         <View style={styles.starsRow}>
-          {Array.from({ length: 5 }).map((_, idx) => (
-            <Ionicons key={idx} name="star-outline" size={26} color={theme.textSecondary} />
-          ))}
+          {Array.from({ length: 5 }).map((_, idx) => {
+            const starValue = idx + 1;
+            const isFilled = starValue <= Math.round(userRating);
+            return (
+              <TouchableOpacity key={idx} onPress={() => handleRating(starValue)}>
+                <Ionicons 
+                  name={isFilled ? "star" : "star-outline"} 
+                  size={32} 
+                  color={isFilled ? "#F4C430" : theme.textSecondary} 
+                />
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         
-        <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]}
-        onPress={openNavigation}>
+        <TouchableOpacity 
+          style={[styles.button, { backgroundColor: theme.primary }]}
+          onPress={openNavigation}
+        >
+          <Ionicons name="navigate" size={20} color="#fff" style={{ marginRight: 8 }} />
           <Text style={styles.buttonText}>Navigation starten</Text>
         </TouchableOpacity>
 
       </ScrollView>
-         
-          
-        
-          <Ionicons name="navigate" size={20} color="#fff" style={{ marginRight: 8 }} />
     </View>
   );
 }

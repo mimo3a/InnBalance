@@ -7,12 +7,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { useMapPicker } from '@/src/contexts/MapPickerContext';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { addPlace } = usePlaces();
   const { theme } = useTheme();
+  const { selectedCoordinates, clearCoordinates } = useMapPicker();
 
   const [image, setImage] = useState(null); // <-- Bild aus Galerie
 
@@ -30,14 +32,15 @@ export default function AddPlaceScreen() {
 
   // Update coordinates when returning from map picker
   useEffect(() => {
-    if (params.selectedLat && params.selectedLng) {
+    if (selectedCoordinates) {
       setFormData(prev => ({
         ...prev,
-        lat: parseFloat(params.selectedLat),
-        lng: parseFloat(params.selectedLng),
+        lat: selectedCoordinates.lat,
+        lng: selectedCoordinates.lng,
       }));
+      clearCoordinates(); // Clear after using
     }
-  }, [params.selectedLat, params.selectedLng]);
+  }, [selectedCoordinates]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -82,7 +85,14 @@ export default function AddPlaceScreen() {
       });
 
       Alert.alert('Erfolgreich', 'Ort wurde hinzugefügt', [
-        { text: 'OK', onPress: () => router.back() }
+        { 
+          text: 'OK', 
+          onPress: () => {
+            router.back();
+            // Return to RuheOrte screen
+            setTimeout(() => router.push('/ruheorte'), 100);
+          }
+        }
       ]);
     } catch (error) {
       Alert.alert('Fehler', 'Ort konnte nicht hinzugefügt werden');

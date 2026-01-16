@@ -16,6 +16,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { ThemeProvider } from '@/src/contexts/ThemeContext';
+import { MapPickerProvider } from '@/src/contexts/MapPickerContext';
 
 // Configure the anchor for navigation
 export const unstable_settings = {
@@ -29,6 +30,7 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <ThemeProvider>
+      <MapPickerProvider>
       {/* Stack navigator for screen transitions */}
       <Stack>
           {/* Main tab navigation - hidden header */}
@@ -46,6 +48,7 @@ export default function RootLayout() {
         
         {/* Status bar with automatic styling */}
         <StatusBar style="auto" />
+      </MapPickerProvider>
     </ThemeProvider>
   );
 }

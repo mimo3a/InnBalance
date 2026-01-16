@@ -16,11 +16,13 @@ import MapView, { Marker } from 'react-native-maps';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { useMapPicker } from '@/src/contexts/MapPickerContext';
 
 export default function MapPickerScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { theme } = useTheme();
+  const { selectCoordinates } = useMapPicker();
 
   // Get initial coordinates from params or use default (Innsbruck)
   const initialLat = params.lat ? parseFloat(params.lat) : 47.2692;
@@ -37,14 +39,9 @@ export default function MapPickerScreen() {
   };
 
   const handleConfirm = () => {
-    // Navigate back to add-place with selected coordinates
-    router.push({
-      pathname: '/add-place',
-      params: {
-        selectedLat: selectedLocation.latitude.toString(),
-        selectedLng: selectedLocation.longitude.toString(),
-      }
-    });
+    // Save coordinates to context and navigate back
+    selectCoordinates(selectedLocation.latitude, selectedLocation.longitude);
+    router.back();
   };
 
   return (

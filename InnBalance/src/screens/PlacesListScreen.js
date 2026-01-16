@@ -24,7 +24,8 @@ export default function PlacesListScreen() {
         <View style={[styles.wrapper, { backgroundColor: theme.background }]}>
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {places.map((place) => (
-                    <PlaceCard key={place.id}
+                    <PlaceCard 
+                        key={`${place.id}-${place.rating}`}
                         name={place.name}
                         info={place.info}
                         rating={place.rating}
@@ -32,7 +33,7 @@ export default function PlacesListScreen() {
                         distance={place.distance}
                         category={place.category}
                         onPress={() => router.push({ pathname: '/description', params: { id: place.id } })}
-                         />
+                    />
                 ))}
             </ScrollView>
 
