@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,6 +10,7 @@ import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { addPlace } = usePlaces();
   const { theme } = useTheme();
 
@@ -26,6 +27,17 @@ export default function AddPlaceScreen() {
     acces: 'Public',
     image: null,
   });
+
+  // Update coordinates when returning from map picker
+  useEffect(() => {
+    if (params.selectedLat && params.selectedLng) {
+      setFormData(prev => ({
+        ...prev,
+        lat: parseFloat(params.selectedLat),
+        lng: parseFloat(params.selectedLng),
+      }));
+    }
+  }, [params.selectedLat, params.selectedLng]);
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -123,27 +135,42 @@ export default function AddPlaceScreen() {
           placeholderTextColor={theme.textSecondary}
         />
 
-        <View style={styles.row}>
-          <View style={styles.halfInput}>
-            <Text style={[styles.label, { color: theme.text }]}>Breitengrad</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-              value={String(formData.lat)}
-              onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
-              keyboardType="numeric"
-              placeholderTextColor={theme.textSecondary}
-            />
-          </View>
+        <View style={styles.coordinatesSection}>
+          <Text style={[styles.label, { color: theme.text }]}>Koordinaten</Text>
+          
+          <TouchableOpacity 
+            style={[styles.mapButton, { backgroundColor: theme.primary }]}
+            onPress={() => router.push({
+              pathname: '/map-picker',
+              params: { lat: formData.lat, lng: formData.lng }
+            })}
+          >
+            <Ionicons name="map" size={20} color="#fff" />
+            <Text style={styles.mapButtonText}>Auf Karte auswählen</Text>
+          </TouchableOpacity>
 
-          <View style={styles.halfInput}>
-            <Text style={[styles.label, { color: theme.text }]}>Längengrad</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-              value={String(formData.lng)}
-              onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
-              keyboardType="numeric"
-              placeholderTextColor={theme.textSecondary}
-            />
+          <View style={styles.row}>
+            <View style={styles.halfInput}>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Breitengrad</Text>
+              <TextInput
+                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                value={String(formData.lat.toFixed(6))}
+                onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
+                keyboardType="numeric"
+                placeholderTextColor={theme.textSecondary}
+              />
+            </View>
+
+            <View style={styles.halfInput}>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Längengrad</Text>
+              <TextInput
+                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                value={String(formData.lng.toFixed(6))}
+                onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
+                keyboardType="numeric"
+                placeholderTextColor={theme.textSecondary}
+              />
+            </View>
           </View>
         </View>
 
@@ -178,12 +205,36 @@ const styles = StyleSheet.create({
     height: 100,
     textAlignVertical: 'top'
   },
+  coordinatesSection: {
+    marginBottom: 16,
+  },
+  mapButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 16,
+    gap: 8,
+  },
+  mapButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   halfInput: {
     width: '48%'
+  },
+  subLabel: {
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  coordInput: {
+    marginBottom: 0,
   },
   submitButton: {
     backgroundColor: '#2f6f5f',

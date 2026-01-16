@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator, Linking, Platform, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,33 @@ export default function PlaceDescriptionScreen() {
   const { places, loading } = usePlaces();
   const place = places.find(p => p.id === Number(id));
   const { theme } = useTheme();
+
+  const openNavigation = () => {
+    if (!place) return;
+
+    const { lat, lng, name } = place;
+    const label = encodeURIComponent(name);
+
+    // Build platform-specific navigation URLs
+    const scheme = Platform.select({
+      ios: `maps:0,0?q=${label}@${lat},${lng}`,
+      android: `geo:0,0?q=${lat},${lng}(${label})`,
+    });
+
+    const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+
+    // Try to open native maps app
+    Linking.canOpenURL(scheme).then((supported) => {
+      if (supported) {
+        Linking.openURL(scheme);
+      } else {
+        // Fallback to web URL
+        Linking.openURL(webUrl);
+      }
+    }).catch(() => {
+      Alert.alert('Fehler', 'Navigation konnte nicht gestartet werden');
+    });
+  };
 
   if (loading) {
     return (
@@ -73,11 +100,16 @@ export default function PlaceDescriptionScreen() {
         </View>
 
         
-        <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]}>
+        <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]}
+        onPress={openNavigation}>
           <Text style={styles.buttonText}>Navigation starten</Text>
         </TouchableOpacity>
 
       </ScrollView>
+         
+          
+        
+          <Ionicons name="navigate" size={20} color="#fff" style={{ marginRight: 8 }} />
     </View>
   );
 }
@@ -184,7 +216,9 @@ const styles = StyleSheet.create({
     marginTop: 26,
     paddingVertical: 16,
     borderRadius: 16,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     shadowOpacity: 0.15,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
