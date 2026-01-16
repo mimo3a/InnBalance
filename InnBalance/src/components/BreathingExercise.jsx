@@ -147,9 +147,10 @@ export default function BreathingExercise({ config, isPlaying, size = 240 }) {
       <Animated.View
         style={{
           position: "absolute",
-          top: size / 2 - 14,
+          top: 0,
           left: 0,
           right: 0,
+          bottom: 0,
           alignItems: "center",
           justifyContent: "center",
         }}
@@ -189,5 +190,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     letterSpacing: 1,
+    alignContent: "center",
+    textAlign: "center",
   },
 });

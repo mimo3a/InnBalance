@@ -259,7 +259,7 @@ export default function SettingsScreen() {
         </TouchableOpacity>
       </ThemedView>
 
-      {/* HELP & SUPPORT */}
+      {/* HELP & SUPPORT
       <Text style={[styles.categoryTitle, { color: theme.text }]}>Help & Support</Text>
 
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
@@ -273,7 +273,7 @@ export default function SettingsScreen() {
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
         </TouchableOpacity>
-      </ThemedView>
+      </ThemedView> */}
 
       {/* HELP & SUPPORT */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>Help & Support</Text>
