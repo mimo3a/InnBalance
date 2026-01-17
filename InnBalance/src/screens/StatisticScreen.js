@@ -75,7 +75,7 @@ export default function StatisticScreen() {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const isoDate = d.toISOString().split('T')[0];
-      const label = d.toLocaleDateString('de-DE', { weekday: 'short' }); 
+      const label = d.toLocaleDateString('en-US', { weekday: 'short' }); 
       days.push({ date: isoDate, label, count: 0, minutes: 0, seconds: 0 });
     }
     return days;
@@ -118,13 +118,13 @@ export default function StatisticScreen() {
 
         {/* SECTION 1 - Summary Cards */}
         <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Zusammenfassung</ThemedText>
+          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Summary</ThemedText>
           
           <View style={styles.statsRow}>
             {/* Card 1 - Total Minutes (Light Green) */}
             <View style={[styles.statBox, { backgroundColor: theme.primaryLight }]}>
               <Text style={styles.statValueLight}>{totalDurationMinutes}</Text>
-              <Text style={styles.statLabelLight}>Minuten</Text>
+              <Text style={styles.statLabelLight}>Minutes</Text>
             </View>
             
             {/* Card 2 - Total Sessions (Dark Green) */}
@@ -137,13 +137,13 @@ export default function StatisticScreen() {
 
         {/* SECTION 2 - Weekly Chart */}
         <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Wochenübersicht</ThemedText>
+          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Last 7 Days</ThemedText>
           
           {/* Legend for chart colors */}
           <View style={styles.legendContainer}>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: '#8baea4' }]} />
-              <Text style={styles.legendText}>Minuten</Text>
+              <Text style={styles.legendText}>Minutes</Text>
             </View>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: '#2f6f5f' }]} />
@@ -203,7 +203,7 @@ export default function StatisticScreen() {
 
         {/* SECTION 3 - Session History */}
         <View style={[styles.historyContainer, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Verlauf</ThemedText>
+          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>History</ThemedText>
           
           {sessions.length === 0 ? (
             <ThemedText style={{ color: theme.textSecondary, fontStyle: 'italic' }}>
@@ -236,7 +236,7 @@ export default function StatisticScreen() {
                       </ThemedText>
                     </View>
                     <View style={[styles.historyBadge, { backgroundColor: theme.primaryLight }]}>
-                      <Text style={styles.historyDuration}>{s.duration} Sek.</Text>
+                      <Text style={styles.historyDuration}>{s.duration} Sec.</Text>
                     </View>
                   </View>
                   {index < sessions.length - 1 && <View style={[styles.divider, { backgroundColor: theme.border }]} />}
