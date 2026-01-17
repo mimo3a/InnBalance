@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { useMapPicker } from '@/src/contexts/MapPickerContext';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { addPlace } = usePlaces();
   const { theme } = useTheme();
+  const { selectedCoordinates, clearCoordinates } = useMapPicker();
 
   const [image, setImage] = useState(null); // <-- Bild aus Galerie
 
@@ -27,31 +30,43 @@ export default function AddPlaceScreen() {
     image: null,
   });
 
+  // Update coordinates when returning from map picker
+  useEffect(() => {
+    if (selectedCoordinates) {
+      setFormData(prev => ({
+        ...prev,
+        lat: selectedCoordinates.lat,
+        lng: selectedCoordinates.lng,
+      }));
+      clearCoordinates(); // Clear after using
+    }
+  }, [selectedCoordinates]);
+
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      quality: 1,
+      quality: 0.8,
     });
 
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       
-      // Copy image to permanent storage
-      const filename = `place_${Date.now()}.jpg`;
-      const newPath = `${FileSystem.documentDirectory}${filename}`;
-      
       try {
+        // Save image to permanent storage (like default places)
+        const filename = `place_${Date.now()}.jpg`;
+        const newPath = `${FileSystem.documentDirectory}${filename}`;
+        
         await FileSystem.copyAsync({
           from: uri,
           to: newPath
         });
         
-        // Use permanent path instead of temporary URI
+        // Store file path in AsyncStorage (like places.js stores require() paths)
         setImage(newPath);
         setFormData({ ...formData, image: newPath });
       } catch (error) {
-        console.error('Error copying image:', error);
+        console.error('Error saving image:', error);
         Alert.alert('Fehler', 'Bild konnte nicht gespeichert werden');
       }
     }
@@ -70,7 +85,14 @@ export default function AddPlaceScreen() {
       });
 
       Alert.alert('Erfolgreich', 'Ort wurde hinzugefügt', [
-        { text: 'OK', onPress: () => router.back() }
+        { 
+          text: 'OK', 
+          onPress: () => {
+            router.back();
+            // Return to RuheOrte screen
+            setTimeout(() => router.push('/ruheorte'), 100);
+          }
+        }
       ]);
     } catch (error) {
       Alert.alert('Fehler', 'Ort konnte nicht hinzugefügt werden');
@@ -123,27 +145,42 @@ export default function AddPlaceScreen() {
           placeholderTextColor={theme.textSecondary}
         />
 
-        <View style={styles.row}>
-          <View style={styles.halfInput}>
-            <Text style={[styles.label, { color: theme.text }]}>Breitengrad</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-              value={String(formData.lat)}
-              onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
-              keyboardType="numeric"
-              placeholderTextColor={theme.textSecondary}
-            />
-          </View>
+        <View style={styles.coordinatesSection}>
+          <Text style={[styles.label, { color: theme.text }]}>Koordinaten</Text>
+          
+          <TouchableOpacity 
+            style={[styles.mapButton, { backgroundColor: theme.primary }]}
+            onPress={() => router.push({
+              pathname: '/map-picker',
+              params: { lat: formData.lat, lng: formData.lng }
+            })}
+          >
+            <Ionicons name="map" size={20} color="#fff" />
+            <Text style={styles.mapButtonText}>Auf Karte auswählen</Text>
+          </TouchableOpacity>
 
-          <View style={styles.halfInput}>
-            <Text style={[styles.label, { color: theme.text }]}>Längengrad</Text>
-            <TextInput
-              style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-              value={String(formData.lng)}
-              onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
-              keyboardType="numeric"
-              placeholderTextColor={theme.textSecondary}
-            />
+          <View style={styles.row}>
+            <View style={styles.halfInput}>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Breitengrad</Text>
+              <TextInput
+                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                value={String(formData.lat.toFixed(6))}
+                onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
+                keyboardType="numeric"
+                placeholderTextColor={theme.textSecondary}
+              />
+            </View>
+
+            <View style={styles.halfInput}>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Längengrad</Text>
+              <TextInput
+                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                value={String(formData.lng.toFixed(6))}
+                onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
+                keyboardType="numeric"
+                placeholderTextColor={theme.textSecondary}
+              />
+            </View>
           </View>
         </View>
 
@@ -178,12 +215,36 @@ const styles = StyleSheet.create({
     height: 100,
     textAlignVertical: 'top'
   },
+  coordinatesSection: {
+    marginBottom: 16,
+  },
+  mapButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 16,
+    gap: 8,
+  },
+  mapButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
   halfInput: {
     width: '48%'
+  },
+  subLabel: {
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  coordInput: {
+    marginBottom: 0,
   },
   submitButton: {
     backgroundColor: '#2f6f5f',

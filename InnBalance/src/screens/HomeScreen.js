@@ -37,7 +37,7 @@ export default function HomeScreen() {
         { key: 'depression', icon: 'emoticon-dead-outline', label: 'Depression' },
         { key: 'anxiety', icon: 'alert-circle-outline', label: 'Anxiety' },
         { key: 'anger', icon: 'emoticon-angry-outline', label: 'Anger' },
-        { key: 'stress', icon: 'weather-windy', label: 'Stress' },
+        { key: 'stress', icon: 'lightning-bolt', label: 'Stress' },
         { key: 'low_energy', icon: 'battery-low', label: 'Low energy' },
         { key: 'balance', icon: 'scale-balance', label: 'Balance' },
     ];
