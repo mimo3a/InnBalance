@@ -7,7 +7,7 @@
  * - Account actions (log out, delete account)
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,30 +18,75 @@ export default function AccountScreen() {
   const { theme } = useTheme();
   const router = useRouter();
 
-  // Mock user data - in real app, this would come from authentication context
-  const [username, setUsername] = useState('User');
-  const [email, setEmail] = useState('user@example.com');
+  const [username, setUsername] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSaveProfile = () => {
-    // In real app, save to backend/storage
-    Alert.alert('Success', 'Profile updated successfully');
+  // Load saved username on mount
+  useEffect(() => {
+    loadUsername();
+  }, []);
+
+  const loadUsername = async () => {
+    try {
+      const savedUsername = await AsyncStorage.getItem('savedUsername');
+      if (savedUsername) {
+        setUsername(savedUsername);
+      }
+    } catch (error) {
+      console.error('Error loading username:', error);
+    }
   };
 
-  const handleChangePassword = () => {
-    Alert.alert(
-      'Change Password',
-      'Enter your current and new password',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Continue',
-          onPress: () => {
-            // In real app, show password input screen or modal
-            Alert.alert('Info', 'Password change feature will be implemented with authentication system');
-          }
-        }
-      ]
-    );
+  const handleSaveProfile = async () => {
+    if (!username.trim()) {
+      Alert.alert('Error', 'Username cannot be empty');
+      return;
+    }
+
+    try {
+      await AsyncStorage.setItem('savedUsername', username);
+      Alert.alert('Success', 'Username updated successfully');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save username');
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all password fields');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      Alert.alert('Error', 'New password must be at least 6 characters');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'New passwords do not match');
+      return;
+    }
+
+    try {
+      const savedPassword = await AsyncStorage.getItem('savedPassword');
+      
+      if (currentPassword !== savedPassword) {
+        Alert.alert('Error', 'Current password is incorrect');
+        return;
+      }
+
+      await AsyncStorage.setItem('savedPassword', newPassword);
+      
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      
+      Alert.alert('Success', 'Password changed successfully');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to change password');
+    }
   };
 
   const handleLogout = () => {
@@ -83,8 +128,8 @@ export default function AccountScreen() {
                   style: 'destructive',
                   onPress: async () => {
                     // In real app, delete account from backend
-                    await AsyncStorage.removeItem('authToken');
-                    router.replace('/login');
+                    await AsyncStorage.clear(); // Clear all data
+                    router.replace('/signup');
                   }
                 }
               ]
@@ -123,19 +168,6 @@ export default function AccountScreen() {
           />
         </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={[styles.inputLabel, { color: theme.text }]}>Email Address</Text>
-          <TextInput
-            style={[styles.input, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter email"
-            placeholderTextColor={theme.textSecondary}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-
         <TouchableOpacity 
           style={[styles.primaryButton, { backgroundColor: theme.primary }]}
           onPress={handleSaveProfile}
@@ -149,17 +181,48 @@ export default function AccountScreen() {
       <Text style={[styles.sectionLabel, { color: theme.text }]}>Security</Text>
       
       <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleChangePassword}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="lock-reset" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Change Password</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
-                Update your password
-              </Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color={theme.textSecondary} />
+        <View style={styles.inputContainer}>
+          <Text style={[styles.inputLabel, { color: theme.text }]}>Current Password</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+            value={currentPassword}
+            onChangeText={setCurrentPassword}
+            placeholder="Enter current password"
+            placeholderTextColor={theme.textSecondary}
+            secureTextEntry
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={[styles.inputLabel, { color: theme.text }]}>New Password</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+            value={newPassword}
+            onChangeText={setNewPassword}
+            placeholder="Enter new password"
+            placeholderTextColor={theme.textSecondary}
+            secureTextEntry
+          />
+        </View>
+
+        <View style={styles.inputContainer}>
+          <Text style={[styles.inputLabel, { color: theme.text }]}>Confirm New Password</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Confirm new password"
+            placeholderTextColor={theme.textSecondary}
+            secureTextEntry
+          />
+        </View>
+
+        <TouchableOpacity 
+          style={[styles.primaryButton, { backgroundColor: theme.primary }]}
+          onPress={handleChangePassword}
+        >
+          <MaterialCommunityIcons name="lock-reset" size={20} color="#fff" />
+          <Text style={styles.primaryButtonText}>Change Password</Text>
         </TouchableOpacity>
       </View>
 

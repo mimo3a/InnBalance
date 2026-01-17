@@ -19,39 +19,44 @@ export default function LoginScreen() {
   const router = useRouter();
   const { theme } = useTheme();
 
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     // Validation
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter both email and password');
-      return;
-    }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+    if (!username.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter both username and password');
       return;
     }
 
     setLoading(true);
 
-    // Simulate API call - replace with actual authentication
-    setTimeout(async () => {
+    try {
+      // Check saved credentials
+      const savedUsername = await AsyncStorage.getItem('savedUsername');
+      const savedPassword = await AsyncStorage.getItem('savedPassword');
+      
       setLoading(false);
-      // Mock success - save auth token
-      await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
-      Alert.alert('Success', 'Login successful!', [
-        {
-          text: 'OK',
-          onPress: () => router.replace('/(tabs)')
-        }
-      ]);
-    }, 1500);
+      
+      // Verify credentials
+      if (username === savedUsername && password === savedPassword) {
+        // Login successful - create auth token
+        await AsyncStorage.setItem('authToken', 'token-' + Date.now());
+        Alert.alert('Success', 'Login successful!', [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/(tabs)')
+          }
+        ]);
+      } else {
+        Alert.alert('Error', 'Invalid username or password');
+      }
+    } catch (error) {
+      setLoading(false);
+      Alert.alert('Error', 'Login failed');
+    }
 
     // TODO: Implement actual authentication
     // try {
@@ -95,18 +100,17 @@ export default function LoginScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-          {/* Email Input */}
+          {/* Username Input */}
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>Email</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Username</Text>
             <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="email-outline" size={20} color={theme.textSecondary} />
+              <MaterialCommunityIcons name="account-outline" size={20} color={theme.textSecondary} />
               <TextInput
                 style={[styles.input, { color: theme.text }]}
-                placeholder="your@email.com"
+                placeholder="Enter your username"
                 placeholderTextColor={theme.textSecondary}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
+                value={username}
+                onChangeText={setUsername}
                 autoCapitalize="none"
                 autoCorrect={false}
               />

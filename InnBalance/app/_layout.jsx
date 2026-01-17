@@ -33,6 +33,13 @@ export default function RootLayout() {
       <MapPickerProvider>
       {/* Stack navigator for screen transitions */}
       <Stack>
+          {/* Entry point - checks auth and redirects */}
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          
+          {/* Authentication screens */}
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="signup" options={{ headerShown: false }} />
+          
           {/* Main tab navigation - hidden header */}
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           

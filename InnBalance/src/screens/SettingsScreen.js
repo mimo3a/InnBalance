@@ -115,23 +115,23 @@ export default function SettingsScreen() {
     );
   };
 
-  const handleClearAuth = () => {
-    Alert.alert(
-      'Clear Authentication',
-      'This will log you out and return to the login screen. For testing only.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Clear',
-          style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.removeItem('authToken');
-            router.replace('/login');
-          },
-        },
-      ]
-    );
-  };
+  // const handleClearAuth = () => {
+  //   Alert.alert(
+  //     'Clear Authentication',
+  //     'This will log you out and return to the login screen. For testing only.',
+  //     [
+  //       { text: 'Cancel', style: 'cancel' },
+  //       {
+  //         text: 'Clear',
+  //         style: 'destructive',
+  //         onPress: async () => {
+  //           await AsyncStorage.removeItem('authToken');
+  //           router.replace('/login');
+  //         },
+  //       },
+  //     ]
+  //   );
+  // };
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -259,21 +259,6 @@ export default function SettingsScreen() {
         </TouchableOpacity>
       </ThemedView>
 
-      {/* HELP & SUPPORT
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>Help & Support</Text>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleAbout}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>About App</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Version and info</Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-        </TouchableOpacity>
-      </ThemedView> */}
 
       {/* HELP & SUPPORT */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>Help & Support</Text>
@@ -307,7 +292,7 @@ export default function SettingsScreen() {
       {/* RESET ALL */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>Reset</Text>
 
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+      {/* <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <View style={styles.settingHeader}>
           <MaterialCommunityIcons name="logout" size={24} color={theme.danger} />
           <Text style={[styles.sectionTitle, { color: theme.danger }]}>Clear Authentication (Testing)</Text>
@@ -319,7 +304,7 @@ export default function SettingsScreen() {
           <MaterialCommunityIcons name="logout" size={20} color="#fff" />
           <Text style={styles.deleteButtonText}>Clear Auth Token</Text>
         </TouchableOpacity>
-      </ThemedView>
+      </ThemedView> */}
 
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <View style={styles.settingHeader}>
