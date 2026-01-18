@@ -11,21 +11,21 @@
  * - Tap callouts to navigate to place details
  */
 
-import React from 'react';
-import {
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { useRouter } from 'expo-router';
 import { usePlaces } from '@/src/hooks/usePlaces';
+import PlaceBottomSheet from '@/src/components/PlaceBottomSheet';
 
 export default function PlacesMap() {
   const { places, loading } = usePlaces();
   const router = useRouter();
+
+  // New: state for the "google maps like" popup
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [sheetVisible, setSheetVisible] = useState(false);
 
   // Show loading indicator while fetching places
   if (loading) {
@@ -35,6 +35,26 @@ export default function PlacesMap() {
       </View>
     );
   }
+
+  // New: open/close helpers (kept very simple)
+  const openSheet = (place) => {
+    setSelectedPlace(place);
+    setSheetVisible(true);
+  };
+
+  const closeSheet = () => {
+    setSheetVisible(false);
+    setTimeout(() => setSelectedPlace(null), 250);
+  };
+
+  const openDetails = () => {
+    if (!selectedPlace) return;
+    closeSheet();
+    router.push({
+      pathname: '/description',
+      params: { id: selectedPlace.id },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -57,8 +77,10 @@ export default function PlacesMap() {
               longitude: place.lng,
             }}
             title={place.name}
-            description={`details...`}         
-            // Navigate to place description when callout is pressed
+            description={`details...`}
+            // New: open bottom sheet on marker tap
+            onPress={() => openSheet(place)}
+            // Old behaviour kept (not used right now, but not deleted)
             onCalloutPress={() =>
               router.push({
                 pathname: '/description',
@@ -66,10 +88,18 @@ export default function PlacesMap() {
               })
             }
           >
-            
+            {/* Keeping this empty block like in your original */}
           </Marker>
         ))}
       </MapView>
+
+      {/* New: Google Maps-like bottom sheet */}
+      <PlaceBottomSheet
+        place={selectedPlace}
+        visible={sheetVisible}
+        onClose={closeSheet}
+        onOpen={openDetails}
+      />
     </View>
   );
 }
