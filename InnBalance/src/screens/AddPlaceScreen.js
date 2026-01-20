@@ -5,18 +5,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useMapPicker } from '@/src/contexts/MapPickerContext';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams();
   const { addPlace } = usePlaces();
   const { theme } = useTheme();
   const { selectedCoordinates, clearCoordinates } = useMapPicker();
 
-  const [image, setImage] = useState(null); // <-- Bild aus Galerie
+  const [image, setImage] = useState(null); // Image from camera or gallery
 
   const [formData, setFormData] = useState({
     name: '',
@@ -30,6 +29,7 @@ export default function AddPlaceScreen() {
     image: null,
   });
 
+
   // Update coordinates when returning from map picker
   useEffect(() => {
     if (selectedCoordinates) {
@@ -42,13 +42,48 @@ export default function AddPlaceScreen() {
     }
   }, [selectedCoordinates]);
 
-  const pickImage = async () => {
+  
+  const pickImageFromCamera = async () => {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+  if (!permission.granted) {
+    Alert.alert("Permission required", "Camera access is needed.");
+    return;
+  }
+
+  const result = await ImagePicker.launchCameraAsync({
+    allowsEditing: true,
+    quality: 1,
+  });
+
+  if (!result.canceled) {
+    const uri = result.assets[0].uri;
+
+    const filename = `place_${Date.now()}.jpg`;
+    const newPath = FileSystem.documentDirectory + filename;
+
+    try {
+      await FileSystem.copyAsync({
+        from: uri,
+        to: newPath,
+      });
+
+      setImage(newPath);
+      setFormData({ ...formData, image: newPath });
+    } catch (error) {
+      console.error("Error copying image:", error);
+      Alert.alert("Error", "Could not save image.");
+    }
+  }
+};
+
+  
+  const pickImageFromLibrary = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 0.8,
     });
-
+git
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       
@@ -59,22 +94,25 @@ export default function AddPlaceScreen() {
         
         await FileSystem.copyAsync({
           from: uri,
-          to: newPath
+          to: newPath,
         });
         
         // Store file path in AsyncStorage (like places.js stores require() paths)
         setImage(newPath);
         setFormData({ ...formData, image: newPath });
       } catch (error) {
+        console.error('Error copying image:', error);
+        Alert.alert('Error', 'Could not save image.');
         console.error('Error saving image:', error);
         Alert.alert('Fehler', 'Bild konnte nicht gespeichert werden');
       }
     }
   };
 
+
   const handleSubmit = async () => {
     if (!formData.name.trim()) {
-      Alert.alert('Fehler', 'Bitte geben Sie einen Ortsnamen ein');
+      Alert.alert('Error', 'Please enter a valid name for the place.');
       return;
     }
 
@@ -95,53 +133,69 @@ export default function AddPlaceScreen() {
         }
       ]);
     } catch (error) {
-      Alert.alert('Fehler', 'Ort konnte nicht hinzugefügt werden');
+      Alert.alert('Error', 'Could not add place.');
     }
   };
 
   const fallbackImage = require('../Images/Places/missingPicture.png');
 
   return (
+    
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <TouchableOpacity style={styles.imageContainer} onPress={pickImage}>
+      <View style={styles.imageContainer}>
         <ImageBackground
           style={styles.image}
           source={image ? { uri: image } : fallbackImage}
         >
           <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,1)']}
+            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']}
             style={styles.linearGradient}
           />
+          {/*Buttons*/}
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={pickImageFromCamera}>
+              <Ionicons name="camera" size={40} color={theme.primary}  />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={pickImageFromLibrary}>
+              <Ionicons name="library" size={40} color={theme.primary}  />
+            </TouchableOpacity>
+            
+          </View>
         </ImageBackground>
-      </TouchableOpacity>
+      </View>
+      
+      
 
+
+      {/* Add Place Button */}
+      
       <ScrollView style={[styles.form, { backgroundColor: theme.background }]}>
         <Text style={[styles.label, { color: theme.text }]}>Name</Text>
         <TextInput
           style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
           value={formData.name}
           onChangeText={(text) => setFormData({ ...formData, name: text })}
-          placeholder="Name des Ortes"
+          placeholder="Name of the Place"
           placeholderTextColor={theme.textSecondary}
         />
 
-        <Text style={[styles.label, { color: theme.text }]}>Beschreibung</Text>
+        <Text style={[styles.label, { color: theme.text }]}>Description</Text>
         <TextInput
           style={[styles.input, styles.textArea, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
           value={formData.info}
           onChangeText={(text) => setFormData({ ...formData, info: text })}
-          placeholder="Beschreibung des Ortes"
+          placeholder='Description of the Place'
           placeholderTextColor={theme.textSecondary}
           multiline
           numberOfLines={4}
         />
 
-        <Text style={[styles.label, { color: theme.text }]}>Kategorie</Text>
+        <Text style={[styles.label, { color: theme.text }]}>Category</Text>
         <TextInput
           style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
           value={formData.category}
           onChangeText={(text) => setFormData({ ...formData, category: text })}
-          placeholder="Park, Museum, Café..."
+          placeholder='Park, Museum, Café...'
           placeholderTextColor={theme.textSecondary}
         />
 
@@ -185,7 +239,7 @@ export default function AddPlaceScreen() {
         </View>
 
         <TouchableOpacity style={[styles.submitButton, { backgroundColor: theme.primary }]} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Ort hinzufügen</Text>
+          <Text style={styles.submitButtonText}>Add Place</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -258,5 +312,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600'
+  },
+  buttonContainer: {
+  position: 'absolute',
+  bottom: 20,
+  right: 20,
+  flexDirection: 'row',
+  gap: 16, // Abstand zwischen Buttons
+  alignItems: 'center',
+  },
+
+  iconButton: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 10,
+    borderRadius: 50,
   },
 });
