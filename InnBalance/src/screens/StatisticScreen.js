@@ -10,8 +10,8 @@
  * Data is loaded from AsyncStorage and refreshed when screen gains focus.
  */
 
-import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback, useMemo } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/src/components/themed-text';
 import { ThemedView } from '@/src/components/themed-view';
 import { getSessions } from '../services/statisticsService';
@@ -27,7 +27,6 @@ export default function StatisticScreen() {
   // Store all session data
   const [sessions, setSessions] = useState([]);
   
-  // Loading state for data fetch
   // Loading state for data fetch
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
@@ -58,41 +57,107 @@ export default function StatisticScreen() {
 
   /**
    * Calculate summary statistics
-   * - Total number of sessions
-   * - Total duration in minutes
+   * - Total number of sessions (totalSessions)
+   * - Total duration in minutes (totalDurationMinutes)
+   * - Average sessions per week (avgSessionsPerWeek)
+   * - Average minutes per week (avgMinutesPerWeek)
    */
   const totalSessions = sessions.length;
   const totalDurationSeconds = sessions.reduce((sum, session) => sum + (session.duration || 0), 0);
   const totalDurationMinutes = Math.round(totalDurationSeconds / 60);
 
+  // Calculate averages for Summary
+  // Find first Session
+  const timestamps = sessions.map(s => new Date(s.date).getTime());
+  const firstSessionTimestamp = Math.min(...timestamps);
+
+  // Calculate weeks passed since first session
+  const diffInMs = new Date().getTime() - firstSessionTimestamp;
+  const diffInDays = Math.max(1, diffInMs / (1000*60*60*24));
+  const weeksSinceStart = Math.max(1,diffInDays / 7);
+
+  // Final calculation
+  const avgMinutesPerWeek = Math.round(totalDurationMinutes / weeksSinceStart);
+  const avgSessionsPerWeek = (totalSessions / weeksSinceStart).toFixed(1);
+
+  // State for chart view and Navigation
+  const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
+  const [offset, setOffset] = useState(0);
+
+
   /**
-   * Generate chart data for last 7 days
-   * Creates an array of day objects with counts and durations
+   * CHART LOGIC
+   * - Calculates data based on view mode and offset
    */
-  const getLast7Days = () => {
-    const days = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const isoDate = d.toISOString().split('T')[0];
-      const label = d.toLocaleDateString('en-US', { weekday: 'short' }); 
-      days.push({ date: isoDate, label, count: 0, minutes: 0, seconds: 0 });
-    }
-    return days;
-  };
+  const chartData = useMemo(() => {
+    const dataPoints = [];
+    const now = new Date();
 
-  const chartData = getLast7Days();
-  
-  sessions.forEach(session => {
-    const sessionDate = new Date(session.date).toISOString().split('T')[0];
-    const dayStat = chartData.find(d => d.date === sessionDate);
-    if (dayStat) {
-      dayStat.count += 1;
-      dayStat.seconds += (session.duration || 0);
-    }
-  });
+    if (viewMode === 'week') {
+      // 7-day-logic (rolling view)
+      const baseDate = new Date();
+      baseDate.setDate(now.getDate() - (offset * 7));
 
-  // Umrechnung Sekunden -> Minuten pro Tag
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(baseDate);
+        d.setDate(d.getDate() - i);
+        const isoDate = d.toISOString().split('T')[0];
+        const label = d.toLocaleDateString('en-US', { weekday: 'short' });
+        dataPoints.push({
+                          date: isoDate,
+                          label,
+                          count: 0,
+                          minutes: 0,
+                          seconds: 0
+                        });
+      }
+    } else {
+      // Monthly-logic (4 week blocks)
+      const targetMonthDate = new Date();
+      targetMonthDate.setMonth(now.getMonth() - offset);
+      
+      const currentMonthName = targetMonthDate.toLocaleDateString('en-US', { month: 'long', year: '2-digit'});
+
+      for (let i = 1; i <= 4; i++) {
+        dataPoints.push({
+                          label: `W${i}`,
+                          count: 0,
+                          minutes: 0,
+                          seconds: 0,
+                          isMonth: true,
+                          monthName: currentMonthName,
+                          monthIdx: targetMonthDate.getMonth()
+                        });
+      }
+    }
+
+    // Map Sessions
+    sessions.forEach(session => {
+      const sDate = new Date(session.date);
+      const sIso = sDate.toISOString().split('T')[0];
+
+      if (viewMode === 'week') {
+        const point = dataPoints.find(p => p.date === sIso);
+        if (point) {
+          point.count += 1;
+          point.seconds += (session.duration || 0);
+        }
+      } else {
+        const targetMonth = new Date();
+        targetMonth.setMonth(now.getMonth() - offset);
+        if (sDate.getMonth() === targetMonth.getMonth() && sDate.getFullYear() === targetMonth.getFullYear()) {
+          const weekIdx = Math.min(Math.floor((sDate.getDate() - 1) / 7.5), 3);
+          dataPoints[weekIdx].count += 1;
+          dataPoints[weekIdx].seconds += (session.duration || 0);
+        }
+      }
+    });
+
+  dataPoints.forEach(p => p.minutes = Math.round(p.seconds / 60));
+  return dataPoints;
+}, [sessions, viewMode, offset]);
+
+  // Convert Seconds to minutes per day
   chartData.forEach(day => {
     day.minutes = Math.round(day.seconds / 60);
   });
@@ -119,25 +184,91 @@ export default function StatisticScreen() {
         {/* SECTION 1 - Summary Cards */}
         <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
           <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Summary</ThemedText>
-          
+
+        {/*Row 1*/}  
           <View style={styles.statsRow}>
             {/* Card 1 - Total Minutes (Light Green) */}
-            <View style={[styles.statBox, { backgroundColor: theme.primaryLight }]}>
+            <View style={[styles.statBoxLarge, { backgroundColor: theme.primaryLight }]}>
               <Text style={styles.statValueLight}>{totalDurationMinutes}</Text>
               <Text style={styles.statLabelLight}>Minutes</Text>
             </View>
             
             {/* Card 2 - Total Sessions (Dark Green) */}
-            <View style={[styles.statBox, { backgroundColor: theme.primary }]}>
+            <View style={[styles.statBoxLarge, { backgroundColor: theme.primary }]}>
               <Text style={styles.statValueLight}>{totalSessions}</Text>
               <Text style={styles.statLabelLight}>Sessions</Text>
             </View>
           </View>
+
+        {/*Row 2*/} 
+        <View style={styles.statsRow}>
+            {/* Card 3 - Average minutes per week (Light Green) */}
+            <View style={[styles.statBoxSmall, { backgroundColor: theme.primaryLight }]}>
+              <Text style={styles.statValueLightSmall}>{avgMinutesPerWeek}</Text>
+              <Text style={styles.statLabelLightSmall}>Avg. Minutes/Week</Text>
+            </View>
+            
+            {/* Card 4 - Average sessions per week (Dark Green) */}
+            <View style={[styles.statBoxSmall, { backgroundColor: theme.primary }]}>
+              <Text style={styles.statValueLightSmall}>{avgSessionsPerWeek}</Text>
+              <Text style={styles.statLabelLightSmall}>Avg. Sessions/Week</Text>
+            </View>
+          </View>
         </View>
 
-        {/* SECTION 2 - Weekly Chart */}
+        {/* SECTION 2 - Chart */}
         <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Last 7 Days</ThemedText>
+          
+          {/* Dynamic Header with Navigation and Toggle */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+            <View>
+              <ThemedText type="subtitle" style={{ color: theme.text, marginBottom: 0 }}>
+                {viewMode === 'week' 
+                  ? (offset === 0 
+                      ? 'Last 7 Days' 
+                      : `${new Date(chartData[0]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(chartData[6]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`)
+                  : `${chartData[0]?.monthName || ''}`}
+              </ThemedText>
+            </View>
+
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              {/* Toggle Week/Month View */}
+              <TouchableOpacity 
+                onPress={() => { setViewMode(viewMode === 'week' ? 'month' : 'week'); setOffset(0); }}
+                style={{ padding: 5, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 8 }}
+              >
+                <MaterialCommunityIcons 
+                  name={viewMode === 'week' ? 'calendar-month' : 'calendar-week'} 
+                  size={24} 
+                  color={theme.primary} 
+                />
+              </TouchableOpacity>
+
+              {/* Navigation Controls */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 10 }}>
+                <TouchableOpacity onPress={() => setOffset(prev => prev + 1)}>
+                  <MaterialCommunityIcons name="chevron-left" size={30} color={theme.primary} />
+                </TouchableOpacity>
+                
+                {offset !== 0 && (
+                  <TouchableOpacity onPress={() => setOffset(0)} style={{ paddingHorizontal: 5 }}>
+                    <MaterialCommunityIcons name="calendar-today" size={20} color={theme.primary} />
+                  </TouchableOpacity>
+                )}
+
+                <TouchableOpacity 
+                  onPress={() => setOffset(prev => Math.max(0, prev - 1))}
+                  disabled={offset === 0}
+                >
+                  <MaterialCommunityIcons 
+                    name="chevron-right" 
+                    size={30} 
+                    color={offset === 0 ? theme.border : theme.primary} 
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
           
           {/* Legend for chart colors */}
           <View style={styles.legendContainer}>
@@ -151,7 +282,7 @@ export default function StatisticScreen() {
             </View>
           </View>
 
-          {/* Bar Chart - 7 days */}
+          {/* Bar Chart */}
           <View style={styles.chartArea}>
             {chartData.map((item, index) => (
               <View key={index} style={styles.chartColumn}>
@@ -164,32 +295,28 @@ export default function StatisticScreen() {
                         { 
                           backgroundColor: '#8baea4',
                           height: `${(item.minutes / maxMinutes) * 100}%`,
-                          // Logic: Flat (2px) if zero, tall enough for text (20px) if data exists
                           minHeight: item.minutes > 0 ? 20 : 2
                         }
                       ]}>
-                         {/* Data label inside bar */}
-                         {item.minutes > 0 && (
-                           <Text style={styles.innerBarLabel}>{item.minutes}</Text>
-                         )}
+                          {item.minutes > 0 && (
+                            <Text style={styles.innerBarLabel}>{item.minutes}</Text>
+                          )}
                       </View>
                   </View>
 
-                  {/* Bar 2 - Count (Dark Green) */}
+                  {/* Bar 2 - Sessions Count (Dark Green) */}
                   <View style={styles.barContainer}>
                       <View style={[
                         styles.bar, 
                         { 
                           backgroundColor: '#2f6f5f',
                           height: `${(item.count / maxCount) * 100}%`,
-                          // Flat (2px) if value = 0, tall enough for text (20px) otherwise
                           minHeight: item.count > 0 ? 20 : 2
                         }
                       ]}>
-                         {/* Data label inside bar */}
-                         {item.count > 0 && (
-                           <Text style={styles.innerBarLabel}>{item.count}</Text>
-                         )}
+                          {item.count > 0 && (
+                            <Text style={styles.innerBarLabel}>{item.count}</Text>
+                          )}
                       </View>
                   </View>
                 </View>
@@ -277,13 +404,15 @@ const styles = StyleSheet.create({
 
   // --- STATS BOXES ---
   statsRow: { 
+    marginTop: 6,
+    marginBottom: 6,
     flexDirection: 'row', 
     justifyContent: 'space-between',
     gap: 12,
   },
-  statBox: {
+  statBoxLarge: {
     width: '48%',
-    // Hintergrundfarbe wird inline gesetzt
+    // Backgroundcolor set inline
     borderRadius: 16,
     paddingVertical: 20,
     paddingHorizontal: 10,
@@ -295,7 +424,22 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  // Helle Schrift für die farbigen Boxen
+  statBoxSmall: {
+    width: '48%',
+    height: 'auto',
+    // Backgroundcolor set inline
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  // Light style for colored containers
   statValueLight: { 
     fontSize: 32, 
     fontWeight: 'bold', 
@@ -308,7 +452,22 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     fontWeight: '500',
   },
-
+  // Light style for colored containers, small
+  statValueLightSmall: { 
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: '#ffffff', 
+    marginTop: 1,
+    marginBottom: 1 
+  },
+  statLabelLightSmall: { 
+    fontSize: 12, 
+    color: '#ffffff',
+    opacity: 0.9,
+    fontWeight: '500',
+    marginTop: 1,
+    marginBottom: 1,
+  },
   // --- CHART STYLES ---
   legendContainer: { flexDirection: 'row', justifyContent: 'flex-end', marginBottom: 10 },
   legendItem: { flexDirection: 'row', alignItems: 'center', marginLeft: 15 },
@@ -344,7 +503,7 @@ const styles = StyleSheet.create({
   bar: {
     width: '100%',
     borderRadius: 4,
-    // minHeight wird dynamisch gesetzt
+    // minHeigt set dynamically
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingTop: 4, 
