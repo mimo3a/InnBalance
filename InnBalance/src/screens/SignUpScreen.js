@@ -65,10 +65,7 @@ export default function SignUpScreen() {
       await AsyncStorage.setItem('authToken', 'token-' + Date.now());
       
       setLoading(false);
-<<<<<<< HEAD
-=======
       setUser({ name, password });
->>>>>>> d9214f5 (Fix AccountScreen and auth screens)
       Alert.alert(
         'Success',
         'Account created successfully!',

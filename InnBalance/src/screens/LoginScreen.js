@@ -17,70 +17,40 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function LoginScreen() {
-    const { setUser } = useUser();
+    const { user, setUser } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
 
-<<<<<<< HEAD
-  const [username, setUsername] = useState('');
-=======
   const [name, setName] = useState('');
->>>>>>> d9214f5 (Fix AccountScreen and auth screens)
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     // Validation
-<<<<<<< HEAD
-    if (!username.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter both username and password');
-=======
     if (!name.trim() || !password.trim()) {
       Alert.alert('Error', 'Please enter both name and password');
->>>>>>> d9214f5 (Fix AccountScreen and auth screens)
       return;
     }
 
     setLoading(true);
-
-    try {
-      // Check saved credentials
-      const savedUsername = await AsyncStorage.getItem('savedUsername');
-      const savedPassword = await AsyncStorage.getItem('savedPassword');
-      
-      setLoading(false);
-<<<<<<< HEAD
-      
-      // Verify credentials
-      if (username === savedUsername && password === savedPassword) {
-        // Login successful - create auth token
-        await AsyncStorage.setItem('authToken', 'token-' + Date.now());
-        Alert.alert('Success', 'Login successful!', [
-          {
-            text: 'OK',
-            onPress: () => router.replace('/(tabs)')
-          }
-        ]);
-      } else {
-        Alert.alert('Error', 'Invalid username or password');
-      }
-    } catch (error) {
-      setLoading(false);
-      Alert.alert('Error', 'Login failed');
+    // Имитация задержки
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setLoading(false);
+    // Проверка совпадения с сохранёнными данными
+    if (name !== user.name || password !== user.password) {
+      Alert.alert('Error', 'Invalid name or password');
+      return;
     }
-=======
-      setUser({ name, password });
-      // Mock success - save auth token
-      await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
-      Alert.alert('Success', 'Login successful!', [
-        {
-          text: 'OK',
-          onPress: () => router.replace('/(tabs)')
-        }
-      ]);
-    }, 1500);
->>>>>>> d9214f5 (Fix AccountScreen and auth screens)
+    setUser({ name, password });
+    // Mock success - save auth token
+    await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
+    Alert.alert('Success', 'Login successful!', [
+      {
+        text: 'OK',
+        onPress: () => router.replace('/(tabs)')
+      }
+    ]);
 
     // TODO: Implement actual authentication
     // try {
@@ -124,33 +94,18 @@ export default function LoginScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-<<<<<<< HEAD
-          {/* Username Input */}
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>Username</Text>
-=======
           {/* Name Input */}
           <View style={styles.inputContainer}>
             <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
->>>>>>> d9214f5 (Fix AccountScreen and auth screens)
             <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
               <MaterialCommunityIcons name="account-outline" size={20} color={theme.textSecondary} />
               <TextInput
                 style={[styles.input, { color: theme.text }]}
-<<<<<<< HEAD
-                placeholder="Enter your username"
-                placeholderTextColor={theme.textSecondary}
-                value={username}
-                onChangeText={setUsername}
-                autoCapitalize="none"
-                autoCorrect={false}
-=======
                 placeholder="John Doe"
                 placeholderTextColor={theme.textSecondary}
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
->>>>>>> d9214f5 (Fix AccountScreen and auth screens)
               />
             </View>
           </View>

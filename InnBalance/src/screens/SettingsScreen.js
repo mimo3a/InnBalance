@@ -79,9 +79,9 @@ export default function SettingsScreen() {
     );
   }
 
-  const handleLanguageSelect = () => {
-    Alert.alert('Language', 'Language selection feature coming soon!');
-  };
+  // const handleLanguageSelect = () => {
+  //   Alert.alert('Language', 'Language selection feature coming soon!');
+  // };
 
   const handleAccount = () => {
     router.push('/account');
@@ -115,23 +115,7 @@ export default function SettingsScreen() {
     );
   };
 
-  // const handleClearAuth = () => {
-  //   Alert.alert(
-  //     'Clear Authentication',
-  //     'This will log you out and return to the login screen. For testing only.',
-  //     [
-  //       { text: 'Cancel', style: 'cancel' },
-  //       {
-  //         text: 'Clear',
-  //         style: 'destructive',
-  //         onPress: async () => {
-  //           await AsyncStorage.removeItem('authToken');
-  //           router.replace('/login');
-  //         },
-  //       },
-  //     ]
-  //   );
-  // };
+  
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
@@ -146,7 +130,7 @@ export default function SettingsScreen() {
       {/* APP PREFERENCES */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>App Preferences</Text>
 
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+      {/* <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <TouchableOpacity style={styles.settingRow} onPress={handleLanguageSelect}>
           <View style={styles.settingLeft}>
             <MaterialCommunityIcons name="translate" size={24} color={theme.primary} />
@@ -157,7 +141,7 @@ export default function SettingsScreen() {
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
         </TouchableOpacity>
-      </ThemedView>
+      </ThemedView> */}
 
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <View style={styles.settingRow}>

@@ -29,54 +29,28 @@ export const unstable_settings = {
  * Main entry point for the application's navigation structure
  */
 export default function RootLayout() {
+  const AuthGate = require('@/src/components/AuthGate.jsx').default;
   return (
     <ThemeProvider>
-<<<<<<< HEAD
-      <MapPickerProvider>
-      {/* Stack navigator for screen transitions */}
-      <Stack>
-          {/* Entry point - checks auth and redirects */}
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          
-          {/* Authentication screens */}
-          <Stack.Screen name="login" options={{ headerShown: false }} />
-          <Stack.Screen name="signup" options={{ headerShown: false }} />
-          
-          {/* Main tab navigation - hidden header */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          
-          {/* Breathing exercise screen */}
-          <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
-          
-          {/* List of all places */}
-          <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
-          
-          {/* Add new place screen */}
-          <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
-        </Stack>
-        
-        {/* Status bar with automatic styling */}
-        <StatusBar style="auto" />
-      </MapPickerProvider>
-=======
       <UserProvider>
         <MapPickerProvider>
-          {/* Stack navigator for screen transitions */}
-          <Stack>
-            {/* Main tab navigation - hidden header */}
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            {/* Breathing exercise screen */}
-            <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
-            {/* List of all places */}
-            <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
-            {/* Add new place screen */}
-            <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
-          </Stack>
-          {/* Status bar with automatic styling */}
-          <StatusBar style="auto" />
+          <AuthGate>
+            {/* Stack navigator for screen transitions */}
+            <Stack>
+              {/* Main tab navigation - hidden header */}
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              {/* Breathing exercise screen */}
+              <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
+              {/* List of all places */}
+              <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
+              {/* Add new place screen */}
+              <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
+            </Stack>
+            {/* Status bar with automatic styling */}
+            <StatusBar style="auto" />
+          </AuthGate>
         </MapPickerProvider>
       </UserProvider>
->>>>>>> d9214f5 (Fix AccountScreen and auth screens)
     </ThemeProvider>
   );
 }

@@ -66,12 +66,23 @@ export default function AccountScreen() {
   };
 
   // удалено дублирующее объявление setUser
-  const handleDeleteAccount = async () => {
-    try {
-      await AsyncStorage.clear();
-    } catch {}
-    setUser({ name: 'User', password: '' });
-    router.replace('/signup');
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to permanently delete your account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete', style: 'destructive', onPress: async () => {
+            try {
+              await AsyncStorage.clear();
+            } catch {}
+            setUser({ name: 'User', password: '' });
+            router.replace('/signup');
+          }
+        }
+      ]
+    );
   };
 
   return (
