@@ -10,6 +10,7 @@
  */
 
 import React, { useState } from 'react';
+import { useUser } from '@/src/contexts/UserContext';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -17,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function SignUpScreen() {
+    const { setUser } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -63,6 +65,10 @@ export default function SignUpScreen() {
       await AsyncStorage.setItem('authToken', 'token-' + Date.now());
       
       setLoading(false);
+<<<<<<< HEAD
+=======
+      setUser({ name, password });
+>>>>>>> d9214f5 (Fix AccountScreen and auth screens)
       Alert.alert(
         'Success',
         'Account created successfully!',
@@ -88,7 +94,7 @@ export default function SignUpScreen() {
     //   Alert.alert('Error', error.message);
     // } finally {
     //   setLoading(false);
-    // }
+    // }a
   };
 
   return (
@@ -190,9 +196,12 @@ export default function SignUpScreen() {
               size={24}
               color={acceptTerms ? theme.primary : theme.textSecondary}
             />
-            <Text style={[styles.checkboxText, { color: theme.text }]}>
+            <Text style={[styles.checkboxText, { color: theme.text }]}> 
               I agree to the{' '}
-              <Text style={{ color: theme.primary, fontWeight: '600' }}>
+              <Text
+                style={{ color: theme.primary, fontWeight: '600', textDecorationLine: 'underline' }}
+                onPress={() => router.push('/terms')}
+              >
                 Terms and Conditions
               </Text>
             </Text>

@@ -9,6 +9,7 @@
  */
 
 import React, { useState } from 'react';
+import { useUser } from '@/src/contexts/UserContext';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -16,18 +17,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function LoginScreen() {
+    const { setUser } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
 
+<<<<<<< HEAD
   const [username, setUsername] = useState('');
+=======
+  const [name, setName] = useState('');
+>>>>>>> d9214f5 (Fix AccountScreen and auth screens)
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     // Validation
+<<<<<<< HEAD
     if (!username.trim() || !password.trim()) {
       Alert.alert('Error', 'Please enter both username and password');
+=======
+    if (!name.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter both name and password');
+>>>>>>> d9214f5 (Fix AccountScreen and auth screens)
       return;
     }
 
@@ -39,6 +50,7 @@ export default function LoginScreen() {
       const savedPassword = await AsyncStorage.getItem('savedPassword');
       
       setLoading(false);
+<<<<<<< HEAD
       
       // Verify credentials
       if (username === savedUsername && password === savedPassword) {
@@ -57,6 +69,18 @@ export default function LoginScreen() {
       setLoading(false);
       Alert.alert('Error', 'Login failed');
     }
+=======
+      setUser({ name, password });
+      // Mock success - save auth token
+      await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
+      Alert.alert('Success', 'Login successful!', [
+        {
+          text: 'OK',
+          onPress: () => router.replace('/(tabs)')
+        }
+      ]);
+    }, 1500);
+>>>>>>> d9214f5 (Fix AccountScreen and auth screens)
 
     // TODO: Implement actual authentication
     // try {
@@ -100,19 +124,33 @@ export default function LoginScreen() {
 
         {/* Form */}
         <View style={styles.form}>
+<<<<<<< HEAD
           {/* Username Input */}
           <View style={styles.inputContainer}>
             <Text style={[styles.label, { color: theme.text }]}>Username</Text>
+=======
+          {/* Name Input */}
+          <View style={styles.inputContainer}>
+            <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
+>>>>>>> d9214f5 (Fix AccountScreen and auth screens)
             <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
               <MaterialCommunityIcons name="account-outline" size={20} color={theme.textSecondary} />
               <TextInput
                 style={[styles.input, { color: theme.text }]}
+<<<<<<< HEAD
                 placeholder="Enter your username"
                 placeholderTextColor={theme.textSecondary}
                 value={username}
                 onChangeText={setUsername}
                 autoCapitalize="none"
                 autoCorrect={false}
+=======
+                placeholder="John Doe"
+                placeholderTextColor={theme.textSecondary}
+                value={name}
+                onChangeText={setName}
+                autoCapitalize="words"
+>>>>>>> d9214f5 (Fix AccountScreen and auth screens)
               />
             </View>
           </View>
@@ -179,13 +217,13 @@ export default function LoginScreen() {
         </View>
 
         {/* Back to Welcome */}
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
           <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
