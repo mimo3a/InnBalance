@@ -1,344 +1,293 @@
 /**
  * AccountScreen Component
- * 
+ *
  * Manage user account settings:
- * - Profile information (username, email)
+ * - Profile information (username)
  * - Security (change password)
  * - Account actions (log out, delete account)
  */
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUser } from '@/src/contexts/UserContext';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
+
 
 export default function AccountScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const { user, setUser } = useUser();
 
-  // Mock user data - in real app, this would come from authentication context
-  const [username, setUsername] = useState('User');
-  const [email, setEmail] = useState('user@example.com');
+  const [username, setUsername] = useState(user?.name || 'User');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   const handleSaveProfile = () => {
-    // In real app, save to backend/storage
+    setUser({ ...user, name: username });
     Alert.alert('Success', 'Profile updated successfully');
   };
 
-  const handleChangePassword = () => {
-    Alert.alert(
-      'Change Password',
-      'Enter your current and new password',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Continue',
-          onPress: () => {
-            // In real app, show password input screen or modal
-            Alert.alert('Info', 'Password change feature will be implemented with authentication system');
-          }
-        }
-      ]
-    );
+  const handlePasswordSave = () => {
+    if (!oldPassword || !newPassword) {
+      Alert.alert('Error', 'Please fill in both fields');
+      return;
+    }
+    if (newPassword.length < 6) {
+      Alert.alert('Error', 'New password must be at least 6 characters');
+      return;
+    }
+    if (oldPassword !== user?.password) {
+      Alert.alert('Error', 'Current password is incorrect');
+      return;
+    }
+
+    setUser({ ...user, password: newPassword });
+    setShowPasswordModal(false);
+    setOldPassword('');
+    setNewPassword('');
+    Alert.alert('Success', 'Password changed successfully');
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Log Out',
-      'Are you sure you want to log out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Log Out',
-          style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.removeItem('authToken');
-            router.replace('/login');
-          }
-        }
-      ]
-    );
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('authToken');
+    router.replace('/login');
   };
 
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete Account',
-      'This will permanently delete your account and all associated data. This action cannot be undone.\n\nAre you absolutely sure?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete Account',
-          style: 'destructive',
-          onPress: () => {
-            // Second confirmation
-            Alert.alert(
-              'Final Confirmation',
-              'Type "DELETE" to confirm account deletion',
-              [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                  text: 'Confirm',
-                  style: 'destructive',
-                  onPress: async () => {
-                    // In real app, delete account from backend
-                    await AsyncStorage.removeItem('authToken');
-                    router.replace('/login');
-                  }
-                }
-              ]
-            );
-          }
-        }
-      ]
-    );
+  // удалено дублирующее объявление setUser
+  const handleDeleteAccount = async () => {
+    try {
+      await AsyncStorage.clear();
+    } catch {}
+    setUser({ name: 'User', password: '' });
+    router.replace('/signup');
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={[styles.avatarContainer, { backgroundColor: theme.primary }]}>
-          <MaterialCommunityIcons name="account" size={48} color="#fff" />
+    <>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
+            <MaterialCommunityIcons name="account" size={48} color="#fff" />
+          </View>
+          <Text style={[styles.title, { color: theme.text }]}>
+            Account Settings
+          </Text>
+          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+            Manage your profile and security
+          </Text>
         </View>
-        <Text style={[styles.headerTitle, { color: theme.text }]}>Account Settings</Text>
-        <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
-          Manage your profile and security
-        </Text>
-      </View>
 
-      {/* Profile Section */}
-      <Text style={[styles.sectionLabel, { color: theme.text }]}>Profile Information</Text>
-      
-      <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.inputContainer}>
-          <Text style={[styles.inputLabel, { color: theme.text }]}>Username</Text>
+        {/* Profile */}
+        <Text style={[styles.sectionLabel, { color: theme.text }]}>
+          Profile Information
+        </Text>
+
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
           <TextInput
-            style={[styles.input, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.background,
+                color: theme.text,
+                borderColor: theme.border,
+              },
+            ]}
             value={username}
             onChangeText={setUsername}
-            placeholder="Enter username"
+            placeholder="Enter your name"
             placeholderTextColor={theme.textSecondary}
           />
+
+          <TouchableOpacity
+            style={[styles.primaryButton, { backgroundColor: theme.primary }]}
+            onPress={handleSaveProfile}
+          >
+            <MaterialCommunityIcons name="content-save" size={20} color="#fff" />
+            <Text style={styles.primaryButtonText}>Save Changes</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.inputContainer}>
-          <Text style={[styles.inputLabel, { color: theme.text }]}>Email Address</Text>
-          <TextInput
-            style={[styles.input, { backgroundColor: theme.background, color: theme.text, borderColor: theme.border }]}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="Enter email"
-            placeholderTextColor={theme.textSecondary}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
+        {/* Security */}
+        <Text style={[styles.sectionLabel, { color: theme.text }]}>Security</Text>
+
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => setShowPasswordModal(true)}
+          >
+            <MaterialCommunityIcons
+              name="lock-reset"
+              size={24}
+              color={theme.primary}
+            />
+            <Text style={[styles.rowText, { color: theme.text }]}>
+              Change Password
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity 
-          style={[styles.primaryButton, { backgroundColor: theme.primary }]}
-          onPress={handleSaveProfile}
-        >
-          <MaterialCommunityIcons name="content-save" size={20} color="#fff" />
-          <Text style={styles.primaryButtonText}>Save Changes</Text>
-        </TouchableOpacity>
-      </View>
+        {/* Actions */}
+        <Text style={[styles.sectionLabel, { color: theme.text }]}>
+          Account Actions
+        </Text>
 
-      {/* Security Section */}
-      <Text style={[styles.sectionLabel, { color: theme.text }]}>Security</Text>
-      
-      <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleChangePassword}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="lock-reset" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Change Password</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
-                Update your password
-              </Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color={theme.textSecondary} />
-        </TouchableOpacity>
-      </View>
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: theme.primary }]}
+            onPress={handleLogout}
+          >
+            <MaterialCommunityIcons name="logout" size={20} color="#fff" />
+            <Text style={styles.actionText}>Log Out</Text>
+          </TouchableOpacity>
 
-      {/* Account Actions Section */}
-      <Text style={[styles.sectionLabel, { color: theme.text }]}>Account Actions</Text>
-      
-      <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: theme.primary }]}
-          onPress={handleLogout}
-        >
-          <MaterialCommunityIcons name="logout" size={20} color="#fff" />
-          <Text style={styles.actionButtonText}>Log Out</Text>
-        </TouchableOpacity>
-
-        <View style={[styles.dangerZone, { borderColor: theme.danger }]}>
-          <View style={styles.dangerHeader}>
-            <MaterialCommunityIcons name="alert" size={24} color={theme.danger} />
-            <Text style={[styles.dangerTitle, { color: theme.danger }]}>Danger Zone</Text>
-          </View>
-          <Text style={[styles.dangerDescription, { color: theme.textSecondary }]}>
-            Once you delete your account, there is no going back. Please be certain.
-          </Text>
-          <TouchableOpacity 
-            style={[styles.dangerButton, { backgroundColor: theme.danger }]}
+          <TouchableOpacity
+            style={[styles.actionButton, { backgroundColor: theme.danger }]}
             onPress={handleDeleteAccount}
           >
             <MaterialCommunityIcons name="delete-forever" size={20} color="#fff" />
-            <Text style={styles.dangerButtonText}>Delete Account</Text>
+            <Text style={styles.actionText}>Delete Account</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      <View style={{ height: 40 }} />
-    </ScrollView>
+        <View style={{ height: 40 }} />
+      </ScrollView>
+
+      {/* Password Modal */}
+      {showPasswordModal && (
+        <View style={styles.overlay}>
+          <View
+            style={[
+              styles.modal,
+              { backgroundColor: theme.cardBackground },
+            ]}
+          >
+            <Text style={[styles.modalTitle, { color: theme.text }]}>
+              Change Password
+            </Text>
+
+            <TextInput
+              style={[
+                styles.input,
+                { backgroundColor: theme.background, color: theme.text },
+              ]}
+              placeholder="Current password"
+              placeholderTextColor={theme.textSecondary}
+              secureTextEntry
+              value={oldPassword}
+              onChangeText={setOldPassword}
+            />
+
+            <TextInput
+              style={[
+                styles.input,
+                { backgroundColor: theme.background, color: theme.text },
+              ]}
+              placeholder="New password"
+              placeholderTextColor={theme.textSecondary}
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity onPress={() => setShowPasswordModal(false)}>
+                <Text style={{ color: theme.textSecondary }}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handlePasswordSave}>
+                <Text style={{ color: theme.primary, fontWeight: '600' }}>
+                  Save
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  header: {
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 32,
-  },
-  avatarContainer: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    alignItems: 'center',
+  container: { flex: 1 },
+  header: { alignItems: 'center', marginVertical: 24 },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     justifyContent: 'center',
-    marginBottom: 16,
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-  },
-  sectionLabel: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginTop: 24,
+    alignItems: 'center',
     marginBottom: 12,
-    marginLeft: 4,
   },
+  title: { fontSize: 20, fontWeight: '700' },
+  subtitle: { fontSize: 14, marginTop: 4 },
+  sectionLabel: { marginLeft: 20, marginTop: 24, fontWeight: '600' },
   section: {
+    margin: 16,
+    padding: 16,
     borderRadius: 16,
-    padding: 20,
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 4,
-  },
-  inputContainer: {
-    marginBottom: 20,
-  },
-  inputLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
   },
   input: {
+    borderWidth: 1,
     borderRadius: 12,
     padding: 14,
-    fontSize: 16,
-    borderWidth: 1,
+    marginBottom: 12,
   },
   primaryButton: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 14,
     borderRadius: 12,
-    marginTop: 8,
+    gap: 8,
   },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  settingLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  settingTextContainer: {
-    marginLeft: 12,
-    flex: 1,
-  },
-  settingTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  settingSubtitle: {
-    fontSize: 13,
-    marginTop: 2,
-  },
+  primaryButtonText: { color: '#fff', fontWeight: '600' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  rowText: { fontSize: 16 },
   actionButton: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 14,
     borderRadius: 12,
-    marginBottom: 20,
+    marginBottom: 12,
+    gap: 8,
   },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  dangerZone: {
-    borderWidth: 2,
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-  },
-  dangerHeader: {
-    flexDirection: 'row',
+  actionText: { color: '#fff', fontWeight: '600' },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  dangerTitle: {
-    fontSize: 16,
+  modal: {
+    width: '80%',
+    padding: 20,
+    borderRadius: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
     fontWeight: '700',
-    marginLeft: 8,
-  },
-  dangerDescription: {
-    fontSize: 13,
-    lineHeight: 18,
     marginBottom: 16,
   },
-  dangerButton: {
+  modalActions: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 12,
-    borderRadius: 10,
-  },
-  dangerButtonText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '600',
-    marginLeft: 8,
+    justifyContent: 'flex-end',
+    gap: 16,
   },
 });

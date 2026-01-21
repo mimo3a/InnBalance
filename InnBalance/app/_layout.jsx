@@ -17,6 +17,7 @@ import 'react-native-reanimated';
 
 import { ThemeProvider } from '@/src/contexts/ThemeContext';
 import { MapPickerProvider } from '@/src/contexts/MapPickerContext';
+import { UserProvider } from '@/src/contexts/UserContext';
 
 // Configure the anchor for navigation
 export const unstable_settings = {
@@ -30,25 +31,23 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <ThemeProvider>
-      <MapPickerProvider>
-      {/* Stack navigator for screen transitions */}
-      <Stack>
-          {/* Main tab navigation - hidden header */}
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          
-          {/* Breathing exercise screen */}
-          <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
-          
-          {/* List of all places */}
-          <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
-          
-          {/* Add new place screen */}
-          <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
-        </Stack>
-        
-        {/* Status bar with automatic styling */}
-        <StatusBar style="auto" />
-      </MapPickerProvider>
+      <UserProvider>
+        <MapPickerProvider>
+          {/* Stack navigator for screen transitions */}
+          <Stack>
+            {/* Main tab navigation - hidden header */}
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            {/* Breathing exercise screen */}
+            <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
+            {/* List of all places */}
+            <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
+            {/* Add new place screen */}
+            <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
+          </Stack>
+          {/* Status bar with automatic styling */}
+          <StatusBar style="auto" />
+        </MapPickerProvider>
+      </UserProvider>
     </ThemeProvider>
   );
 }
