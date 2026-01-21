@@ -17,7 +17,7 @@ import 'react-native-reanimated';
 
 import { ThemeProvider } from '@/src/contexts/ThemeContext';
 import { MapPickerProvider } from '@/src/contexts/MapPickerContext';
-import { UserProvider } from '@/src/contexts/UserContext';
+import { UserProvider, useUser } from '@/src/contexts/UserContext';
 
 // Configure the anchor for navigation
 export const unstable_settings = {
@@ -28,29 +28,68 @@ export const unstable_settings = {
  * RootLayout Component
  * Main entry point for the application's navigation structure
  */
+import React, { useEffect } from 'react';
+import { useRouter } from 'expo-router';
+
+function AuthGate() {
+  const { user } = useUser();
+  const router = useRouter();
+  useEffect(() => {
+    if (!user?.name || !user?.password) {
+      router.replace('/signup');
+    }
+  }, [user, router]);
+  if (!user?.name || !user?.password) return null;
+  return (
+    <>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
+        <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
+        <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
+      </Stack>
+      <StatusBar style="auto" />
+    </>
+  );
+}
+
 export default function RootLayout() {
-  const AuthGate = require('@/src/components/AuthGate.jsx').default;
   return (
     <ThemeProvider>
       <UserProvider>
         <MapPickerProvider>
-          <AuthGate>
-            {/* Stack navigator for screen transitions */}
-            <Stack>
-              {/* Main tab navigation - hidden header */}
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              {/* Breathing exercise screen */}
-              <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
-              {/* List of all places */}
-              <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
-              {/* Add new place screen */}
-              <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
-            </Stack>
-            {/* Status bar with automatic styling */}
-            <StatusBar style="auto" />
-          </AuthGate>
+          <RootNavigator />
         </MapPickerProvider>
       </UserProvider>
     </ThemeProvider>
   );
 }
+
+function RootNavigator() {
+  const { user } = useUser();
+
+  const isAuthenticated = user?.name && user?.password;
+
+  return (
+    <>
+      <Stack>
+        {!isAuthenticated ? (
+          <Stack.Screen
+            name="signup"
+            options={{ headerShown: false }}
+          />
+        ) : (
+          <>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="breathing" options={{ title: 'Breathing Exercise' }} />
+            <Stack.Screen name="places-list" options={{ title: 'All Places' }} />
+            <Stack.Screen name="add-place" options={{ title: 'Add New Place' }} />
+          </>
+        )}
+      </Stack>
+
+      <StatusBar style="auto" />
+    </>
+  );
+}
+

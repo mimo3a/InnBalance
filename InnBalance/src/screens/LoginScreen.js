@@ -171,14 +171,7 @@ export default function LoginScreen() {
           </View>
         </View>
 
-        {/* Back to Welcome */}
-        {/* <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
-          <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity> */}
+        {/* No back navigation on LoginScreen */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
