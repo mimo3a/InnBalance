@@ -114,7 +114,7 @@ export default function HomeScreen() {
                             }}
                         >
                             <ThemedText style={styles.nextButtonText}>
-                                Weiter →
+                                Next →
                             </ThemedText>
                         </TouchableOpacity>
                     </View>
