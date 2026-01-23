@@ -9,6 +9,7 @@
  */
 
 import React, { useState } from 'react';
+import { useUser } from '@/src/contexts/UserContext';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -16,61 +17,44 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function LoginScreen() {
+    const { user, setUser } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
 
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     // Validation
-    if (!email.trim() || !password.trim()) {
-      Alert.alert('Error', 'Please enter both email and password');
-      return;
-    }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
+    if (!name.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter both name and password');
       return;
     }
 
     setLoading(true);
+    // Имитация задержки
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setLoading(false);
+    // Проверка совпадения с сохранёнными данными
+    if (name !== user.name || password !== user.password) {
+      Alert.alert('Error', 'Invalid name or password');
+      return;
+    }
+    setUser({ name, password });
+    // Mock success - save auth token
+    await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
+    Alert.alert('Success', 'Login successful!', [
+      {
+        text: 'OK',
+        onPress: () => router.replace('/(tabs)')
+      }
+    ]);
 
-    // Simulate API call - replace with actual authentication
-    setTimeout(async () => {
-      setLoading(false);
-      // Mock success - save auth token
-      await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
-      Alert.alert('Success', 'Login successful!', [
-        {
-          text: 'OK',
-          onPress: () => router.replace('/(tabs)')
-        }
-      ]);
-    }, 1500);
-
-    // TODO: Implement actual authentication
-    // try {
-    //   const response = await authAPI.login(email, password);
-    //   await AsyncStorage.setItem('authToken', response.token);
-    //   router.replace('/(tabs)');
-    // } catch (error) {
-    //   Alert.alert('Error', error.message);
-    // } finally {
-    //   setLoading(false);
-    // }
+    
   };
 
-  const handleForgotPassword = () => {
-    Alert.alert(
-      'Reset Password',
-      'Password reset functionality will be implemented with backend integration'
-    );
-  };
 
   return (
     <KeyboardAvoidingView
@@ -95,20 +79,18 @@ export default function LoginScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-          {/* Email Input */}
+          {/* Name Input */}
           <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>Email</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
             <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="email-outline" size={20} color={theme.textSecondary} />
+              <MaterialCommunityIcons name="account-outline" size={20} color={theme.textSecondary} />
               <TextInput
                 style={[styles.input, { color: theme.text }]}
-                placeholder="your@email.com"
+                placeholder="John Doe"
                 placeholderTextColor={theme.textSecondary}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
+                value={name}
+                onChangeText={setName}
+                autoCapitalize="words"
               />
             </View>
           </View>
@@ -138,12 +120,7 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          {/* Forgot Password */}
-          <TouchableOpacity style={styles.forgotButton} onPress={handleForgotPassword}>
-            <Text style={[styles.forgotText, { color: theme.primary }]}>
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
+          
 
           {/* Login Button */}
           <TouchableOpacity
@@ -174,14 +151,7 @@ export default function LoginScreen() {
           </View>
         </View>
 
-        {/* Back to Welcome */}
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
-          <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity>
+        {/* No back navigation on LoginScreen */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

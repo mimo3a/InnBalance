@@ -5,11 +5,13 @@ import { Ionicons } from '@expo/vector-icons';
 import PlaceCard from '@/src/components/PlaceCard';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 
 
 export default function PlacesListScreen() {
     const router = useRouter();
-    const { places, loading } = usePlaces();
+    const { location } = useCurrentLocation();
+    const { places, loading } = usePlaces(location);
     const { theme } = useTheme();
 
     if (loading) {

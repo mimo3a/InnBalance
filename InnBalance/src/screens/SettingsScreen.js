@@ -1,14 +1,5 @@
 /**
  * SettingsScreen Component
- * 
- * Comprehensive settings interface with multiple sections:
- * - App preferences (language, theme, default exercise)
- * - Account management
- * - Data management (places, statistics)
- * - Privacy & permissions (location services)
- * - Help & support (about, tutorial)
- * 
- * All destructive actions require confirmation before execution.
  */
 
 import React, { useState } from 'react';
@@ -17,32 +8,31 @@ import { ThemedView } from '@/src/components/themed-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePlaces } from '@/src/hooks/usePlaces';
+import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 import { clearSessions } from '@/src/services/statisticsService';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
+import { useLocation } from '@/src/contexts/LocationContext';
 
-/**
- * SettingsScreen Component
- * Main settings interface for app configuration
- */
+
 export default function SettingsScreen() {
-  // Hook for managing user places
-  const { resetUserPlaces } = usePlaces();
+  // Innsbruck coordinates
+  const innsbruckLocation = { latitude: 47.2692, longitude: 11.4041 };
+
+  // Toggle: true = use real location, false = use Innsbruck
+  const [useTestLocation, setUseTestLocation] = useState(false);
+  const { location } = useCurrentLocation(useTestLocation);
+  const { resetUserPlaces } = usePlaces(location);
   const { theme, isDark, toggleTheme } = useTheme();
   const router = useRouter();
-  
-  // State for toggles
   const [locationEnabled, setLocationEnabled] = useState(true);
+  const { isTestMode, setTestMode } = useLocation();
 
-  /**
-   * Handle deletion of user-added places
-   * Shows confirmation dialog before proceeding
-   * Default places are preserved
-   */
+  /** RESET PLACES **/
   const handleResetOrte = () => {
     Alert.alert(
       'Delete Custom Places',
-      'Are you sure you want to delete all places you added? Default places will remain.',
+      'Are you sure you want to delete all places you added?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -50,21 +40,18 @@ export default function SettingsScreen() {
           style: 'destructive',
           onPress: async () => {
             await resetUserPlaces();
-            Alert.alert('Done', 'Custom places have been deleted');
+            Alert.alert('Done', 'Custom places deleted');
           },
         },
       ]
     );
   };
 
-  /**
-   * Handle deletion of session statistics
-   * Shows confirmation dialog before clearing all session data
-   */
+  /** RESET STATISTICS **/
   const handleResetStatistics = () => {
     Alert.alert(
       'Delete Statistics',
-      'Are you sure you want to delete all your session statistics?',
+      'Are you sure?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -72,61 +59,33 @@ export default function SettingsScreen() {
           style: 'destructive',
           onPress: async () => {
             await clearSessions();
-            Alert.alert('Done', 'Statistics have been deleted');
+            Alert.alert('Done', 'Statistics deleted');
           },
         },
       ]
     );
-  }
-
-  const handleLanguageSelect = () => {
-    Alert.alert('Language', 'Language selection feature coming soon!');
   };
 
-  const handleAccount = () => {
-    router.push('/account');
-  };
+  /** NAVIGATION **/
+  const handleAccount = () => router.push('/account');
+  const handleAbout = () => router.push('/about');
+  const handleTutorial = () => router.push('/help');
 
-  const handleAbout = () => {
-    router.push('/about');
-  };
-
-  const handleTutorial = () => {
-    router.push('/help');
-  };
-
+  /** RESET ALL **/
   const handleResetAll = () => {
     Alert.alert(
-      'Reset to Defaults',
-      'This will reset all settings, delete custom places and statistics. Are you sure?',
+      'Reset All',
+      'Reset everything?',
       [
         { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Reset All',
+          text: 'Reset',
           style: 'destructive',
           onPress: async () => {
             await resetUserPlaces();
             await clearSessions();
             setLocationEnabled(true);
-            Alert.alert('Done', 'All settings have been reset to defaults');
-          },
-        },
-      ]
-    );
-  };
-
-  const handleClearAuth = () => {
-    Alert.alert(
-      'Clear Authentication',
-      'This will log you out and return to the login screen. For testing only.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Clear',
-          style: 'destructive',
-          onPress: async () => {
-            await AsyncStorage.removeItem('authToken');
-            router.replace('/login');
+            Alert.alert('Done', 'Everything reset');
           },
         },
       ]
@@ -134,7 +93,8 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}> 
+
       {/* HEADER */}
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.text }]}>Settings</Text>
@@ -143,21 +103,31 @@ export default function SettingsScreen() {
         </Text>
       </View>
 
-      {/* APP PREFERENCES */}
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>App Preferences</Text>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleLanguageSelect}>
+      {/* TEST LOCATION TOGGLE */}
+      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
+        <View style={styles.settingRow}>
           <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="translate" size={24} color={theme.primary} />
+            <MaterialCommunityIcons name="map-marker-question" size={24} color={theme.primary} />
             <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Language</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>English</Text>
+              <Text style={[styles.settingTitle, { color: theme.text }]}>Test Innsbruck Location</Text>
+              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Toggle to use Innsbruck as your location for testing</Text>
+              <Text style={{ color: theme.text }}>
+                Lat: {location?.latitude?.toFixed(4)} | Lng: {location?.longitude?.toFixed(4)}
+              </Text>
             </View>
           </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-        </TouchableOpacity>
+          <Switch
+  value={isTestMode}
+  onValueChange={setTestMode}
+/>
+
+
+
+        </View>
       </ThemedView>
+
+      {/* DARK MODE */}
+      <Text style={[styles.categoryTitle, { color: theme.text }]}>App Preferences</Text>
 
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <View style={styles.settingRow}>
@@ -177,19 +147,6 @@ export default function SettingsScreen() {
         </View>
       </ThemedView>
 
-      {/* <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleDefaultExercise}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="lungs" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Default Exercise</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Stress relief</Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-        </TouchableOpacity>
-      </ThemedView> */}
-
       {/* ACCOUNT */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>Account</Text>
 
@@ -199,105 +156,9 @@ export default function SettingsScreen() {
             <MaterialCommunityIcons name="account-circle" size={24} color={theme.primary} />
             <View style={styles.settingTextContainer}>
               <Text style={[styles.settingTitle, { color: theme.text }]}>Account Settings</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Profile and preferences</Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-        </TouchableOpacity>
-      </ThemedView>
-
-      {/* PRIVACY & PERMISSIONS */}
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>Privacy & Permissions</Text>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.settingRow}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="map-marker" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Location Services</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Find nearby places</Text>
-            </View>
-          </View>
-          <Switch
-            value={locationEnabled}
-            onValueChange={setLocationEnabled}
-            trackColor={{ false: theme.border, true: theme.primaryLight }}
-            thumbColor={locationEnabled ? theme.primary : '#f4f3f4'}
-          />
-        </View>
-      </ThemedView>
-
-      {/* DATA MANAGEMENT */}
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>Data Management</Text>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.settingHeader}>
-          <MaterialCommunityIcons name="map-marker-multiple" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>My Places</Text>
-        </View>
-        <Text style={[styles.sectionDescription, { color: theme.textSecondary }]}>
-          Delete all places you have added. Default places will remain intact.
-        </Text>
-        <TouchableOpacity style={[styles.deleteButton, { backgroundColor: theme.danger }]} onPress={handleResetOrte}>
-          <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Delete My Places</Text>
-        </TouchableOpacity>
-      </ThemedView>
-      
-      {/* Statistics Management Section */}
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.settingHeader}>
-          <MaterialCommunityIcons name="chart-line" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>My Statistics</Text>
-        </View>
-        <Text style={[styles.sectionDescription, { color: theme.textSecondary }]}>
-          Clear all your session statistics and breathing history.
-        </Text>
-        <TouchableOpacity style={[styles.deleteButton, { backgroundColor: theme.danger }]} onPress={handleResetStatistics}>
-          <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Delete My Statistics</Text>
-        </TouchableOpacity>
-      </ThemedView>
-
-      {/* HELP & SUPPORT
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>Help & Support</Text>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleAbout}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>About App</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Version and info</Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-        </TouchableOpacity>
-      </ThemedView> */}
-
-      {/* HELP & SUPPORT */}
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>Help & Support</Text>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleAbout}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>About App</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Version and info</Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-        </TouchableOpacity>
-      </ThemedView>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleTutorial}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="help-circle" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Help & Tutorial</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Learn how to use the app</Text>
+              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
+                Profile and preferences
+              </Text>
             </View>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
@@ -309,27 +170,18 @@ export default function SettingsScreen() {
 
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
         <View style={styles.settingHeader}>
-          <MaterialCommunityIcons name="logout" size={24} color={theme.danger} />
-          <Text style={[styles.sectionTitle, { color: theme.danger }]}>Clear Authentication (Testing)</Text>
-        </View>
-        <Text style={[styles.sectionDescription, { color: theme.textSecondary }]}>
-          Clear auth token and return to login screen. For testing purposes only.
-        </Text>
-        <TouchableOpacity style={[styles.deleteButton, { backgroundColor: theme.dangerDark }]} onPress={handleClearAuth}>
-          <MaterialCommunityIcons name="logout" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Clear Auth Token</Text>
-        </TouchableOpacity>
-      </ThemedView>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.settingHeader}>
           <MaterialCommunityIcons name="restore" size={24} color={theme.danger} />
           <Text style={[styles.sectionTitle, { color: theme.danger }]}>Reset to Defaults</Text>
         </View>
+
         <Text style={[styles.sectionDescription, { color: theme.textSecondary }]}>
-          Reset all settings to default values and clear all custom data.
+          This will clear all your custom data and reset app to default.
         </Text>
-        <TouchableOpacity style={[styles.deleteButton, { backgroundColor: theme.dangerDark }]} onPress={handleResetAll}>
+
+        <TouchableOpacity
+          style={[styles.deleteButton, { backgroundColor: theme.dangerDark }]}
+          onPress={handleResetAll}
+        >
           <MaterialCommunityIcons name="restore" size={20} color="#fff" />
           <Text style={styles.deleteButtonText}>Reset All Settings</Text>
         </TouchableOpacity>
@@ -436,5 +288,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     marginLeft: 8,
-  }, 
+  },
 });
+
