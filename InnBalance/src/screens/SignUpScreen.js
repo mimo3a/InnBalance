@@ -10,17 +10,19 @@
  */
 
 import React, { useState } from 'react';
+import { useUser } from '@/src/contexts/UserContext';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function SignUpScreen() {
+    const { setUser } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
 
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,15 +32,8 @@ export default function SignUpScreen() {
 
   const handleSignUp = async () => {
     // Validation
-    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+    if (!name.trim() || !password.trim() || !confirmPassword.trim()) {
       Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert('Error', 'Please enter a valid email address');
       return;
     }
 
@@ -52,7 +47,7 @@ export default function SignUpScreen() {
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
-    }
+    }a
 
     // Terms acceptance validation
     if (!acceptTerms) {
@@ -62,21 +57,29 @@ export default function SignUpScreen() {
 
     setLoading(true);
 
-    // Simulate API call - replace with actual registration
-    setTimeout(() => {
+    try {
+      // Save user credentials
+      await AsyncStorage.setItem('savedUsername', name);
+      await AsyncStorage.setItem('savedPassword', password);
+      // Create auth token (user is now registered and logged in)
+      await AsyncStorage.setItem('authToken', 'token-' + Date.now());
+      
       setLoading(false);
-      // Mock success
+      setUser({ name, password });
       Alert.alert(
         'Success',
-        'Account created successfully! Please log in.',
+        'Account created successfully!',
         [
           {
             text: 'OK',
-            onPress: () => router.replace('/login')
+            onPress: () => router.replace('/(tabs)')
           }
         ]
       );
-    }, 1500);
+    } catch (error) {
+      setLoading(false);
+      Alert.alert('Error', 'Failed to create account');
+    }
 
     // TODO: Implement actual registration
     // try {
@@ -88,7 +91,7 @@ export default function SignUpScreen() {
     //   Alert.alert('Error', error.message);
     // } finally {
     //   setLoading(false);
-    // }
+    // }a
   };
 
   return (
@@ -126,24 +129,6 @@ export default function SignUpScreen() {
                 value={name}
                 onChangeText={setName}
                 autoCapitalize="words"
-              />
-            </View>
-          </View>
-
-          {/* Email Input */}
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>Email</Text>
-            <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="email-outline" size={20} color={theme.textSecondary} />
-              <TextInput
-                style={[styles.input, { color: theme.text }]}
-                placeholder="your@email.com"
-                placeholderTextColor={theme.textSecondary}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
               />
             </View>
           </View>
@@ -208,9 +193,12 @@ export default function SignUpScreen() {
               size={24}
               color={acceptTerms ? theme.primary : theme.textSecondary}
             />
-            <Text style={[styles.checkboxText, { color: theme.text }]}>
+            <Text style={[styles.checkboxText, { color: theme.text }]}> 
               I agree to the{' '}
-              <Text style={{ color: theme.primary, fontWeight: '600' }}>
+              <Text
+                style={{ color: theme.primary, fontWeight: '600', textDecorationLine: 'underline' }}
+                onPress={() => router.push('/terms')}
+              >
                 Terms and Conditions
               </Text>
             </Text>
@@ -245,14 +233,14 @@ export default function SignUpScreen() {
           </View>
         </View>
 
-        {/* Back to Welcome */}
+        {/* Back to Welcome
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
           <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

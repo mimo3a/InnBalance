@@ -8,6 +8,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useMapPicker } from '@/src/contexts/MapPickerContext';
+//import { Picker } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
@@ -20,15 +22,22 @@ export default function AddPlaceScreen() {
   const [formData, setFormData] = useState({
     name: '',
     info: '',
-    category: 'Other',
+    category: '',
     lat: 47.2692,
     lng: 11.4041,
     rating: 0,
     distance: 0,
-    acces: 'Public',
+    access: 'Public',
     image: null,
   });
 
+  {/*Used for dropdown menue*/}
+  const [open, setOpen] = useState(false);
+        const [items, setItems] = useState([
+          { label: 'Park', value: 'Park' },
+          { label: 'Museum', value: 'Museum' },
+          { label: 'Café', value: 'Cafe' },
+        ]);
 
   // Update coordinates when returning from map picker
   useEffect(() => {
@@ -42,51 +51,72 @@ export default function AddPlaceScreen() {
     }
   }, [selectedCoordinates]);
 
-  
+  {/*Function to pick image using camera */}
   const pickImageFromCamera = async () => {
-  const permission = await ImagePicker.requestCameraPermissionsAsync();
-  if (!permission.granted) {
-    Alert.alert("Permission required", "Camera access is needed.");
-    return;
-  }
-
-  const result = await ImagePicker.launchCameraAsync({
-    allowsEditing: true,
-    quality: 1,
-  });
-
-  if (!result.canceled) {
-    const uri = result.assets[0].uri;
-
-    const filename = `place_${Date.now()}.jpg`;
-    const newPath = FileSystem.documentDirectory + filename;
-
+    {/*Checking status of permissions*/}
+    let result;
     try {
-      await FileSystem.copyAsync({
-        from: uri,
-        to: newPath,
-      });
-
-      setImage(newPath);
-      setFormData({ ...formData, image: newPath });
+      const permission = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert("Permission required", "Camera access is needed.");
+        return;
+      }
+      result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1,
+      });  
     } catch (error) {
-      console.error("Error copying image:", error);
-      Alert.alert("Error", "Could not save image.");
+      console.log('An error occured while trying to take a picture.', error);
+      return;
     }
-  }
-};
+    
+    
 
-  
-  const pickImageFromLibrary = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 0.8,
-    });
-git
     if (!result.canceled) {
       const uri = result.assets[0].uri;
-      
+
+      const filename = `place_${Date.now()}.jpg`;
+      const newPath = FileSystem.documentDirectory + filename;
+
+      try {
+        await FileSystem.copyAsync({
+          from: uri,
+          to: newPath,
+        });
+
+        setImage(newPath);
+        setFormData({ ...formData, image: newPath });
+      } catch (error) {
+        console.error("Error copying image:", error);
+        Alert.alert("Error", "Could not save image.");
+      }
+    }
+  };
+
+  {/*Function to pick image using local library */}
+  const pickImageFromLibrary = async () => {
+    {/*Checking status of permissions*/}
+    let result;
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert("Permission required", "Media Library access is needed.");
+        return;
+      }  
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        quality: 0.8,
+      });
+    } catch (error) {
+      console.log('An error occured while trying to access the Media Library.', error);
+      return;
+    }
+    
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      let hallo;
       try {
         // Save image to permanent storage (like default places)
         const filename = `place_${Date.now()}.jpg`;
@@ -102,17 +132,28 @@ git
         setFormData({ ...formData, image: newPath });
       } catch (error) {
         console.error('Error copying image:', error);
-        Alert.alert('Error', 'Could not save image.');
+        Alert.alert('Error', 'Could not copy image.');
         console.error('Error saving image:', error);
-        Alert.alert('Fehler', 'Bild konnte nicht gespeichert werden');
+        Alert.alert('Error', 'Could not save image.');
       }
     }
   };
 
-
+  //We need to check all of the possibilities. Checking, that every field is not default.
+  //...maybe using a switch case?
+  //#defensivesProgrammieren
   const handleSubmit = async () => {
-    if (!formData.name.trim()) {
+    if (!formData.name.trim()){
       Alert.alert('Error', 'Please enter a valid name for the place.');
+      return;
+    } else if (!formData.info.trim()){
+      Alert.alert('Error', 'Please select a valid description for the place.');
+      return;
+    } else if (!formData.category.trim()){
+      Alert.alert('Error', 'Please select a valid category for the place.');
+      return;
+    } else if (formData.image === null){
+      Alert.alert('Error', 'Please give your place an image.');
       return;
     }
 
@@ -122,7 +163,7 @@ git
         image: formData.image || require('../Images/Places/missingPicture.png'),
       });
 
-      Alert.alert('Erfolgreich', 'Ort wurde hinzugefügt', [
+      Alert.alert('Success!', 'Place has been added successfully', [
         { 
           text: 'OK', 
           onPress: () => {
@@ -164,11 +205,7 @@ git
         </ImageBackground>
       </View>
       
-      
-
-
-      {/* Add Place Button */}
-      
+      {/* Add Place Button */}      
       <ScrollView style={[styles.form, { backgroundColor: theme.background }]}>
         <Text style={[styles.label, { color: theme.text }]}>Name</Text>
         <TextInput
@@ -191,16 +228,31 @@ git
         />
 
         <Text style={[styles.label, { color: theme.text }]}>Category</Text>
-        <TextInput
-          style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+        
+        <DropDownPicker
+          open={open}
           value={formData.category}
-          onChangeText={(text) => setFormData({ ...formData, category: text })}
-          placeholder='Park, Museum, Café...'
-          placeholderTextColor={theme.textSecondary}
+          items={items}
+          setOpen={setOpen}
+          setItems={setItems}
+          setValue={(callback) =>
+            setFormData({ ...formData, category: callback(formData.category) })
+          }
+          listMode='SCROLLVIEW' //Without this, we receive an error, because it is used within the ScrollView.
+          style={{
+            backgroundColor: theme.cardBackground,
+            borderColor: theme.border,
+          }}
+          textStyle={{
+            color: theme.text,
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: theme.cardBackground,
+            borderColor: theme.border,
+          }}
         />
-
         <View style={styles.coordinatesSection}>
-          <Text style={[styles.label, { color: theme.text }]}>Koordinaten</Text>
+          <Text style={[styles.label, { color: theme.text }]}>Location</Text>
           
           <TouchableOpacity 
             style={[styles.mapButton, { backgroundColor: theme.primary }]}
@@ -210,12 +262,12 @@ git
             })}
           >
             <Ionicons name="map" size={20} color="#fff" />
-            <Text style={styles.mapButtonText}>Auf Karte auswählen</Text>
+            <Text style={styles.mapButtonText}>Select on Map</Text>
           </TouchableOpacity>
 
           <View style={styles.row}>
             <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Breitengrad</Text>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
               <TextInput
                 style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
                 value={String(formData.lat.toFixed(6))}
@@ -226,7 +278,7 @@ git
             </View>
 
             <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Längengrad</Text>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
               <TextInput
                 style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
                 value={String(formData.lng.toFixed(6))}

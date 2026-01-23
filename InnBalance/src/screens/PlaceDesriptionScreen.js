@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator, Linking, Platform, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { usePlaces } from '@/src/hooks/usePlaces';
+import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 import { Ionicons } from '@expo/vector-icons';
+
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function PlaceDescriptionScreen() {
+  // ...весь существующий код компонента (до styles)
+
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const { places, loading, updatePlace } = usePlaces();
+  const { location } = useCurrentLocation();
+  const { places, loading, updatePlace } = usePlaces(location);
   const place = places.find(p => p.id === Number(id));
   const { theme } = useTheme();
 
@@ -65,18 +70,18 @@ export default function PlaceDescriptionScreen() {
 
   if (!place) {
     return (
-      <View style={[styles.center, { backgroundColor: theme.background }]}>
+      <View style={[styles.center, { backgroundColor: theme.background }]}> 
         <Text style={{ color: theme.text }}>Ort nicht gefunden</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={[styles.card, { backgroundColor: theme.cardBackground }]}>
+    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+      <ScrollView contentContainerStyle={[styles.card, { backgroundColor: theme.cardBackground }]}> 
         
         
-        <View style={styles.imageWrapper}>
+        <View style={styles.imageWrapper}> 
           <Image source={place.image} style={styles.image} />
 
           
@@ -89,17 +94,17 @@ export default function PlaceDescriptionScreen() {
         </View>
 
        
-        <View style={styles.titleRow}>
+        <View style={styles.titleRow}> 
           <Text style={[styles.title, { color: theme.text }]}>{place.name}</Text>
 
-          <View style={[styles.distancePill, { backgroundColor: theme.primary + '20' }]}>
+          <View style={[styles.distancePill, { backgroundColor: theme.primary + '20' }]}> 
             <Ionicons name="navigate-outline" size={14} color={theme.primary} />
             <Text style={[styles.distanceText, { color: theme.text }]}>{place.distance} km</Text>
           </View>
         </View>
 
         
-        <View style={styles.ratingRow}>
+        <View style={styles.ratingRow}> 
           <Text style={[styles.star, { color: theme.text }]}>⭐ {userRating.toFixed(1)}</Text>
           <Text style={[styles.category, { color: theme.textSecondary }]}>· {place.category}</Text>
         </View>
@@ -109,7 +114,7 @@ export default function PlaceDescriptionScreen() {
 
         
         <Text style={[styles.rateTitle, { color: theme.text }]}>Bewerte diesen Ort</Text>
-        <View style={styles.starsRow}>
+        <View style={styles.starsRow}> 
           {Array.from({ length: 5 }).map((_, idx) => {
             const starValue = idx + 1;
             const isFilled = starValue <= Math.round(userRating);
@@ -138,6 +143,7 @@ export default function PlaceDescriptionScreen() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   screen: {

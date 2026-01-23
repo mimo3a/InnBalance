@@ -49,6 +49,6 @@ export default function Index() {
   }
 
   // Redirect based on auth status
-  return <Redirect href={isAuthenticated ? "/(tabs)" : "/login"} />;
+  return <Redirect href={isAuthenticated ? "/(tabs)" : "/signup"} />;
 }
 
