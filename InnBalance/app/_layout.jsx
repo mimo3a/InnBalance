@@ -27,8 +27,14 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { user } = useUser();
-  const isAuthenticated = user?.name && user?.password;
+  const { user, loading } = useUser();
+
+  // ⏳ Ждём, пока загрузится пользователь
+  if (loading) {
+    return null; // или SplashScreen
+  }
+
+  const isAuthenticated = !!user;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -36,14 +42,12 @@ function RootNavigator() {
         <Stack.Screen name="signup" />
       ) : (
         <>
+          <Stack.Screen name="(tabs)" />
           <Stack.Screen name="breathing" />
-          
-          
-
-          
         </>
       )}
     </Stack>
   );
 }
+
 

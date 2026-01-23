@@ -5,9 +5,8 @@
  */
 
 import React, { useState } from 'react';
-import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
-
-import MapView, { Marker, Callout } from 'react-native-maps';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 import { useRouter } from 'expo-router';
 
 import { useLocation } from '@/src/contexts/LocationContext';
@@ -17,12 +16,18 @@ import PlaceBottomSheet from '@/src/components/PlaceBottomSheet';
 export default function PlacesMap() {
   const router = useRouter();
 
-  // New: state for the "google maps like" popup
+  // ✅ get location from context
+  const { location, loading: locationLoading } = useLocation();
+
+  // ✅ get places based on location
+  const { places, loading: placesLoading } = usePlaces(location);
+
+  // Bottom sheet state
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [sheetVisible, setSheetVisible] = useState(false);
 
-  // Show loading indicator while fetching places
-  if (loading) {
+  // Combined loading state
+  if (locationLoading || placesLoading || !location) {
     return (
       <View style={[styles.container, styles.center]}>
         <ActivityIndicator size="large" color="#1d16f4" />
@@ -30,7 +35,6 @@ export default function PlacesMap() {
     );
   }
 
-  // New: open/close helpers (kept very simple)
   const openSheet = (place) => {
     setSelectedPlace(place);
     setSheetVisible(true);
@@ -70,23 +74,11 @@ export default function PlacesMap() {
               longitude: place.lng,
             }}
             title={place.name}
-            description={`details...`}
-            // New: open bottom sheet on marker tap
             onPress={() => openSheet(place)}
-            // Old behaviour kept (not used right now, but not deleted)
-            onCalloutPress={() =>
-              router.push({
-                pathname: '/description',
-                params: { id: place.id },
-              })
-            }
-          >
-            {/* Keeping this empty block like in your original */}
-          </Marker>
+          />
         ))}
       </MapView>
 
-      {/* New: Google Maps-like bottom sheet */}
       <PlaceBottomSheet
         place={selectedPlace}
         visible={sheetVisible}
