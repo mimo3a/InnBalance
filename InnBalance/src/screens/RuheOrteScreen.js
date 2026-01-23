@@ -13,11 +13,14 @@
  */
 
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import SwitchTabs from '../components/SwitchTab';
 import PlacesListScreen from './PlacesListScreen';
 import PlacesMap from '../components/PlacesMap';
 import { useTheme } from '@/src/contexts/ThemeContext';
+
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 /**
  * RuheOrteScreen Component
@@ -28,6 +31,7 @@ export default function RuheOrteScreen() {
   const [activeTab, setActiveTab] = useState('map');
   const { theme } = useTheme();
 
+  const router = useRouter();
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       
@@ -39,6 +43,14 @@ export default function RuheOrteScreen() {
       {/* Content area - conditionally render map or list */}
       <View style={styles.content}>
         {activeTab === 'map' ? <PlacesMap /> : <PlacesListScreen />}
+        {/* Add Place Button */}
+        <View style={styles.fillView}/>{/**making the plus-symbol white, instead of transparent */}
+        <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => router.push('/add-place')}
+        >
+            <Ionicons name="add-circle" size={70} color={theme.primary}  />
+        </TouchableOpacity>
       </View>
 
     </View>
@@ -61,4 +73,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     flex: 1,
   },
+  addButton: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+  },
+  fillView:{
+    position:'absolute',
+    width:30,
+    height:30,
+    bottom:30,
+    right:30,
+    backgroundColor:'#fff'
+    },
 });
