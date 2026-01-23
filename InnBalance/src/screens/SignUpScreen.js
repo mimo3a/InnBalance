@@ -233,14 +233,14 @@ export default function SignUpScreen() {
           </View>
         </View>
 
-        {/* Back to Welcome */}
+        {/* Back to Welcome
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
           <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

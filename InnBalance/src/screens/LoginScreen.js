@@ -52,24 +52,9 @@ export default function LoginScreen() {
       }
     ]);
 
-    // TODO: Implement actual authentication
-    // try {
-    //   const response = await authAPI.login(email, password);
-    //   await AsyncStorage.setItem('authToken', response.token);
-    //   router.replace('/(tabs)');
-    // } catch (error) {
-    //   Alert.alert('Error', error.message);
-    // } finally {
-    //   setLoading(false);
-    // }
+    
   };
 
-  const handleForgotPassword = () => {
-    Alert.alert(
-      'Reset Password',
-      'Password reset functionality will be implemented with backend integration'
-    );
-  };
 
   return (
     <KeyboardAvoidingView
@@ -135,12 +120,7 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          {/* Forgot Password */}
-          <TouchableOpacity style={styles.forgotButton} onPress={handleForgotPassword}>
-            <Text style={[styles.forgotText, { color: theme.primary }]}>
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
+          
 
           {/* Login Button */}
           <TouchableOpacity
