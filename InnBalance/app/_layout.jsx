@@ -32,35 +32,19 @@ function RootNavigator() {
 
   return (
     <>
-      <Stack>
-        {!isAuthenticated ? (
-          <Stack.Screen
-            name="signup"
-            options={{ headerShown: false }}
-          />
-        ) : (
-          <>
-            <Stack.Screen
-              name="(tabs)"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="breathing"
-              options={{ title: 'Breathing Exercise' }}
-            />
-            <Stack.Screen
-              name="places-list"
-              options={{ title: 'All Places' }}
-            />
-            <Stack.Screen
-              name="add-place"
-              options={{ title: 'Add New Place' }}
-            />
-          </>
-        )}
-      </Stack>
+      <Stack screenOptions={{ headerShown: false }}>
+  {!isAuthenticated ? (
+    <Stack.Screen name="signup" />
+  ) : (
+    <>
+      {/* <Stack.Screen name="(tabs)" /> */}
+      <Stack.Screen name="breathing" />
+      <Stack.Screen name="places-list" />
+      <Stack.Screen name="add-place" />
+    </>
+  )}
+</Stack>
 
-      <StatusBar style="auto" />
     </>
   );
 }
