@@ -31,20 +31,19 @@ function RootNavigator() {
   const isAuthenticated = user?.name && user?.password;
 
   return (
-    <>
-      <Stack screenOptions={{ headerShown: false }}>
-  {!isAuthenticated ? (
-    <Stack.Screen name="signup" />
-  ) : (
-    <>
-      {/* <Stack.Screen name="(tabs)" /> */}
-      <Stack.Screen name="breathing" />
-      <Stack.Screen name="places-list" />
-      <Stack.Screen name="add-place" />
-    </>
-  )}
-</Stack>
+    <Stack screenOptions={{ headerShown: false }}>
+      {!isAuthenticated ? (
+        <Stack.Screen name="signup" />
+      ) : (
+        <>
+          <Stack.Screen name="breathing" />
+          
+          
 
-    </>
+          
+        </>
+      )}
+    </Stack>
   );
 }
+
