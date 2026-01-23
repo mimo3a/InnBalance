@@ -10,7 +10,7 @@ import { Stack } from 'expo-router';
 import { ThemeProvider } from '@/src/contexts/ThemeContext';
 import { UserProvider, useUser } from '@/src/contexts/UserContext';
 import { MapPickerProvider } from '@/src/contexts/MapPickerContext';
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'expo-status-bar'
 
 
 

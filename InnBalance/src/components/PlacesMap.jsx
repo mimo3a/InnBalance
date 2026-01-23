@@ -12,6 +12,7 @@
  */
 
 import React from 'react';
+import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 import {
   StyleSheet,
   View,
@@ -21,10 +22,12 @@ import {
 
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { useRouter } from 'expo-router';
+
 import { usePlaces } from '@/src/hooks/usePlaces';
 
 export default function PlacesMap() {
-  const { places, loading } = usePlaces();
+  const { location, errorMsg } = useCurrentLocation();
+  const { places, loading } = usePlaces(location);
   const router = useRouter();
 
   // Show loading indicator while fetching places
@@ -38,17 +41,16 @@ export default function PlacesMap() {
 
   return (
     <View style={styles.container}>
-      {/* Map view centered on Innsbruck with initial zoom level */}
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 47.2692, // Innsbruck
-          longitude: 11.4041,
+          latitude: location?.latitude || 47.2692,
+          longitude: location?.longitude || 11.4041,
           latitudeDelta: 0.06,
           longitudeDelta: 0.06,
         }}
+        showsUserLocation={!!location}
       >
-        {/* Render a marker for each saved place */}
         {places.map(place => (
           <Marker
             key={place.id}
@@ -57,19 +59,21 @@ export default function PlacesMap() {
               longitude: place.lng,
             }}
             title={place.name}
-            description={`details...`}         
-            // Navigate to place description when callout is pressed
+            description={`details...`}
             onCalloutPress={() =>
               router.push({
                 pathname: '/description',
                 params: { id: place.id },
               })
             }
-          >
-            
-          </Marker>
+          />
         ))}
       </MapView>
+      {errorMsg && (
+        <View style={styles.center}>
+          <Text style={{ color: 'red' }}>{errorMsg}</Text>
+        </View>
+      )}
     </View>
   );
 }
