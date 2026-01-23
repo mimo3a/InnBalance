@@ -12,15 +12,21 @@ import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 import { clearSessions } from '@/src/services/statisticsService';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
+import { useLocation } from '@/src/contexts/LocationContext';
+
 
 export default function SettingsScreen() {
+  // Innsbruck coordinates
+  const innsbruckLocation = { latitude: 47.2692, longitude: 11.4041 };
 
-  const { location } = useCurrentLocation();
+  // Toggle: true = use real location, false = use Innsbruck
+  const [useTestLocation, setUseTestLocation] = useState(false);
+  const { location } = useCurrentLocation(useTestLocation);
   const { resetUserPlaces } = usePlaces(location);
   const { theme, isDark, toggleTheme } = useTheme();
   const router = useRouter();
-
   const [locationEnabled, setLocationEnabled] = useState(true);
+  const { isTestMode, setTestMode } = useLocation();
 
   /** RESET PLACES **/
   const handleResetOrte = () => {
@@ -87,7 +93,7 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}> 
 
       {/* HEADER */}
       <View style={styles.header}>
@@ -96,6 +102,29 @@ export default function SettingsScreen() {
           Manage your app preferences
         </Text>
       </View>
+
+      {/* TEST LOCATION TOGGLE */}
+      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
+        <View style={styles.settingRow}>
+          <View style={styles.settingLeft}>
+            <MaterialCommunityIcons name="map-marker-question" size={24} color={theme.primary} />
+            <View style={styles.settingTextContainer}>
+              <Text style={[styles.settingTitle, { color: theme.text }]}>Test Innsbruck Location</Text>
+              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Toggle to use Innsbruck as your location for testing</Text>
+              <Text style={{ color: theme.text }}>
+                Lat: {location?.latitude?.toFixed(4)} | Lng: {location?.longitude?.toFixed(4)}
+              </Text>
+            </View>
+          </View>
+          <Switch
+  value={isTestMode}
+  onValueChange={setTestMode}
+/>
+
+
+
+        </View>
+      </ThemedView>
 
       {/* DARK MODE */}
       <Text style={[styles.categoryTitle, { color: theme.text }]}>App Preferences</Text>
@@ -162,4 +191,103 @@ export default function SettingsScreen() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f6f8f7',
+  },
+  header: {
+    marginBottom: 24,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#2f6f62',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  categoryTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2f6f62',
+    marginTop: 20,
+    marginBottom: 12,
+    marginLeft: 4,
+  },
+  settingBox: {
+    backgroundColor: '#dbeee9ff',
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  settingTextContainer: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2f6f62',
+  },
+  settingSubtitle: {
+    fontSize: 13,
+    color: '#666',
+    marginTop: 2,
+  },
+  settingHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 12,
+    color: '#2f6f62',
+  },
+  sectionDescription: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 14,
+    lineHeight: 18,
+  },
+  deleteButton: {
+    backgroundColor: '#d94c4c',
+    padding: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    elevation: 1,
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+});
 
