@@ -216,13 +216,13 @@ export default function StatisticScreen() {
             {/* Card 1 - Total Minutes (Light Green) */}
             <View style={[styles.statBoxLarge, { backgroundColor: theme.primaryLight }]}>
               <Text style={styles.statValueLight}>{totalDurationMinutes}</Text>
-              <Text style={styles.statLabelLight}>Minutes</Text>
+              <Text style={styles.statLabelLight}>Total Minutes</Text>
             </View>
             
             {/* Card 2 - Total Sessions (Dark Green) */}
             <View style={[styles.statBoxLarge, { backgroundColor: theme.primary }]}>
               <Text style={styles.statValueLight}>{totalSessions}</Text>
-              <Text style={styles.statLabelLight}>Sessions</Text>
+              <Text style={styles.statLabelLight}>Total Sessions</Text>
             </View>
           </View>
 
