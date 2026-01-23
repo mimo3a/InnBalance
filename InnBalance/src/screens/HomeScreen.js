@@ -142,9 +142,22 @@ export default function HomeScreen() {
                     Choose your mood and get a preliminary recommendation for breathing exercises or a walk in the fresh air, depending on the weather.
                 </ThemedText>
             </ThemedView>
+
+            {/* DEV: Open style test screen */}
+            <View style={{ marginTop: 16 }}>
+                <TouchableOpacity
+                    style={styles.nextButton}
+                    onPress={() => router.push("/sample-styles")}
+                >
+                    <ThemedText style={styles.nextButtonText}>
+                        Open Style Test →
+                    </ThemedText>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
