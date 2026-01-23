@@ -59,8 +59,8 @@ export default function StatisticScreen() {
    * Calculate summary statistics
    * - Total number of sessions (totalSessions)
    * - Total duration in minutes (totalDurationMinutes)
-   * - Average sessions per week (avgSessionsPerWeek)
-   * - Average minutes per week (avgMinutesPerWeek)
+   * - Average sessions per day (avgSessionsPerDay)
+   * - Average minutes per day (avgMinutesPerDay)
    */
   const totalSessions = sessions.length;
   const totalDurationSeconds = sessions.reduce((sum, session) => sum + (session.duration || 0), 0);
@@ -79,7 +79,8 @@ export default function StatisticScreen() {
   const avgMinutesPerDay = (totalDurationMinutes / diffInDays).toFixed(1);
   const avgSessionsPerDay = (totalSessions / diffInDays).toFixed(1);
 
-  /* ==== Weekly Summary ==== (old)
+  /* 
+  ==== Weekly Summary ==== (old)
   // Round to next full week
   const weeksSinceStart = Math.ceil(diffInDays / 7);
 
@@ -87,6 +88,7 @@ export default function StatisticScreen() {
   const avgMinutesPerWeek = Math.round(totalDurationMinutes / weeksSinceStart);
   const avgSessionsPerWeek = (totalSessions / weeksSinceStart).toFixed(1);
   */
+ 
   // State for chart view and Navigation
   const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
   const [offset, setOffset] = useState(0);
