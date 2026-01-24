@@ -15,11 +15,12 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 export default function LoginScreen() {
     const { user, setUser } = useUser();
   const router = useRouter();
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -57,9 +58,13 @@ export default function LoginScreen() {
 
 
   return (
+    <>
+    <StatusBar style ={!isDark ? "dark" : "light"}/>
+    
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      
     >
       <ScrollView
         style={[styles.container, { backgroundColor: theme.background }]}
@@ -154,6 +159,7 @@ export default function LoginScreen() {
         {/* No back navigation on LoginScreen */}
       </ScrollView>
     </KeyboardAvoidingView>
+    </>
   );
 }
 

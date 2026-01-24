@@ -10,11 +10,12 @@ import { useTheme } from '@/src/contexts/ThemeContext';
 import { useMapPicker } from '@/src/contexts/MapPickerContext';
 //import { Picker } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { StatusBar } from 'expo-status-bar';
 
 export default function AddPlaceScreen() {
   const router = useRouter();
   const { addPlace } = usePlaces();
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { selectedCoordinates, clearCoordinates } = useMapPicker();
 
   const [image, setImage] = useState(null); // Image from camera or gallery
@@ -22,7 +23,7 @@ export default function AddPlaceScreen() {
   const [formData, setFormData] = useState({
     name: '',
     info: '',
-    category: '',
+    category: '', 
     lat: 47.2692,
     lng: 11.4041,
     rating: 0,
@@ -139,9 +140,7 @@ export default function AddPlaceScreen() {
     }
   };
 
-  //We need to check all of the possibilities. Checking, that every field is not default.
-  //...maybe using a switch case?
-  //#defensivesProgrammieren
+  {/**Pflichtfelder */}
   const handleSubmit = async () => {
     if (!formData.name.trim()){
       Alert.alert('Error', 'Please enter a valid name for the place.');
@@ -181,120 +180,123 @@ export default function AddPlaceScreen() {
   const fallbackImage = require('../Images/Places/missingPicture.png');
 
   return (
-    
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.imageContainer}>
-        <ImageBackground
-          style={styles.image}
-          source={image ? { uri: image } : fallbackImage}
-        >
-          <LinearGradient
-            colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']}
-            style={styles.linearGradient}
-          />
-          {/*Buttons*/}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.iconButton} onPress={pickImageFromCamera}>
-              <Ionicons name="camera" size={40} color={theme.primary}  />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={pickImageFromLibrary}>
-              <Ionicons name="library" size={40} color={theme.primary}  />
-            </TouchableOpacity>
-            
-          </View>
-        </ImageBackground>
-      </View>
-      
-      {/* Add Place Button */}      
-      <ScrollView style={[styles.form, { backgroundColor: theme.background }]}>
-        <Text style={[styles.label, { color: theme.text }]}>Name</Text>
-        <TextInput
-          style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-          value={formData.name}
-          onChangeText={(text) => setFormData({ ...formData, name: text })}
-          placeholder="Name of the Place"
-          placeholderTextColor={theme.textSecondary}
-        />
-
-        <Text style={[styles.label, { color: theme.text }]}>Description</Text>
-        <TextInput
-          style={[styles.input, styles.textArea, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-          value={formData.info}
-          onChangeText={(text) => setFormData({ ...formData, info: text })}
-          placeholder='Description of the Place'
-          placeholderTextColor={theme.textSecondary}
-          multiline
-          numberOfLines={4}
-        />
-
-        <Text style={[styles.label, { color: theme.text }]}>Category</Text>
-        
-        <DropDownPicker
-          open={open}
-          value={formData.category}
-          items={items}
-          setOpen={setOpen}
-          setItems={setItems}
-          setValue={(callback) =>
-            setFormData({ ...formData, category: callback(formData.category) })
-          }
-          listMode='SCROLLVIEW' //Without this, we receive an error, because it is used within the ScrollView.
-          style={{
-            backgroundColor: theme.cardBackground,
-            borderColor: theme.border,
-          }}
-          textStyle={{
-            color: theme.text,
-          }}
-          dropDownContainerStyle={{
-            backgroundColor: theme.cardBackground,
-            borderColor: theme.border,
-          }}
-        />
-        <View style={styles.coordinatesSection}>
-          <Text style={[styles.label, { color: theme.text }]}>Location</Text>
-          
-          <TouchableOpacity 
-            style={[styles.mapButton, { backgroundColor: theme.primary }]}
-            onPress={() => router.push({
-              pathname: '/map-picker',
-              params: { lat: formData.lat, lng: formData.lng }
-            })}
+    <>
+      <StatusBar style ={!isDark ? "dark" : "light"}/>  
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
+        <View style={styles.imageContainer}>
+          <ImageBackground
+            style={styles.image}
+            source={image ? { uri: image } : fallbackImage}
           >
-            <Ionicons name="map" size={20} color="#fff" />
-            <Text style={styles.mapButtonText}>Select on Map</Text>
-          </TouchableOpacity>
-
-          <View style={styles.row}>
-            <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
-              <TextInput
-                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                value={String(formData.lat.toFixed(6))}
-                onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
-                keyboardType="numeric"
-                placeholderTextColor={theme.textSecondary}
-              />
+            <LinearGradient
+              colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.6)']}
+              style={styles.linearGradient}
+            />
+            {/*Buttons*/}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.iconButton} onPress={pickImageFromCamera}>
+                <Ionicons name="camera" size={40} color={theme.primary}  />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.iconButton} onPress={pickImageFromLibrary}>
+                <Ionicons name="library" size={40} color={theme.primary}  />
+              </TouchableOpacity>
+              
             </View>
+          </ImageBackground>
+        </View>
+        
+        {/* Add Place Button */}      
+        <ScrollView style={[styles.form, { backgroundColor: theme.background }]}>
+          <Text style={[styles.label, { color: theme.text }]}>Name</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+            value={formData.name}
+            onChangeText={(text) => setFormData({ ...formData, name: text })}
+            placeholder="Name of the Place"
+            placeholderTextColor={theme.textSecondary}
+          />
 
-            <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
-              <TextInput
-                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                value={String(formData.lng.toFixed(6))}
-                onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
-                keyboardType="numeric"
-                placeholderTextColor={theme.textSecondary}
-              />
+          <Text style={[styles.label, { color: theme.text }]}>Description</Text>
+          <TextInput
+            style={[styles.input, styles.textArea, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+            value={formData.info}
+            onChangeText={(text) => setFormData({ ...formData, info: text })}
+            placeholder='Description of the Place'
+            placeholderTextColor={theme.textSecondary}
+            multiline
+            numberOfLines={4}
+          />
+
+          <Text style={[styles.label, { color: theme.text }]}>Category</Text>
+          {/**Dropdown Menue for choosing category */}
+          <DropDownPicker
+            open={open}
+            value={formData.category}
+            items={items}
+            setOpen={setOpen}
+            setItems={setItems}
+            setValue={(callback) =>
+              setFormData({ ...formData, category: callback(formData.category) })
+            }
+            listMode='SCROLLVIEW' //Without this, we receive an error, because it is used within the ScrollView.
+            style={{
+              backgroundColor: theme.cardBackground,
+              borderColor: theme.border,
+            }}
+            textStyle={{
+              color: theme.text,
+            }}
+            dropDownContainerStyle={{
+              backgroundColor: theme.cardBackground,
+              borderColor: theme.border,
+            }}
+          />
+          {/**Location Selection */}
+          <View style={styles.coordinatesSection}>
+            <Text style={[styles.label, { color: theme.text }]}>Location</Text>
+            
+            <TouchableOpacity 
+              style={[styles.mapButton, { backgroundColor: theme.primary }]}
+              onPress={() => router.push({
+                pathname: '/map-picker',
+                params: { lat: formData.lat, lng: formData.lng }
+              })}
+            >
+              <Ionicons name="map" size={20} color="#fff" />
+              <Text style={styles.mapButtonText}>Select on Map</Text>
+            </TouchableOpacity>
+
+            <View style={styles.row}>
+              <View style={styles.halfInput}>
+                <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
+                <TextInput
+                  style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                  value={String(formData.lat.toFixed(6))}
+                  onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
+                  keyboardType="numeric"
+                  placeholderTextColor={theme.textSecondary}
+                />
+              </View>
+
+              <View style={styles.halfInput}>
+                <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
+                <TextInput
+                  style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                  value={String(formData.lng.toFixed(6))}
+                  onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
+                  keyboardType="numeric"
+                  placeholderTextColor={theme.textSecondary}
+                />
+              </View>
             </View>
           </View>
-        </View>
 
-        <TouchableOpacity style={[styles.submitButton, { backgroundColor: theme.primary }]} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Add Place</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
+          <TouchableOpacity style={[styles.submitButton, { backgroundColor: theme.primary }]} onPress={handleSubmit}>
+            <Text style={styles.submitButtonText}>Add Place</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
+    </>
   );
 }
 

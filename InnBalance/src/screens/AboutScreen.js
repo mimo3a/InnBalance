@@ -13,114 +13,119 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 export default function AboutScreen() {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* App Icon and Title */}
-      <View style={styles.header}>
-        <View style={[styles.iconContainer, { backgroundColor: theme.primary }]}>
-          <MaterialCommunityIcons name="spa" size={48} color="#fff" />
-        </View>
-        <Text style={[styles.appName, { color: theme.text }]}>InnBalance</Text>
-        <Text style={[styles.version, { color: theme.textSecondary }]}>Version 1.0.0</Text>
-      </View>
-
-      {/* Description Section */}
-      <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.sectionHeader}>
-          <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>About</Text>
-        </View>
-        <Text style={[styles.sectionText, { color: theme.text }]}>
-          InnBalance is a mental wellness application designed to help you manage stress, 
-          anxiety, and emotional well-being through guided breathing exercises and mindful 
-          outdoor activities.
-        </Text>
-      </View>
-
-      {/* Features Section */}
-      <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.sectionHeader}>
-          <MaterialCommunityIcons name="star-four-points" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Features</Text>
-        </View>
+    <>  
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
         
-        <View style={styles.featureItem}>
-          <MaterialCommunityIcons name="lungs" size={20} color={theme.primary} />
-          <Text style={[styles.featureText, { color: theme.text }]}>
-            Guided breathing exercises for various emotional states
+        {/* App Icon and Title */}
+        <View style={styles.header}>
+          <View style={[styles.iconContainer, { backgroundColor: theme.primary }]}>
+            <MaterialCommunityIcons name="spa" size={48} color="#fff" />
+          </View>
+          <Text style={[styles.appName, { color: theme.text }]}>InnBalance</Text>
+          <Text style={[styles.version, { color: theme.textSecondary }]}>Version 1.0.0</Text>
+        </View>
+
+        {/* Description Section */}
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>About</Text>
+          </View>
+          <Text style={[styles.sectionText, { color: theme.text }]}>
+            InnBalance is a mental wellness application designed to help you manage stress, 
+            anxiety, and emotional well-being through guided breathing exercises and mindful 
+            outdoor activities.
           </Text>
         </View>
 
-        <View style={styles.featureItem}>
-          <MaterialCommunityIcons name="map-marker" size={20} color={theme.primary} />
-          <Text style={[styles.featureText, { color: theme.text }]}>
-            Discover and save peaceful places for relaxation
+        {/* Features Section */}
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="star-four-points" size={24} color={theme.primary} />
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Features</Text>
+          </View>
+          
+          <View style={styles.featureItem}>
+            <MaterialCommunityIcons name="lungs" size={20} color={theme.primary} />
+            <Text style={[styles.featureText, { color: theme.text }]}>
+              Guided breathing exercises for various emotional states
+            </Text>
+          </View>
+
+          <View style={styles.featureItem}>
+            <MaterialCommunityIcons name="map-marker" size={20} color={theme.primary} />
+            <Text style={[styles.featureText, { color: theme.text }]}>
+              Discover and save peaceful places for relaxation
+            </Text>
+          </View>
+
+          <View style={styles.featureItem}>
+            <MaterialCommunityIcons name="chart-line" size={20} color={theme.primary} />
+            <Text style={[styles.featureText, { color: theme.text }]}>
+              Track your breathing sessions and progress
+            </Text>
+          </View>
+
+          <View style={styles.featureItem}>
+            <MaterialCommunityIcons name="weather-partly-cloudy" size={20} color={theme.primary} />
+            <Text style={[styles.featureText, { color: theme.text }]}>
+              Weather-based activity recommendations
+            </Text>
+          </View>
+
+          <View style={styles.featureItem}>
+            <MaterialCommunityIcons name="theme-light-dark" size={20} color={theme.primary} />
+            <Text style={[styles.featureText, { color: theme.text }]}>
+              Light and dark theme support
+            </Text>
+          </View>
+        </View>
+
+        {/* Developer Section */}
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="account-group" size={24} color={theme.primary} />
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Development</Text>
+          </View>
+          <Text style={[styles.sectionText, { color: theme.text }]}>
+            Developed as a mobile wellness solution for improving mental health 
+            through simple, accessible breathing techniques and outdoor activity promotion.
           </Text>
         </View>
 
-        <View style={styles.featureItem}>
-          <MaterialCommunityIcons name="chart-line" size={20} color={theme.primary} />
-          <Text style={[styles.featureText, { color: theme.text }]}>
-            Track your breathing sessions and progress
+        {/* Legal Section */}
+        <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="shield-check" size={24} color={theme.primary} />
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Privacy & Data</Text>
+          </View>
+          <Text style={[styles.sectionText, { color: theme.text }]}>
+            All your data is stored locally on your device. We do not collect, transmit, 
+            or share any personal information. Your breathing sessions, saved places, and 
+            preferences remain private and under your control.
           </Text>
         </View>
 
-        <View style={styles.featureItem}>
-          <MaterialCommunityIcons name="weather-partly-cloudy" size={20} color={theme.primary} />
-          <Text style={[styles.featureText, { color: theme.text }]}>
-            Weather-based activity recommendations
+        {/* Copyright */}
+        <View style={styles.footer}>
+          <Text style={[styles.copyright, { color: theme.textSecondary }]}>
+            © 2026 InnBalance
+          </Text>
+          <Text style={[styles.copyright, { color: theme.textSecondary }]}>
+            All rights reserved
           </Text>
         </View>
 
-        <View style={styles.featureItem}>
-          <MaterialCommunityIcons name="theme-light-dark" size={20} color={theme.primary} />
-          <Text style={[styles.featureText, { color: theme.text }]}>
-            Light and dark theme support
-          </Text>
-        </View>
-      </View>
-
-      {/* Developer Section */}
-      <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.sectionHeader}>
-          <MaterialCommunityIcons name="account-group" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Development</Text>
-        </View>
-        <Text style={[styles.sectionText, { color: theme.text }]}>
-          Developed as a mobile wellness solution for improving mental health 
-          through simple, accessible breathing techniques and outdoor activity promotion.
-        </Text>
-      </View>
-
-      {/* Legal Section */}
-      <View style={[styles.section, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.sectionHeader}>
-          <MaterialCommunityIcons name="shield-check" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.text }]}>Privacy & Data</Text>
-        </View>
-        <Text style={[styles.sectionText, { color: theme.text }]}>
-          All your data is stored locally on your device. We do not collect, transmit, 
-          or share any personal information. Your breathing sessions, saved places, and 
-          preferences remain private and under your control.
-        </Text>
-      </View>
-
-      {/* Copyright */}
-      <View style={styles.footer}>
-        <Text style={[styles.copyright, { color: theme.textSecondary }]}>
-          © 2026 InnBalance
-        </Text>
-        <Text style={[styles.copyright, { color: theme.textSecondary }]}>
-          All rights reserved
-        </Text>
-      </View>
-
-      <View style={{ height: 40 }} />
-    </ScrollView>
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </>
   );
 }
 

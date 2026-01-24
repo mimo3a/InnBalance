@@ -4,11 +4,12 @@ import { ThemedView } from '@/src/components/themed-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 export default function RecommendationsScreen() {
     const { state } = useLocalSearchParams();
     const router = useRouter();
-    const { theme } = useTheme();
+    const { theme, isDark } = useTheme();
     
     // Get description based on state
     const getDescription = () => {
@@ -33,61 +34,65 @@ export default function RecommendationsScreen() {
     const description = getDescription();
 
     return (
-  <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <>
+      
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
 
-    {/* HEADER */}
-    <View style={styles.header}>
-      <Text style={[styles.title, { color: theme.text }]}>{description.title}</Text>
-      <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-        Recommended Exercise
-      </Text>
-    </View>
+          {/* HEADER */}
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.text }]}>{description.title}</Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+              Recommended Exercise
+            </Text>
+          </View>
 
-    {/* DESCRIPTION — РАСТЯГИВАЕТСЯ */}
-    <ThemedView style={[styles.descriptionBox, { backgroundColor: theme.cardBackground }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={[styles.description, { color: theme.text }]}>
-          {description.description}
-        </Text>
-      </ScrollView>
-    </ThemedView>
+          {/* DESCRIPTION — РАСТЯГИВАЕТСЯ */}
+          <ThemedView style={[styles.descriptionBox, { backgroundColor: theme.cardBackground }]}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={[styles.description, { color: theme.text }]}>
+                {description.description}
+              </Text>
+            </ScrollView>
+          </ThemedView>
 
-    {/* ACTIONS — ПРИЖАТЫ К НИЗУ */}
-    <ThemedView style={[styles.actionBox, { backgroundColor: theme.cardBackground }]}>
-      <Text style={[styles.actionTitle, { color: theme.text }]}>
-        What would you like to do?
-      </Text>
+          {/* ACTIONS — ПРИЖАТЫ К НИЗУ */}
+          <ThemedView style={[styles.actionBox, { backgroundColor: theme.cardBackground }]}>
+            <Text style={[styles.actionTitle, { color: theme.text }]}>
+              What would you like to do?
+            </Text>
 
-      <View style={styles.actionsRow}>
-        <TouchableOpacity
-          style={[styles.actionCard, { backgroundColor: theme.primary + '15' }]}
-          onPress={() =>
-            router.push({ pathname: '/breathing', params: { state } })
-          }
-        >
-          <MaterialCommunityIcons 
-  name="circle-slice-8"
-  size={44} 
-  color={theme.primary}
-/>
-          <Text style={[styles.actionText, { color: theme.text }]}>Breathing</Text>
-        </TouchableOpacity>
+            <View style={styles.actionsRow}>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: theme.primary + '15' }]}
+                onPress={() =>
+                  router.push({ pathname: '/breathing', params: { state } })
+                }
+              >
+                <MaterialCommunityIcons 
+        name="circle-slice-8"
+        size={44} 
+        color={theme.primary}
+      />
+                <Text style={[styles.actionText, { color: theme.text }]}>Breathing</Text>
+              </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.actionCard, { backgroundColor: theme.primary + '15' }]}
-          onPress={() => router.push('/ruheorte')}
-        >
-          <MaterialCommunityIcons
-  name="walk"
-  size={44}
-  color={theme.primary}
-/>
-          <Text style={[styles.actionText, { color: theme.text }]}>Walk</Text>
-        </TouchableOpacity>
-      </View>
-    </ThemedView>
+              <TouchableOpacity
+                style={[styles.actionCard, { backgroundColor: theme.primary + '15' }]}
+                onPress={() => router.push('/ruheorte')}
+              >
+                <MaterialCommunityIcons
+        name="walk"
+        size={44}
+        color={theme.primary}
+      />
+                <Text style={[styles.actionText, { color: theme.text }]}>Walk</Text>
+              </TouchableOpacity>
+            </View>
+          </ThemedView>
 
-  </View>
+        </View>
+      </>
 );
 
 
@@ -101,6 +106,7 @@ const styles = StyleSheet.create({
   },
 
   header: {
+    marginTop: 30,
     marginBottom: 12,
     alignItems: 'center',
   },

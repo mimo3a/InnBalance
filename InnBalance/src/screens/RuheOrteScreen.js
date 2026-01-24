@@ -33,6 +33,7 @@ export default function RuheOrteScreen() {
 
   const router = useRouter();
   return (
+
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       
       {/* Header with tab switcher */}
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingTop: 10,
+    paddingTop: 90,
     paddingBottom: 10,
     zIndex: 10,
   },

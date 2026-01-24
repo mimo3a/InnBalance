@@ -6,21 +6,31 @@ import PlaceCard from '@/src/components/PlaceCard';
 import { usePlaces } from '@/src/hooks/usePlaces';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import useCurrentLocation from '@/src/hooks/useCurrentLocation';
+import { StatusBar } from 'expo-status-bar';
 
 export default function PlacesListScreen() {
-    const [categoryFilter, setCategoryFilter] = React.useState(null);
+    const [categoryFilters, setCategoryFilters] = React.useState([]);
+
     const router = useRouter();
-
-    // Get user location
     const { location: userLocation } = useCurrentLocation();
-
-    // Pass userLocation to usePlaces
     const { places, loading } = usePlaces(userLocation);
-    const filteredPlaces = categoryFilter
-        ? places.filter((p) => p.category === categoryFilter)
-        : places;
+    const { theme, isDark } = useTheme();
 
-    const { theme } = useTheme();
+    const categories = [...new Set(places.map((p) => p.category))];
+
+    const toggleCategory = (cat) => {
+        setCategoryFilters((prev) =>
+            prev.includes(cat)
+                ? prev.filter((c) => c !== cat)
+                : [...prev, cat]
+        );
+    };
+
+    const filteredPlaces =
+        categoryFilters.length === 0
+            ? places
+            : places.filter((p) => categoryFilters.includes(p.category));
+
 
     if (loading) {
         return (
@@ -31,34 +41,42 @@ export default function PlacesListScreen() {
     }
 
     return (
-        
-        
         <View style={[styles.wrapper, { backgroundColor: theme.background }]}>
-            <View style={{ flexDirection: 'row', gap: 10, padding: 10 }}>
-                <TouchableOpacity onPress={() => setCategoryFilter(null)}>
+            <StatusBar style ={!isDark ? "dark" : "light"}/>
+            {/* FILTER-BAR */}
+            <View style={{ flexDirection: 'row', gap: 10, padding: 10, flexWrap: 'wrap' }}>
+                
+                {/* Reset Button */}
+                <TouchableOpacity onPress={() => setCategoryFilters([])}>
                     <Ionicons name="filter" size={24} color={theme.primary} />
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => setCategoryFilter('Park')}>
-                    <View style={{ padding: 8, backgroundColor: theme.primary, borderRadius: 8 }}>
-                    <Text style={{ color: '#fff' }}>Park</Text>
-                    </View>
-                </TouchableOpacity>
+                {/* Dynamische Kategorie-Chips */}
+                {categories.map((cat) => {
+                    const isActive = categoryFilters.includes(cat);
 
-                <TouchableOpacity onPress={() => setCategoryFilter('Museum')}>
-                    <View style={{ padding: 8, backgroundColor: theme.primary, borderRadius: 8 }}>
-                    <Text style={{ color: '#fff' }}>Museum</Text>
-                    </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => setCategoryFilter('Cafe')}>
-                    <View style={{ padding: 8, backgroundColor: theme.primary, borderRadius: 8 }}>
-                    <Text style={{ color: '#fff' }}>Cafe</Text>
-                    </View>
-                </TouchableOpacity>
+                    return (
+                        <TouchableOpacity key={cat} onPress={() => toggleCategory(cat)}>
+                            <View
+                                style={{
+                                    padding: 8,
+                                    borderRadius: 8,
+                                    backgroundColor: isActive ? theme.primary : theme.cardBackground
+                                }}
+                            >
+                                <Text style={{ color: isActive ? '#fff' : '#003300' }}>
+                                    {cat}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    );
+                })}
             </View>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                contentInsetAdjustmentBehavior = 'automatic'
+                >
                 {filteredPlaces.map((place) => (
                     <PlaceCard 
                         key={`${place.id}-${place.rating}-${place.distance}`}
@@ -79,7 +97,7 @@ export default function PlacesListScreen() {
                 style={styles.addButton}
                 onPress={() => router.push('/add-place')}
             >
-                <Ionicons name="add-circle" size={70} color={theme.primary}  />
+                <Ionicons name="add-circle" size={70    } color={theme.primary}  />
             </TouchableOpacity>
         </View>
         
