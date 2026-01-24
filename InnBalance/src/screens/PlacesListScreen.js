@@ -11,7 +11,11 @@ export default function PlacesListScreen() {
     const [categoryFilter, setCategoryFilter] = React.useState(null);
     const router = useRouter();
 
-    const { places, loading } = usePlaces();
+    // Get user location
+    const { location: userLocation } = useCurrentLocation();
+
+    // Pass userLocation to usePlaces
+    const { places, loading } = usePlaces(userLocation);
     const filteredPlaces = categoryFilter
         ? places.filter((p) => p.category === categoryFilter)
         : places;
@@ -57,7 +61,7 @@ export default function PlacesListScreen() {
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {filteredPlaces.map((place) => (
                     <PlaceCard 
-                        key={`${place.id}-${place.rating}`}
+                        key={`${place.id}-${place.rating}-${place.distance}`}
                         name={place.name}
                         info={place.info}
                         rating={place.rating}
