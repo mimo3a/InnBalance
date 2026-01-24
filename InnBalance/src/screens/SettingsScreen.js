@@ -13,7 +13,7 @@ import { clearSessions } from '@/src/services/statisticsService';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
 import { useLocation } from '@/src/contexts/LocationContext';
-
+import { StatusBar } from 'expo-status-bar';
 
 export default function SettingsScreen() {
   // Innsbruck coordinates
@@ -93,126 +93,129 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}> 
+    <>
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]}> 
 
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>Settings</Text>
-        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-          Manage your app preferences
-        </Text>
-      </View>
+        {/* HEADER */}
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: theme.text }]}>Settings</Text>
+          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+            Manage your app preferences
+          </Text>
+        </View>
 
-      {/* TEST LOCATION TOGGLE */}
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
-        <View style={styles.settingRow}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="map-marker-question" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Test Innsbruck Location</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Toggle to use Innsbruck as your location for testing</Text>
-              <Text style={{ color: theme.text }}>
-                Lat: {location?.latitude?.toFixed(4)} | Lng: {location?.longitude?.toFixed(4)}
-              </Text>
+        {/* TEST LOCATION TOGGLE */}
+        <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
+          <View style={styles.settingRow}>
+            <View style={styles.settingLeft}>
+              <MaterialCommunityIcons name="map-marker-question" size={24} color={theme.primary} />
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingTitle, { color: theme.text }]}>Test Innsbruck Location</Text>
+                <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Toggle to use Innsbruck as your location for testing</Text>
+                <Text style={{ color: theme.text }}>
+                  Lat: {location?.latitude?.toFixed(4)} | Lng: {location?.longitude?.toFixed(4)}
+                </Text>
+              </View>
             </View>
+            <Switch
+    value={isTestMode}
+    onValueChange={setTestMode}
+  />
+
+
+
           </View>
-          <Switch
-  value={isTestMode}
-  onValueChange={setTestMode}
-/>
+        </ThemedView>
 
+        {/* DARK MODE */}
+        <Text style={[styles.categoryTitle, { color: theme.text }]}>App Preferences</Text>
 
-
-        </View>
-      </ThemedView>
-
-      {/* DARK MODE */}
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>App Preferences</Text>
-
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.settingRow}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="theme-light-dark" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Dark Mode</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Toggle dark theme</Text>
+        <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingLeft}>
+              <MaterialCommunityIcons name="theme-light-dark" size={24} color={theme.primary} />
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingTitle, { color: theme.text }]}>Dark Mode</Text>
+                <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>Toggle dark theme</Text>
+              </View>
             </View>
+            <Switch
+              value={isDark}
+              onValueChange={toggleTheme}
+              trackColor={{ false: theme.border, true: theme.primaryLight }}
+              thumbColor={isDark ? theme.primary : '#f4f3f4'}
+            />
           </View>
-          <Switch
-            value={isDark}
-            onValueChange={toggleTheme}
-            trackColor={{ false: theme.border, true: theme.primaryLight }}
-            thumbColor={isDark ? theme.primary : '#f4f3f4'}
-          />
-        </View>
-      </ThemedView>
+        </ThemedView>
 
-      {/* ACCOUNT */}
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>Account</Text>
+        {/* ACCOUNT */}
+        <Text style={[styles.categoryTitle, { color: theme.text }]}>Account</Text>
 
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <TouchableOpacity style={styles.settingRow} onPress={handleAccount}>
-          <View style={styles.settingLeft}>
-            <MaterialCommunityIcons name="account-circle" size={24} color={theme.primary} />
-            <View style={styles.settingTextContainer}>
-              <Text style={[styles.settingTitle, { color: theme.text }]}>Account Settings</Text>
-              <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
-                Profile and preferences
-              </Text>
+        <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+          <TouchableOpacity style={styles.settingRow} onPress={handleAccount}>
+            <View style={styles.settingLeft}>
+              <MaterialCommunityIcons name="account-circle" size={24} color={theme.primary} />
+              <View style={styles.settingTextContainer}>
+                <Text style={[styles.settingTitle, { color: theme.text }]}>Account Settings</Text>
+                <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
+                  Profile and preferences
+                </Text>
+              </View>
             </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
+          </TouchableOpacity>
+        </ThemedView>
+
+        {/* Place Management Section */}
+        <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
+          <View style={styles.settingHeader}>
+            <MaterialCommunityIcons name="map-marker" size={24} color={theme.primary} />
+            <Text style={[styles.sectionTitle, { color: theme.primary }]}>Orte verwalten</Text>
           </View>
-          <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-        </TouchableOpacity>
-      </ThemedView>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleResetOrte}>
+            <MaterialCommunityIcons name="delete" size={20} color="#fff" />
+            <Text style={styles.deleteButtonText}>Meine Orte löschen</Text>
+          </TouchableOpacity>
+        </ThemedView>
 
-      {/* Place Management Section */}
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
-        <View style={styles.settingHeader}>
-          <MaterialCommunityIcons name="map-marker" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Orte verwalten</Text>
-        </View>
-        <TouchableOpacity style={styles.deleteButton} onPress={handleResetOrte}>
-          <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Meine Orte löschen</Text>
-        </TouchableOpacity>
-      </ThemedView>
+        {/* Statistik Management Section */}
+        <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
+          <View style={styles.settingHeader}>
+            <MaterialCommunityIcons name="chart-bar" size={24} color={theme.primary} />
+            <Text style={[styles.sectionTitle, { color: theme.primary }]}>Statistiken verwalten</Text>
+          </View>
+          <TouchableOpacity style={styles.deleteButton} onPress={handleResetStatistics}>
+            <MaterialCommunityIcons name="delete" size={20} color="#fff" />
+            <Text style={styles.deleteButtonText}>Meine Statistiken löschen</Text>
+          </TouchableOpacity>
+        </ThemedView>
 
-      {/* Statistik Management Section */}
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
-        <View style={styles.settingHeader}>
-          <MaterialCommunityIcons name="chart-bar" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Statistiken verwalten</Text>
-        </View>
-        <TouchableOpacity style={styles.deleteButton} onPress={handleResetStatistics}>
-          <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Meine Statistiken löschen</Text>
-        </TouchableOpacity>
-      </ThemedView>
+        {/* RESET ALL */}
+        <Text style={[styles.categoryTitle, { color: theme.text }]}>Reset</Text>
 
-      {/* RESET ALL */}
-      <Text style={[styles.categoryTitle, { color: theme.text }]}>Reset</Text>
+        <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+          <View style={styles.settingHeader}>
+            <MaterialCommunityIcons name="restore" size={24} color={theme.danger} />
+            <Text style={[styles.sectionTitle, { color: theme.danger }]}>Reset to Defaults</Text>
+          </View>
 
-      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
-        <View style={styles.settingHeader}>
-          <MaterialCommunityIcons name="restore" size={24} color={theme.danger} />
-          <Text style={[styles.sectionTitle, { color: theme.danger }]}>Reset to Defaults</Text>
-        </View>
+          <Text style={[styles.sectionDescription, { color: theme.textSecondary }]}>
+            This will clear all your custom data and reset app to default.
+          </Text>
 
-        <Text style={[styles.sectionDescription, { color: theme.textSecondary }]}>
-          This will clear all your custom data and reset app to default.
-        </Text>
+          <TouchableOpacity
+            style={[styles.deleteButton, { backgroundColor: theme.dangerDark }]}
+            onPress={handleResetAll}
+          >
+            <MaterialCommunityIcons name="restore" size={20} color="#fff" />
+            <Text style={styles.deleteButtonText}>Reset All Settings</Text>
+          </TouchableOpacity>
+        </ThemedView>
 
-        <TouchableOpacity
-          style={[styles.deleteButton, { backgroundColor: theme.dangerDark }]}
-          onPress={handleResetAll}
-        >
-          <MaterialCommunityIcons name="restore" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Reset All Settings</Text>
-        </TouchableOpacity>
-      </ThemedView>
-
-      <View style={{ height: 40 }} />
-    </ScrollView>
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </>
   );
 }
 

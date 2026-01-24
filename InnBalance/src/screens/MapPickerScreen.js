@@ -68,7 +68,8 @@ export default function MapPickerScreen() {
       {/* Info Bar */}
       <View style={[styles.infoBar, { backgroundColor: theme.cardBackground }]}>
         <Text style={[styles.infoText, { color: theme.text }]}>
-          Tippen Sie auf die Karte, um einen Ort auszuwählen
+          
+          Click anywhere on the Map, to set the Location for your Place.
         </Text>
         <Text style={[styles.coordsText, { color: theme.textSecondary }]}>
           {selectedLocation.latitude.toFixed(6)}, {selectedLocation.longitude.toFixed(6)}
@@ -82,7 +83,7 @@ export default function MapPickerScreen() {
           onPress={() => router.back()}
         >
           <Ionicons name="close" size={24} color={theme.text} />
-          <Text style={[styles.buttonText, { color: theme.text }]}>Abbrechen</Text>
+          <Text style={[styles.buttonText, { color: theme.text }]}>Dismiss</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -90,7 +91,7 @@ export default function MapPickerScreen() {
           onPress={handleConfirm}
         >
           <Ionicons name="checkmark" size={24} color="#fff" />
-          <Text style={[styles.buttonText, { color: '#fff' }]}>Bestätigen</Text>
+          <Text style={[styles.buttonText, { color: '#fff' }]}>Confirm</Text>
         </TouchableOpacity>
       </View>
     </View>

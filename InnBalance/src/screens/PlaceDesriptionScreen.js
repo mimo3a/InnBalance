@@ -6,6 +6,7 @@ import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 export default function PlaceDescriptionScreen() {
   // ...весь существующий код компонента (до styles)
@@ -15,7 +16,7 @@ export default function PlaceDescriptionScreen() {
   const { location } = useCurrentLocation();
   const { places, loading, updatePlace } = usePlaces(location);
   const place = places.find(p => p.id === Number(id));
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   const [userRating, setUserRating] = useState(place?.rating || 0);
 
@@ -77,70 +78,73 @@ export default function PlaceDescriptionScreen() {
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
-      <ScrollView contentContainerStyle={[styles.card, { backgroundColor: theme.cardBackground }]}> 
+    <>
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
+      <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+        <ScrollView contentContainerStyle={[styles.card, { backgroundColor: theme.cardBackground }]}> 
+          
+          
+          <View style={styles.imageWrapper}> 
+            <Image source={place.image} style={styles.image} />
+
+            
+            <TouchableOpacity 
+              style={[styles.closeButton, { backgroundColor: theme.cardBackground }]} 
+              onPress={() => router.back()}
+            >
+              <Ionicons name="close" size={24} color={theme.text} />
+            </TouchableOpacity>
+          </View>
+
         
-        
-        <View style={styles.imageWrapper}> 
-          <Image source={place.image} style={styles.image} />
+          <View style={styles.titleRow}> 
+            <Text style={[styles.title, { color: theme.text }]}>{place.name}</Text>
+
+            <View style={[styles.distancePill, { backgroundColor: theme.primary + '20' }]}> 
+              <Ionicons name="navigate-outline" size={14} color={theme.primary} />
+              <Text style={[styles.distanceText, { color: theme.text }]}>{place.distance} km</Text>
+            </View>
+          </View>
+
+          
+          <View style={styles.ratingRow}> 
+            <Text style={[styles.star, { color: theme.text }]}>⭐ {userRating.toFixed(1)}</Text>
+            <Text style={[styles.category, { color: theme.textSecondary }]}>· {place.category}</Text>
+          </View>
+
+          
+          <Text style={[styles.description, { color: theme.text }]}>{place.info}</Text>
+
+          
+          <Text style={[styles.rateTitle, { color: theme.text }]}>Bewerte diesen Ort</Text>
+          <View style={styles.starsRow}> 
+            {Array.from({ length: 5 }).map((_, idx) => {
+              const starValue = idx + 1;
+              const isFilled = starValue <= Math.round(userRating);
+              return (
+                <TouchableOpacity key={idx} onPress={() => handleRating(starValue)}>
+                  <Ionicons 
+                    name={isFilled ? "star" : "star-outline"} 
+                    size={32} 
+                    color={isFilled ? "#F4C430" : theme.textSecondary} 
+                  />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
 
           
           <TouchableOpacity 
-            style={[styles.closeButton, { backgroundColor: theme.cardBackground }]} 
-            onPress={() => router.back()}
+            style={[styles.button, { backgroundColor: theme.primary }]}
+            onPress={openNavigation}
           >
-            <Ionicons name="close" size={24} color={theme.text} />
+            <Ionicons name="navigate" size={20} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.buttonText}>Navigation starten</Text>
           </TouchableOpacity>
-        </View>
 
-       
-        <View style={styles.titleRow}> 
-          <Text style={[styles.title, { color: theme.text }]}>{place.name}</Text>
-
-          <View style={[styles.distancePill, { backgroundColor: theme.primary + '20' }]}> 
-            <Ionicons name="navigate-outline" size={14} color={theme.primary} />
-            <Text style={[styles.distanceText, { color: theme.text }]}>{place.distance} km</Text>
-          </View>
-        </View>
-
-        
-        <View style={styles.ratingRow}> 
-          <Text style={[styles.star, { color: theme.text }]}>⭐ {userRating.toFixed(1)}</Text>
-          <Text style={[styles.category, { color: theme.textSecondary }]}>· {place.category}</Text>
-        </View>
-
-        
-        <Text style={[styles.description, { color: theme.text }]}>{place.info}</Text>
-
-        
-        <Text style={[styles.rateTitle, { color: theme.text }]}>Bewerte diesen Ort</Text>
-        <View style={styles.starsRow}> 
-          {Array.from({ length: 5 }).map((_, idx) => {
-            const starValue = idx + 1;
-            const isFilled = starValue <= Math.round(userRating);
-            return (
-              <TouchableOpacity key={idx} onPress={() => handleRating(starValue)}>
-                <Ionicons 
-                  name={isFilled ? "star" : "star-outline"} 
-                  size={32} 
-                  color={isFilled ? "#F4C430" : theme.textSecondary} 
-                />
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        
-        <TouchableOpacity 
-          style={[styles.button, { backgroundColor: theme.primary }]}
-          onPress={openNavigation}
-        >
-          <Ionicons name="navigate" size={20} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.buttonText}>Navigation starten</Text>
-        </TouchableOpacity>
-
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </>
   );
 }
 
@@ -163,16 +167,19 @@ const styles = StyleSheet.create({
   },
 
   imageWrapper: {
-    position: "relative",
-    marginTop: -40,
-    borderRadius: 18,
-    overflow: "hidden",
-  },
+  position: "relative",
+  marginTop: -40,
+  borderRadius: 18,
+  overflow: "hidden",
+  width: "100%",
+  aspectRatio: 16 / 9, // ⬅️ магия
+},
 
   image: {
     width: "100%",
-    height: 250,
-  },
+    height: "100%",
+  resizeMode: "cover",
+},
 
   closeButton: {
     position: "absolute",

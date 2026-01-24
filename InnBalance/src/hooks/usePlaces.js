@@ -11,26 +11,9 @@ export function usePlaces(userLocation) {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Load places initially
+  // Load places initially and when userLocation changes
   useEffect(() => {
     loadPlaces();
-  }, []);
-
-  // Recalculate distances when location updates
-  useEffect(() => {
-    if (!userLocation) return;
-
-    setPlaces(prev =>
-      prev.map(place => ({
-        ...place,
-        distance: getDistanceFromLatLonInKm(
-          userLocation.latitude,
-          userLocation.longitude,
-          place.lat,
-          place.lng
-        ).toFixed(2),
-      }))
-    );
   }, [userLocation?.latitude, userLocation?.longitude]);
 
   // Load or initialize places

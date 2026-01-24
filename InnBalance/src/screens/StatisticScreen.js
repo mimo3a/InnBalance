@@ -18,6 +18,7 @@ import { getSessions } from '../services/statisticsService';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 /**
  * StatisticScreen Component
@@ -29,7 +30,7 @@ export default function StatisticScreen() {
   
   // Loading state for data fetch
   const [loading, setLoading] = useState(true);
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   /**
    * Load sessions from storage
@@ -202,215 +203,218 @@ export default function StatisticScreen() {
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.background }}>
-      <View style={[styles.container, { backgroundColor: theme.background }]}>
-        
-        <ThemedText type="title" style={[{ marginBottom: 20 }, { color: theme.text }]}>Statistics</ThemedText>
+    <>
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
+      <ScrollView style={{ flex: 1, backgroundColor: theme.background }}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+          
+          <ThemedText type="title" style={[{ marginBottom: 20 }, { color: theme.text }]}>Statistics</ThemedText>
 
-        {/* SECTION 1 - Summary Cards */}
-        <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Summary</ThemedText>
+          {/* SECTION 1 - Summary Cards */}
+          <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
+            <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>Summary</ThemedText>
 
-        {/*Row 1*/}  
+          {/*Row 1*/}  
+            <View style={styles.statsRow}>
+              {/* Card 1 - Total Minutes (Light Green) */}
+              <View style={[styles.statBoxLarge, { backgroundColor: theme.primaryLight }]}>
+                <Text style={styles.statValueLight}>{totalDurationMinutes}</Text>
+                <Text style={styles.statLabelLight}>Total Minutes</Text>
+              </View>
+              
+              {/* Card 2 - Total Sessions (Dark Green) */}
+              <View style={[styles.statBoxLarge, { backgroundColor: theme.primary }]}>
+                <Text style={styles.statValueLight}>{totalSessions}</Text>
+                <Text style={styles.statLabelLight}>Total Sessions</Text>
+              </View>
+            </View>
+
+          {/*Row 2*/} 
           <View style={styles.statsRow}>
-            {/* Card 1 - Total Minutes (Light Green) */}
-            <View style={[styles.statBoxLarge, { backgroundColor: theme.primaryLight }]}>
-              <Text style={styles.statValueLight}>{totalDurationMinutes}</Text>
-              <Text style={styles.statLabelLight}>Total Minutes</Text>
-            </View>
-            
-            {/* Card 2 - Total Sessions (Dark Green) */}
-            <View style={[styles.statBoxLarge, { backgroundColor: theme.primary }]}>
-              <Text style={styles.statValueLight}>{totalSessions}</Text>
-              <Text style={styles.statLabelLight}>Total Sessions</Text>
-            </View>
-          </View>
-
-        {/*Row 2*/} 
-        <View style={styles.statsRow}>
-            {/* Card 3 - Average minutes per week (Light Green) */}
-            <View style={[styles.statBoxSmall, { backgroundColor: theme.primaryLight }]}>
-              <Text style={styles.statValueLightSmall}>{avgMinutesPerDay}</Text>
-              <Text style={styles.statLabelLightSmall}>Avg. Minutes/Day</Text>
-            </View>
-            
-            {/* Card 4 - Average sessions per week (Dark Green) */}
-            <View style={[styles.statBoxSmall, { backgroundColor: theme.primary }]}>
-              <Text style={styles.statValueLightSmall}>{avgSessionsPerDay}</Text>
-              <Text style={styles.statLabelLightSmall}>Avg. Sessions/Day</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* SECTION 2 - Chart */}
-        <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
-          
-          {/* Dynamic Header with Navigation and Toggle */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
-            <View>
-              <ThemedText type="subtitle" style={{ color: theme.text, marginBottom: 0 }}>
-                {viewMode === 'week' 
-                  ? (offset === 0 
-                      ? 'Last 7 Days' 
-                      : `${new Date(chartData[0]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(chartData[6]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`)
-                  : `${chartData[0]?.monthName || ''}`}
-              </ThemedText>
-            </View>
-
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              {/* Toggle Week/Month View */}
-              <TouchableOpacity 
-                onPress={() => { setViewMode(viewMode === 'week' ? 'month' : 'week'); setOffset(0); }}
-                style={{ padding: 5, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 8 }}
-              >
-                <MaterialCommunityIcons 
-                  name={viewMode === 'week' ? 'calendar-month' : 'calendar-week'} 
-                  size={24} 
-                  color={theme.primary} 
-                />
-              </TouchableOpacity>
-
-              {/* Navigation Controls */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 10 }}>
-                
-                {/* left chevron (always active) */}
-                <TouchableOpacity onPress={() => setOffset(prev => prev + 1)}>
-                  <MaterialCommunityIcons name="chevron-left" size={30} color={theme.primary} />
-                </TouchableOpacity>
-                
-                {/* Today button: can get inactive if view in current week */}
-                <TouchableOpacity 
-                  onPress={() => setOffset(0)} 
-                  style={{ paddingHorizontal: 5 }}
-                  disabled={offset === 0} // deactivate, if already at offset 0
-                >
-                  <MaterialCommunityIcons 
-                    name="calendar-today" 
-                    size={20} 
-                    color={offset === 0 ? theme.border : theme.primary} // change color: grey if 0 else green
-                  />
-                </TouchableOpacity>
-
-                {/* right chevron: can get inactive if view in current week */}
-                <TouchableOpacity 
-                  onPress={() => setOffset(prev => Math.max(0, prev - 1))}
-                  disabled={offset === 0}
-                >
-                  <MaterialCommunityIcons 
-                    name="chevron-right" 
-                    size={30} 
-                    color={offset === 0 ? theme.border : theme.primary} // change color: grey if 0 else green
-                  />
-                </TouchableOpacity>
+              {/* Card 3 - Average minutes per week (Light Green) */}
+              <View style={[styles.statBoxSmall, { backgroundColor: theme.primaryLight }]}>
+                <Text style={styles.statValueLightSmall}>{avgMinutesPerDay}</Text>
+                <Text style={styles.statLabelLightSmall}>Avg. Minutes/Day</Text>
+              </View>
+              
+              {/* Card 4 - Average sessions per week (Dark Green) */}
+              <View style={[styles.statBoxSmall, { backgroundColor: theme.primary }]}>
+                <Text style={styles.statValueLightSmall}>{avgSessionsPerDay}</Text>
+                <Text style={styles.statLabelLightSmall}>Avg. Sessions/Day</Text>
               </View>
             </View>
           </View>
-          
-          {/* Legend for chart colors */}
-          <View style={styles.legendContainer}>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: '#8baea4' }]} />
-              <Text style={styles.legendText}>Minutes</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: '#2f6f5f' }]} />
-              <Text style={styles.legendText}>Sessions</Text>
-            </View>
-          </View>
 
-          {/* Bar Chart */}
-          <View style={styles.chartArea}>
-            {chartData.map((item, index) => (
-              <View key={index} style={styles.chartColumn}>
-                
-                <View style={styles.barsWrapper}>
-                  {/* Bar 1 - Minutes (Light Green) */}
-                  <View style={styles.barContainer}>
-                      <View style={[
-                        styles.bar, 
-                        { 
-                          backgroundColor: '#8baea4',
-                          height: `${(item.minutes / maxMinutes) * 100}%`,
-                          minHeight: item.minutes > 0 ? 20 : 2
-                        }
-                      ]}>
-                          {item.minutes > 0 && (
-                            <Text style={styles.innerBarLabel}>{item.minutes}</Text>
-                          )}
-                      </View>
-                  </View>
+          {/* SECTION 2 - Chart */}
+          <View style={[styles.cardContainer, { backgroundColor: theme.cardBackground }]}>
+            
+            {/* Dynamic Header with Navigation and Toggle */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+              <View>
+                <ThemedText type="subtitle" style={{ color: theme.text, marginBottom: 0 }}>
+                  {viewMode === 'week' 
+                    ? (offset === 0 
+                        ? 'Last 7 Days' 
+                        : `${new Date(chartData[0]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(chartData[6]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`)
+                    : `${chartData[0]?.monthName || ''}`}
+                </ThemedText>
+              </View>
 
-                  {/* Bar 2 - Sessions Count (Dark Green) */}
-                  <View style={styles.barContainer}>
-                      <View style={[
-                        styles.bar, 
-                        { 
-                          backgroundColor: '#2f6f5f',
-                          height: `${(item.count / maxCount) * 100}%`,
-                          minHeight: item.count > 0 ? 20 : 2
-                        }
-                      ]}>
-                          {item.count > 0 && (
-                            <Text style={styles.innerBarLabel}>{item.count}</Text>
-                          )}
-                      </View>
-                  </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                {/* Toggle Week/Month View */}
+                <TouchableOpacity 
+                  onPress={() => { setViewMode(viewMode === 'week' ? 'month' : 'week'); setOffset(0); }}
+                  style={{ padding: 5, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 8 }}
+                >
+                  <MaterialCommunityIcons 
+                    name={viewMode === 'week' ? 'calendar-month' : 'calendar-week'} 
+                    size={24} 
+                    color={theme.primary} 
+                  />
+                </TouchableOpacity>
+
+                {/* Navigation Controls */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 10 }}>
+                  
+                  {/* left chevron (always active) */}
+                  <TouchableOpacity onPress={() => setOffset(prev => prev + 1)}>
+                    <MaterialCommunityIcons name="chevron-left" size={30} color={theme.primary} />
+                  </TouchableOpacity>
+                  
+                  {/* Today button: can get inactive if view in current week */}
+                  <TouchableOpacity 
+                    onPress={() => setOffset(0)} 
+                    style={{ paddingHorizontal: 5 }}
+                    disabled={offset === 0} // deactivate, if already at offset 0
+                  >
+                    <MaterialCommunityIcons 
+                      name="calendar-today" 
+                      size={20} 
+                      color={offset === 0 ? theme.border : theme.primary} // change color: grey if 0 else green
+                    />
+                  </TouchableOpacity>
+
+                  {/* right chevron: can get inactive if view in current week */}
+                  <TouchableOpacity 
+                    onPress={() => setOffset(prev => Math.max(0, prev - 1))}
+                    disabled={offset === 0}
+                  >
+                    <MaterialCommunityIcons 
+                      name="chevron-right" 
+                      size={30} 
+                      color={offset === 0 ? theme.border : theme.primary} // change color: grey if 0 else green
+                    />
+                  </TouchableOpacity>
                 </View>
-
-                {/* Day label below bars */}
-                <Text style={styles.dayLabel}>{item.label}</Text>
               </View>
-            ))}
-          </View>
-        </View>
+            </View>
+            
+            {/* Legend for chart colors */}
+            <View style={styles.legendContainer}>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: '#8baea4' }]} />
+                <Text style={styles.legendText}>Minutes</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: '#2f6f5f' }]} />
+                <Text style={styles.legendText}>Sessions</Text>
+              </View>
+            </View>
 
-        {/* SECTION 3 - Session History */}
-        <View style={[styles.historyContainer, { backgroundColor: theme.cardBackground }]}>
-          <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>History</ThemedText>
-          
-          {sessions.length === 0 ? (
-            <ThemedText style={{ color: theme.textSecondary, fontStyle: 'italic' }}>
-              Noch keine Übungen absolviert.
-            </ThemedText>
-          ) : (
-            sessions.map((s, index) => {
-               const moodIcons = {
-                depression: 'emoticon-dead-outline',
-                anxiety: 'alert-circle-outline',
-                anger: 'emoticon-angry-outline',
-                stress: 'weather-windy',
-                low_energy: 'battery-low',
-                balance: 'scale-balance',
-              };
-              const moodKey = s.mood || s.state || null; 
-              const iconName = moodKey ? (moodIcons[moodKey] || 'help-circle-outline') : null;
-
-              return (
-                <View key={index}>
-                  <View style={styles.historyRow}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-                      {iconName && (
-                        <View style={{ backgroundColor: theme.background, padding: 6, borderRadius: 8 }}>
-                          <MaterialCommunityIcons name={iconName} size={18} color={theme.primary} />
+            {/* Bar Chart */}
+            <View style={styles.chartArea}>
+              {chartData.map((item, index) => (
+                <View key={index} style={styles.chartColumn}>
+                  
+                  <View style={styles.barsWrapper}>
+                    {/* Bar 1 - Minutes (Light Green) */}
+                    <View style={styles.barContainer}>
+                        <View style={[
+                          styles.bar, 
+                          { 
+                            backgroundColor: '#8baea4',
+                            height: `${(item.minutes / maxMinutes) * 100}%`,
+                            minHeight: item.minutes > 0 ? 20 : 2
+                          }
+                        ]}>
+                            {item.minutes > 0 && (
+                              <Text style={styles.innerBarLabel}>{item.minutes}</Text>
+                            )}
                         </View>
-                      )}
-                      <ThemedText style={[styles.historyDate, { color: theme.text }]}>
-                        {new Date(s.date).toLocaleDateString()}
-                      </ThemedText>
                     </View>
-                    <View style={[styles.historyBadge, { backgroundColor: theme.primaryLight }]}>
-                      <Text style={styles.historyDuration}>{s.duration} Sec.</Text>
+
+                    {/* Bar 2 - Sessions Count (Dark Green) */}
+                    <View style={styles.barContainer}>
+                        <View style={[
+                          styles.bar, 
+                          { 
+                            backgroundColor: '#2f6f5f',
+                            height: `${(item.count / maxCount) * 100}%`,
+                            minHeight: item.count > 0 ? 20 : 2
+                          }
+                        ]}>
+                            {item.count > 0 && (
+                              <Text style={styles.innerBarLabel}>{item.count}</Text>
+                            )}
+                        </View>
                     </View>
                   </View>
-                  {index < sessions.length - 1 && <View style={[styles.divider, { backgroundColor: theme.border }]} />}
-                </View>
-              );
-            })
-          )}
-        </View>
 
-      </View>
-    </ScrollView>
+                  {/* Day label below bars */}
+                  <Text style={styles.dayLabel}>{item.label}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* SECTION 3 - Session History */}
+          <View style={[styles.historyContainer, { backgroundColor: theme.cardBackground }]}>
+            <ThemedText type="subtitle" style={[styles.sectionHeader, { color: theme.text }]}>History</ThemedText>
+            
+            {sessions.length === 0 ? (
+              <ThemedText style={{ color: theme.textSecondary, fontStyle: 'italic' }}>
+                No Exercises completed yet.
+              </ThemedText>
+            ) : (
+              sessions.map((s, index) => {
+                const moodIcons = {
+                  depression: 'emoticon-dead-outline',
+                  anxiety: 'alert-circle-outline',
+                  anger: 'emoticon-angry-outline',
+                  stress: 'weather-windy',
+                  low_energy: 'battery-low',
+                  balance: 'scale-balance',
+                };
+                const moodKey = s.mood || s.state || null; 
+                const iconName = moodKey ? (moodIcons[moodKey] || 'help-circle-outline') : null;
+
+                return (
+                  <View key={index}>
+                    <View style={styles.historyRow}>
+                      <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                        {iconName && (
+                          <View style={{ backgroundColor: theme.background, padding: 6, borderRadius: 8 }}>
+                            <MaterialCommunityIcons name={iconName} size={18} color={theme.primary} />
+                          </View>
+                        )}
+                        <ThemedText style={[styles.historyDate, { color: theme.text }]}>
+                          {new Date(s.date).toLocaleDateString()}
+                        </ThemedText>
+                      </View>
+                      <View style={[styles.historyBadge, { backgroundColor: theme.primaryLight }]}>
+                        <Text style={styles.historyDuration}>{s.duration} Sec.</Text>
+                      </View>
+                    </View>
+                    {index < sessions.length - 1 && <View style={[styles.divider, { backgroundColor: theme.border }]} />}
+                  </View>
+                );
+              })
+            )}
+          </View>
+
+        </View>
+      </ScrollView>
+    </>
   );
 }
 
