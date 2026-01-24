@@ -4,24 +4,41 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
+<<<<<<< HEAD
   // user = { name: string, password: string }
   const [user, setUserState] = useState({ name: 'User', password: '' });
 
   // Загрузка пользователя из AsyncStorage при старте
+=======
+  // user = { name: string, password: string } or null
+  const [user, setUserState] = useState(null);
+
+  // Load user from AsyncStorage on start
+>>>>>>> 3614bce59e474e464386a0832f29f2019f876590
   useEffect(() => {
     (async () => {
       try {
         const stored = await AsyncStorage.getItem('user');
-        if (stored) setUserState(JSON.parse(stored));
-      } catch {}
+        if (stored) {
+          setUserState(JSON.parse(stored));
+        } else {
+          setUserState(null);
+        }
+      } catch {
+        setUserState(null);
+      }
     })();
   }, []);
 
-  // Сохранять пользователя в AsyncStorage при изменении
+  // Save user to AsyncStorage on change
   const setUser = async (u) => {
     setUserState(u);
     try {
-      await AsyncStorage.setItem('user', JSON.stringify(u));
+      if (u) {
+        await AsyncStorage.setItem('user', JSON.stringify(u));
+      } else {
+        await AsyncStorage.removeItem('user');
+      }
     } catch {}
   };
 

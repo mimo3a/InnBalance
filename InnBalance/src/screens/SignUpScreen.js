@@ -14,6 +14,7 @@ import { useUser } from '@/src/contexts/UserContext';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function SignUpScreen() {
@@ -46,7 +47,7 @@ export default function SignUpScreen() {
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
-    }
+    }a
 
     // Terms acceptance validation
     if (!acceptTerms) {
@@ -56,21 +57,29 @@ export default function SignUpScreen() {
 
     setLoading(true);
 
-    // Simulate API call - replace with actual registration
-    setTimeout(() => {
+    try {
+      // Save user credentials
+      await AsyncStorage.setItem('savedUsername', name);
+      await AsyncStorage.setItem('savedPassword', password);
+      // Create auth token (user is now registered and logged in)
+      await AsyncStorage.setItem('authToken', 'token-' + Date.now());
+      
       setLoading(false);
       setUser({ name, password });
       Alert.alert(
         'Success',
-        'Account created successfully! Please log in.',
+        'Account created successfully!',
         [
           {
             text: 'OK',
-            onPress: () => router.replace('/login')
+            onPress: () => router.replace('/(tabs)')
           }
         ]
       );
-    }, 1500);
+    } catch (error) {
+      setLoading(false);
+      Alert.alert('Error', 'Failed to create account');
+    }
 
     // TODO: Implement actual registration
     // try {
@@ -224,14 +233,14 @@ export default function SignUpScreen() {
           </View>
         </View>
 
-        {/* Back to Welcome */}
+        {/* Back to Welcome
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
           <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
           <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );

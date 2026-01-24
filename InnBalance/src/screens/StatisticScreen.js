@@ -59,27 +59,36 @@ export default function StatisticScreen() {
    * Calculate summary statistics
    * - Total number of sessions (totalSessions)
    * - Total duration in minutes (totalDurationMinutes)
-   * - Average sessions per week (avgSessionsPerWeek)
-   * - Average minutes per week (avgMinutesPerWeek)
+   * - Average sessions per day (avgSessionsPerDay)
+   * - Average minutes per day (avgMinutesPerDay)
    */
   const totalSessions = sessions.length;
   const totalDurationSeconds = sessions.reduce((sum, session) => sum + (session.duration || 0), 0);
   const totalDurationMinutes = Math.round(totalDurationSeconds / 60);
 
   // Calculate averages for Summary
-  // Find first Session
-  const timestamps = sessions.map(s => new Date(s.date).getTime());
-  const firstSessionTimestamp = Math.min(...timestamps);
+  // Find first Session & safetycheck if no sessions available
+  const hasSessions = sessions && sessions.length > 0;
+  const timestamps = hasSessions ? sessions.map(s => new Date(s.date).getTime()) : [];
+  const firstSessionTimestamp = hasSessions ? Math.min(...timestamps) : new Date().getTime();
 
-  // Calculate weeks passed since first session
+  // Timedifference calculated in Days (rounded)
   const diffInMs = new Date().getTime() - firstSessionTimestamp;
-  const diffInDays = Math.max(1, diffInMs / (1000*60*60*24));
-  const weeksSinceStart = Math.max(1,diffInDays / 7);
+  const diffInDays = Math.max(1, Math.ceil(diffInMs / (1000 * 60 * 60 * 24)));
+  
+  const avgMinutesPerDay = (totalDurationMinutes / diffInDays).toFixed(1);
+  const avgSessionsPerDay = (totalSessions / diffInDays).toFixed(1);
+
+  /* 
+  ==== Weekly Summary ==== (old)
+  // Round to next full week
+  const weeksSinceStart = Math.ceil(diffInDays / 7);
 
   // Final calculation
   const avgMinutesPerWeek = Math.round(totalDurationMinutes / weeksSinceStart);
   const avgSessionsPerWeek = (totalSessions / weeksSinceStart).toFixed(1);
-
+  */
+ 
   // State for chart view and Navigation
   const [viewMode, setViewMode] = useState('week'); // 'week' or 'month'
   const [offset, setOffset] = useState(0);
@@ -90,77 +99,94 @@ export default function StatisticScreen() {
    * - Calculates data based on view mode and offset
    */
   const chartData = useMemo(() => {
-    const dataPoints = [];
-    const now = new Date();
+  const dataPoints = [];
+  const now = new Date();
 
-    if (viewMode === 'week') {
-      // 7-day-logic (rolling view)
-      const baseDate = new Date();
-      baseDate.setDate(now.getDate() - (offset * 7));
+  if (viewMode === 'week') {
+    // Week View: Rolling 7-day window based on offset
+    const baseDate = new Date();
+    baseDate.setDate(now.getDate() - (offset * 7));
 
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(baseDate);
-        d.setDate(d.getDate() - i);
-        const isoDate = d.toISOString().split('T')[0];
-        const label = d.toLocaleDateString('en-US', { weekday: 'short' });
-        dataPoints.push({
-                          date: isoDate,
-                          label,
-                          count: 0,
-                          minutes: 0,
-                          seconds: 0
-                        });
-      }
-    } else {
-      // Monthly-logic (4 week blocks)
-      const targetMonthDate = new Date();
-      targetMonthDate.setMonth(now.getMonth() - offset);
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(baseDate);
+      d.setDate(d.getDate() - i);
       
-      const currentMonthName = targetMonthDate.toLocaleDateString('en-US', { month: 'long', year: '2-digit'});
-
-      for (let i = 1; i <= 4; i++) {
-        dataPoints.push({
-                          label: `W${i}`,
-                          count: 0,
-                          minutes: 0,
-                          seconds: 0,
-                          isMonth: true,
-                          monthName: currentMonthName,
-                          monthIdx: targetMonthDate.getMonth()
-                        });
-      }
+      dataPoints.push({
+        date: d.toISOString().split('T')[0],
+        label: d.toLocaleDateString('en-US', { weekday: 'short' }),
+        count: 0,
+        seconds: 0
+      });
     }
 
-    // Map Sessions
+    // Fill week data
     sessions.forEach(session => {
-      const sDate = new Date(session.date);
-      const sIso = sDate.toISOString().split('T')[0];
-
-      if (viewMode === 'week') {
-        const point = dataPoints.find(p => p.date === sIso);
-        if (point) {
-          point.count += 1;
-          point.seconds += (session.duration || 0);
-        }
-      } else {
-        const targetMonth = new Date();
-        targetMonth.setMonth(now.getMonth() - offset);
-        if (sDate.getMonth() === targetMonth.getMonth() && sDate.getFullYear() === targetMonth.getFullYear()) {
-          const weekIdx = Math.min(Math.floor((sDate.getDate() - 1) / 7.5), 3);
-          dataPoints[weekIdx].count += 1;
-          dataPoints[weekIdx].seconds += (session.duration || 0);
-        }
+      const sIso = new Date(session.date).toISOString().split('T')[0];
+      const point = dataPoints.find(p => p.date === sIso);
+      
+      if (point) {
+        point.count += 1;
+        point.seconds += (session.duration || 0);
       }
     });
 
-  dataPoints.forEach(p => p.minutes = Math.round(p.seconds / 60));
-  return dataPoints;
-}, [sessions, viewMode, offset]);
+  } else {
+    // Month View: Real calendar weeks logic
+    const targetDate = new Date();
+    targetDate.setMonth(now.getMonth() - offset);
+    
+    const year = targetDate.getFullYear();
+    const month = targetDate.getMonth();
+    const monthName = targetDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric'});
 
-  // Convert Seconds to minutes per day
-  chartData.forEach(day => {
-    day.minutes = Math.round(day.seconds / 60);
-  });
+    // Determine starting weekday of the month (0=Mon, 6=Sun for easier math)
+    const firstDayOfMonth = new Date(year, month, 1);
+    const jsDay = firstDayOfMonth.getDay(); 
+    const startOffset = jsDay === 0 ? 6 : jsDay - 1; 
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Calculate required rows (4, 5, or 6 weeks)
+    const weeksCount = Math.ceil((daysInMonth + startOffset) / 7);
+
+    // Create buckets
+    for (let i = 0; i < weeksCount; i++) {
+      dataPoints.push({
+        label: `W${i + 1}`,
+        count: 0,
+        seconds: 0,
+        isMonth: true,
+        monthName,
+        monthIdx: month,
+        year
+      });
+    }
+
+    // Map sessions to week buckets
+    sessions.forEach(session => {
+      const sDate = new Date(session.date);
+      
+      // Only process sessions belonging to the displayed month
+      if (sDate.getMonth() === month && sDate.getFullYear() === year) {
+        const dayOfMonth = sDate.getDate();
+        
+        // Calculate which row (week index) this day belongs to
+        const weekIndex = Math.floor((dayOfMonth + startOffset - 1) / 7);
+
+        if (dataPoints[weekIndex]) {
+          dataPoints[weekIndex].count += 1;
+          dataPoints[weekIndex].seconds += (session.duration || 0);
+        }
+      }
+    });
+  }
+
+  // Common: Convert seconds to minutes for display
+  dataPoints.forEach(p => p.minutes = Math.round(p.seconds / 60));
+
+  return dataPoints;
+
+}, [sessions, viewMode, offset]);
 
   const maxCount = Math.max(...chartData.map(d => d.count), 1); 
   const maxMinutes = Math.max(...chartData.map(d => d.minutes), 1);
@@ -190,13 +216,13 @@ export default function StatisticScreen() {
             {/* Card 1 - Total Minutes (Light Green) */}
             <View style={[styles.statBoxLarge, { backgroundColor: theme.primaryLight }]}>
               <Text style={styles.statValueLight}>{totalDurationMinutes}</Text>
-              <Text style={styles.statLabelLight}>Minutes</Text>
+              <Text style={styles.statLabelLight}>Total Minutes</Text>
             </View>
             
             {/* Card 2 - Total Sessions (Dark Green) */}
             <View style={[styles.statBoxLarge, { backgroundColor: theme.primary }]}>
               <Text style={styles.statValueLight}>{totalSessions}</Text>
-              <Text style={styles.statLabelLight}>Sessions</Text>
+              <Text style={styles.statLabelLight}>Total Sessions</Text>
             </View>
           </View>
 
@@ -204,14 +230,14 @@ export default function StatisticScreen() {
         <View style={styles.statsRow}>
             {/* Card 3 - Average minutes per week (Light Green) */}
             <View style={[styles.statBoxSmall, { backgroundColor: theme.primaryLight }]}>
-              <Text style={styles.statValueLightSmall}>{avgMinutesPerWeek}</Text>
-              <Text style={styles.statLabelLightSmall}>Avg. Minutes/Week</Text>
+              <Text style={styles.statValueLightSmall}>{avgMinutesPerDay}</Text>
+              <Text style={styles.statLabelLightSmall}>Avg. Minutes/Day</Text>
             </View>
             
             {/* Card 4 - Average sessions per week (Dark Green) */}
             <View style={[styles.statBoxSmall, { backgroundColor: theme.primary }]}>
-              <Text style={styles.statValueLightSmall}>{avgSessionsPerWeek}</Text>
-              <Text style={styles.statLabelLightSmall}>Avg. Sessions/Week</Text>
+              <Text style={styles.statValueLightSmall}>{avgSessionsPerDay}</Text>
+              <Text style={styles.statLabelLightSmall}>Avg. Sessions/Day</Text>
             </View>
           </View>
         </View>
@@ -246,16 +272,26 @@ export default function StatisticScreen() {
 
               {/* Navigation Controls */}
               <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 10 }}>
+                
+                {/* left chevron (always active) */}
                 <TouchableOpacity onPress={() => setOffset(prev => prev + 1)}>
                   <MaterialCommunityIcons name="chevron-left" size={30} color={theme.primary} />
                 </TouchableOpacity>
                 
-                {offset !== 0 && (
-                  <TouchableOpacity onPress={() => setOffset(0)} style={{ paddingHorizontal: 5 }}>
-                    <MaterialCommunityIcons name="calendar-today" size={20} color={theme.primary} />
-                  </TouchableOpacity>
-                )}
+                {/* Today button: can get inactive if view in current week */}
+                <TouchableOpacity 
+                  onPress={() => setOffset(0)} 
+                  style={{ paddingHorizontal: 5 }}
+                  disabled={offset === 0} // deactivate, if already at offset 0
+                >
+                  <MaterialCommunityIcons 
+                    name="calendar-today" 
+                    size={20} 
+                    color={offset === 0 ? theme.border : theme.primary} // change color: grey if 0 else green
+                  />
+                </TouchableOpacity>
 
+                {/* right chevron: can get inactive if view in current week */}
                 <TouchableOpacity 
                   onPress={() => setOffset(prev => Math.max(0, prev - 1))}
                   disabled={offset === 0}
@@ -263,7 +299,7 @@ export default function StatisticScreen() {
                   <MaterialCommunityIcons 
                     name="chevron-right" 
                     size={30} 
-                    color={offset === 0 ? theme.border : theme.primary} 
+                    color={offset === 0 ? theme.border : theme.primary} // change color: grey if 0 else green
                   />
                 </TouchableOpacity>
               </View>

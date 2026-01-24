@@ -1,5 +1,11 @@
-import BreathingScreen from '@/src/screens/BreathingScreen';
 
+import { Stack } from 'expo-router';
+import BreathingScreen from '@/src/screens/BreathingScreen';
 export default function BreathingRoute() {
-  return <BreathingScreen />;
+  return (
+    <>
+      <Stack.Screen options={{ headerShown: true, headerTitle: '' }} />
+      <BreathingScreen />
+    </>
+  );
 }

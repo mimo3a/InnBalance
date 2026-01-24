@@ -25,6 +25,7 @@ import { useTheme } from '@/src/contexts/ThemeContext';
 export default function HomeScreen() {
     // Track the currently selected mood state
     // Track the currently selected mood state
+    
     const [selectedState, setSelectedState] = useState(null);
     const { theme } = useTheme();
     
@@ -47,6 +48,15 @@ export default function HomeScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: theme.background }]}>
+            {/*Welcome Text*/}
+            <View style={{marginTop: '10', marginBottom: '10'}}>
+                <ThemedText type="title" style={{ color: theme.text }}>
+                Hello User,
+            </ThemedText>
+            <ThemedText type='subtitle'>
+                how are we feeling?
+            </ThemedText>
+            </View>
             {/* Mood Selection Container */}
             <ThemedView style={[styles.moodContainer, { backgroundColor: theme.cardBackground }]}>
                 <ThemedView style={[styles.moodBox, { backgroundColor: theme.cardBackground }]}>

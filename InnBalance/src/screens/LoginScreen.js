@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
 
 export default function LoginScreen() {
-    const { setUser } = useUser();
+    const { user, setUser } = useUser();
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -34,39 +34,27 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
+    // Имитация задержки
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setLoading(false);
+    // Проверка совпадения с сохранёнными данными
+    if (name !== user.name || password !== user.password) {
+      Alert.alert('Error', 'Invalid name or password');
+      return;
+    }
+    setUser({ name, password });
+    // Mock success - save auth token
+    await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
+    Alert.alert('Success', 'Login successful!', [
+      {
+        text: 'OK',
+        onPress: () => router.replace('/(tabs)')
+      }
+    ]);
 
-    // Simulate API call - replace with actual authentication
-    setTimeout(async () => {
-      setLoading(false);
-      setUser({ name, password });
-      // Mock success - save auth token
-      await AsyncStorage.setItem('authToken', 'mock-token-' + Date.now());
-      Alert.alert('Success', 'Login successful!', [
-        {
-          text: 'OK',
-          onPress: () => router.replace('/(tabs)')
-        }
-      ]);
-    }, 1500);
-
-    // TODO: Implement actual authentication
-    // try {
-    //   const response = await authAPI.login(email, password);
-    //   await AsyncStorage.setItem('authToken', response.token);
-    //   router.replace('/(tabs)');
-    // } catch (error) {
-    //   Alert.alert('Error', error.message);
-    // } finally {
-    //   setLoading(false);
-    // }
+    
   };
 
-  const handleForgotPassword = () => {
-    Alert.alert(
-      'Reset Password',
-      'Password reset functionality will be implemented with backend integration'
-    );
-  };
 
   return (
     <KeyboardAvoidingView
@@ -132,12 +120,7 @@ export default function LoginScreen() {
             </View>
           </View>
 
-          {/* Forgot Password */}
-          <TouchableOpacity style={styles.forgotButton} onPress={handleForgotPassword}>
-            <Text style={[styles.forgotText, { color: theme.primary }]}>
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
+          
 
           {/* Login Button */}
           <TouchableOpacity
@@ -168,14 +151,7 @@ export default function LoginScreen() {
           </View>
         </View>
 
-        {/* Back to Welcome */}
-        {/* <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
-          <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity> */}
+        {/* No back navigation on LoginScreen */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
