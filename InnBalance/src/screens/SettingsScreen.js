@@ -169,23 +169,23 @@ export default function SettingsScreen() {
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
         <View style={styles.settingHeader}>
           <MaterialCommunityIcons name="map-marker" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Orte verwalten</Text>
+          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Manage Places</Text>
         </View>
         <TouchableOpacity style={styles.deleteButton} onPress={handleResetOrte}>
           <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Meine Orte löschen</Text>
+          <Text style={styles.deleteButtonText}>Delete My Places</Text>
         </TouchableOpacity>
       </ThemedView>
 
-      {/* Statistik Management Section */}
+      {/* Statistics Management Section */}
       <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
         <View style={styles.settingHeader}>
           <MaterialCommunityIcons name="chart-bar" size={24} color={theme.primary} />
-          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Statistiken verwalten</Text>
+          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Manage Statistics</Text>
         </View>
         <TouchableOpacity style={styles.deleteButton} onPress={handleResetStatistics}>
           <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-          <Text style={styles.deleteButtonText}>Meine Statistiken löschen</Text>
+          <Text style={styles.deleteButtonText}>Delete My Statistics</Text>
         </TouchableOpacity>
       </ThemedView>
 
