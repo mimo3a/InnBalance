@@ -162,8 +162,6 @@ export default function SettingsScreen() {
             </View>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
-<<<<<<< HEAD
-=======
         </TouchableOpacity>
       </ThemedView>
 
@@ -188,7 +186,6 @@ export default function SettingsScreen() {
         <TouchableOpacity style={styles.deleteButton} onPress={handleResetStatistics}>
           <MaterialCommunityIcons name="delete" size={20} color="#fff" />
           <Text style={styles.deleteButtonText}>Meine Statistiken löschen</Text>
->>>>>>> review-branch
         </TouchableOpacity>
       </ThemedView>
 

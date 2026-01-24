@@ -19,11 +19,7 @@ export default function RootLayout() {
         <UserProvider>
           <MapPickerProvider>
             <RootNavigator />
-<<<<<<< HEAD
-          </gitMapPickerProvider>
-=======
           </MapPickerProvider>
->>>>>>> review-branch
         </UserProvider>
       </ThemeProvider>
     </LocationProvider>
@@ -31,10 +27,6 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-<<<<<<< HEAD
-  const { user } = useUser();
-  const isAuthenticated = user?.name && user?.password;
-=======
   const { user, loading } = useUser();
 
   // ⏳ Ждём, пока загрузится пользователь
@@ -43,7 +35,6 @@ function RootNavigator() {
   }
 
   const isAuthenticated = !!user;
->>>>>>> review-branch
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -51,23 +42,11 @@ function RootNavigator() {
         <Stack.Screen name="signup" />
       ) : (
         <>
-<<<<<<< HEAD
-          <Stack.Screen name="breathing" />
-          
-          
-
-          
-=======
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="breathing" />
->>>>>>> review-branch
         </>
       )}
     </Stack>
   );
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> review-branch
