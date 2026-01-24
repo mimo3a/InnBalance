@@ -167,16 +167,19 @@ const styles = StyleSheet.create({
   },
 
   imageWrapper: {
-    position: "relative",
-    marginTop: -40,
-    borderRadius: 18,
-    overflow: "hidden",
-  },
+  position: "relative",
+  marginTop: -40,
+  borderRadius: 18,
+  overflow: "hidden",
+  width: "100%",
+  aspectRatio: 16 / 9, // ⬅️ магия
+},
 
   image: {
     width: "100%",
-    height: 250,
-  },
+    height: "100%",
+  resizeMode: "cover",
+},
 
   closeButton: {
     position: "absolute",

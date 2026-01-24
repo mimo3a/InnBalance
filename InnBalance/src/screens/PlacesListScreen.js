@@ -79,7 +79,7 @@ export default function PlacesListScreen() {
                 >
                 {filteredPlaces.map((place) => (
                     <PlaceCard 
-                        key={`${place.id}-${place.rating}`}
+                        key={`${place.id}-${place.rating}-${place.distance}`}
                         name={place.name}
                         info={place.info}
                         rating={place.rating}
