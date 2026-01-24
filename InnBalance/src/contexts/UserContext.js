@@ -4,19 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
-<<<<<<< HEAD
-  // user = { name: string, password: string }
-  const [user, setUserState] = useState({ name: 'User', password: '' });
-
-  // Загрузка пользователя из AsyncStorage при старте
-=======
-  // user = { name: string, password: string } or null
   const [user, setUserState] = useState(null);
+  const [loading, setLoading] = useState(true); // ✅ ВАЖНО
 
   // Load user from AsyncStorage on start
->>>>>>> 3614bce59e474e464386a0832f29f2019f876590
   useEffect(() => {
-    (async () => {
+    const loadUser = async () => {
       try {
         const stored = await AsyncStorage.getItem('user');
         if (stored) {
@@ -26,8 +19,12 @@ export function UserProvider({ children }) {
         }
       } catch {
         setUserState(null);
+      } finally {
+        setLoading(false); // ✅ ЗАГРУЗКА ЗАВЕРШЕНА
       }
-    })();
+    };
+
+    loadUser();
   }, []);
 
   // Save user to AsyncStorage on change
@@ -43,7 +40,7 @@ export function UserProvider({ children }) {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, loading }}>
       {children}
     </UserContext.Provider>
   );

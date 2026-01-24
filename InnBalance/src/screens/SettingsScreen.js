@@ -162,6 +162,33 @@ export default function SettingsScreen() {
             </View>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
+<<<<<<< HEAD
+=======
+        </TouchableOpacity>
+      </ThemedView>
+
+      {/* Place Management Section */}
+      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
+        <View style={styles.settingHeader}>
+          <MaterialCommunityIcons name="map-marker" size={24} color={theme.primary} />
+          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Orte verwalten</Text>
+        </View>
+        <TouchableOpacity style={styles.deleteButton} onPress={handleResetOrte}>
+          <MaterialCommunityIcons name="delete" size={20} color="#fff" />
+          <Text style={styles.deleteButtonText}>Meine Orte löschen</Text>
+        </TouchableOpacity>
+      </ThemedView>
+
+      {/* Statistik Management Section */}
+      <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
+        <View style={styles.settingHeader}>
+          <MaterialCommunityIcons name="chart-bar" size={24} color={theme.primary} />
+          <Text style={[styles.sectionTitle, { color: theme.primary }]}>Statistiken verwalten</Text>
+        </View>
+        <TouchableOpacity style={styles.deleteButton} onPress={handleResetStatistics}>
+          <MaterialCommunityIcons name="delete" size={20} color="#fff" />
+          <Text style={styles.deleteButtonText}>Meine Statistiken löschen</Text>
+>>>>>>> review-branch
         </TouchableOpacity>
       </ThemedView>
 

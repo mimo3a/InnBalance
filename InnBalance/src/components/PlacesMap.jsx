@@ -4,24 +4,29 @@
  * Displays an interactive map showing all saved relaxation places.
  */
 
-import React from 'react';
-import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { useRouter } from 'expo-router';
 
 import { useLocation } from '@/src/contexts/LocationContext';
 import { usePlaces } from '@/src/hooks/usePlaces';
+import PlaceBottomSheet from '@/src/components/PlaceBottomSheet';
 
 export default function PlacesMap() {
   const router = useRouter();
 
-  // 🔹 global location (from Context)
-  const { location, loading: locationLoading, errorMsg } = useLocation();
+  // ✅ get location from context
+  const { location, loading: locationLoading } = useLocation();
 
-  // 🔹 places depend on location
+  // ✅ get places based on location
   const { places, loading: placesLoading } = usePlaces(location);
 
-  // 🔄 loading state
+  // Bottom sheet state
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [sheetVisible, setSheetVisible] = useState(false);
+
+  // Combined loading state
   if (locationLoading || placesLoading || !location) {
     return (
       <View style={[styles.container, styles.center]}>
@@ -29,6 +34,25 @@ export default function PlacesMap() {
       </View>
     );
   }
+
+  const openSheet = (place) => {
+    setSelectedPlace(place);
+    setSheetVisible(true);
+  };
+
+  const closeSheet = () => {
+    setSheetVisible(false);
+    setTimeout(() => setSelectedPlace(null), 250);
+  };
+
+  const openDetails = () => {
+    if (!selectedPlace) return;
+    closeSheet();
+    router.push({
+      pathname: '/description',
+      params: { id: selectedPlace.id },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -50,22 +74,17 @@ export default function PlacesMap() {
               longitude: place.lng,
             }}
             title={place.name}
-            description="details..."
-            onCalloutPress={() =>
-              router.push({
-                pathname: '/description',
-                params: { id: place.id },
-              })
-            }
+            onPress={() => openSheet(place)}
           />
         ))}
       </MapView>
 
-      {errorMsg && (
-        <View style={styles.center}>
-          <Text style={{ color: 'red' }}>{errorMsg}</Text>
-        </View>
-      )}
+      <PlaceBottomSheet
+        place={selectedPlace}
+        visible={sheetVisible}
+        onClose={closeSheet}
+        onOpen={openDetails}
+      />
     </View>
   );
 }

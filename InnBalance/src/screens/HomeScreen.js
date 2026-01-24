@@ -114,7 +114,7 @@ export default function HomeScreen() {
                             }}
                         >
                             <ThemedText style={styles.nextButtonText}>
-                                Weiter →
+                                Next →
                             </ThemedText>
                         </TouchableOpacity>
                     </View>
@@ -137,14 +137,15 @@ export default function HomeScreen() {
             </ThemedView>
             
             {/* Information/Advance Section */}
-            <ThemedView style={[styles.anvanceContainer, { backgroundColor: theme.cardBackground }]}>
+            {/* <ThemedView style={[styles.anvanceContainer, { backgroundColor: theme.cardBackground }]}>
                 <ThemedText style={{ color: theme.text }}>
                     Choose your mood and get a preliminary recommendation for breathing exercises or a walk in the fresh air, depending on the weather.
                 </ThemedText>
-            </ThemedView>
+            </ThemedView> */}
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { places as defaultPlaces } from '@/src/data/places';
 import { getDistanceFromLatLonInKm } from '@/src/utils/distance';
 
@@ -110,9 +110,9 @@ export function usePlaces(userLocation) {
   };
 
   const resetUserPlaces = async () => {
-    // Remove uploaded images
+    // Remove uploaded images (only if image is a string path)
     for (const p of places) {
-      if (p.image?.startsWith('file://')) {
+      if (typeof p.image === 'string' && p.image.startsWith('file://')) {
         try {
           await FileSystem.deleteAsync(p.image, { idempotent: true });
         } catch (e) {

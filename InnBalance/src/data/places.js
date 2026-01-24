@@ -1,7 +1,7 @@
 export const places = [
     { 
         id: 1, 
-        name: 'Place 1', 
+        name: 'Botanic park', 
         info: 'Seit über 100 Jahren befindet sich der Botanische Garten nunmehr in Hötting und ist nicht nur unverzichtbar als Lehr- und Forschungsstätte des Institutes für Botanik der Universität Innsbruck, sondern auch Bildungs- und Erholungsort für Kinder, Jugendliche und Erwachsene. Über 7000 Pflanzenarten aus den verschiedensten Lebensräumen der Erde werden hier kultiviert.', 
         rating: 4.5, 
         image: require('../Images/Places/BotanischeGarten.png'), 
@@ -13,14 +13,15 @@ export const places = [
     },
     { 
         id: 2, 
-        name: 'Place 2', 
-        info: 'Short Info about Place 2', 
-        rating: 4.0, 
-        image: require('../Images/Places/BotanischeGarten.png'), 
-        category: 'Museum', 
+        name: 'MCI', 
+        info: 'Das MCI-Bauprojekt in Innsbruck befindet sich auf dem Gelände der ehemaligen Fennerkaserne, das oft als „grüne Wiese“ oder Brache im Stadtzentrum (nahe dem Hofgarten) bezeichnet wurde. ', 
+        rating: 5.0, 
+        image: require('../Images/Places/mci.png'), 
+        category: 'Park', 
         distance: 2.5,
-        lat: 47.2650,
-        lng: 11.3900,
+        // 47.26947108309961, 11.398268543930676
+        lat: 47.26947108309961,
+        lng: 11.398268543930676,
         acces: 'Public'
     },
     { 
@@ -63,6 +64,18 @@ export const places = [
         id: 6, 
         name: 'Place 6', 
         info: 'Short Info about Place 6', 
+        rating: 3.8, 
+        image: require('../Images/Places/BotanischeGarten.png'), 
+        category: 'Gym', 
+        distance: 2.1,
+        lat: 47.2550,
+        lng: 11.4050,
+        acces: 'Public'
+    },
+    { 
+        id: 7, 
+        name: 'Place 7', 
+        info: 'Short Info about Place 7', 
         rating: 3.8, 
         image: require('../Images/Places/BotanischeGarten.png'), 
         category: 'Gym', 

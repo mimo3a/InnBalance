@@ -1,4 +1,16 @@
-import RecommendationsScreen from "@/src/screens/RecommendationsScreen";
+import { Stack } from 'expo-router';
+import RecommendationsScreen from '@/src/screens/RecommendationsScreen';
+
 export default function RecommendationsScreenRoute() {
-  return <RecommendationsScreen />;
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: '',
+          headerShown: true,
+        }}
+      />
+      <RecommendationsScreen />
+    </>
+  );
 }
