@@ -22,10 +22,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '@/src/contexts/UserContext';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
-
+import { StatusBar } from 'expo-status-bar';
 
 export default function AccountScreen() {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const router = useRouter();
   const { user, setUser } = useUser();
 
@@ -87,6 +87,7 @@ export default function AccountScreen() {
 
   return (
     <>
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
       <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
         {/* Header */}
         <View style={styles.header}>

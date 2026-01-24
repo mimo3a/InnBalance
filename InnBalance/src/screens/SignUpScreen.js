@@ -16,11 +16,12 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 export default function SignUpScreen() {
     const { setUser } = useUser();
   const router = useRouter();
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -95,154 +96,157 @@ export default function SignUpScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        style={[styles.container, { backgroundColor: theme.background }]}
-        contentContainerStyle={styles.contentContainer}
-        keyboardShouldPersistTaps="handled"
+    <>
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={[styles.iconContainer, { backgroundColor: theme.primary }]}>
-            <MaterialCommunityIcons name="account-plus" size={48} color="#fff" />
-          </View>
-          <Text style={[styles.title, { color: theme.text }]}>Create Account</Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-            Join InnBalance today
-          </Text>
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          {/* Name Input */}
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
-            <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="account-outline" size={20} color={theme.textSecondary} />
-              <TextInput
-                style={[styles.input, { color: theme.text }]}
-                placeholder="John Doe"
-                placeholderTextColor={theme.textSecondary}
-                value={name}
-                onChangeText={setName}
-                autoCapitalize="words"
-              />
-            </View>
-          </View>
-
-          {/* Password Input */}
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>Password</Text>
-            <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="lock-outline" size={20} color={theme.textSecondary} />
-              <TextInput
-                style={[styles.input, { color: theme.text }]}
-                placeholder="At least 6 characters"
-                placeholderTextColor={theme.textSecondary}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                <MaterialCommunityIcons
-                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                  size={20}
-                  color={theme.textSecondary}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Confirm Password Input */}
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: theme.text }]}>Confirm Password</Text>
-            <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="lock-check-outline" size={20} color={theme.textSecondary} />
-              <TextInput
-                style={[styles.input, { color: theme.text }]}
-                placeholder="Re-enter password"
-                placeholderTextColor={theme.textSecondary}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                secureTextEntry={!showConfirmPassword}
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-              <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                <MaterialCommunityIcons
-                  name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
-                  size={20}
-                  color={theme.textSecondary}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Terms and Conditions */}
-          <TouchableOpacity
-            style={styles.checkboxContainer}
-            onPress={() => setAcceptTerms(!acceptTerms)}
-          >
-            <MaterialCommunityIcons
-              name={acceptTerms ? 'checkbox-marked' : 'checkbox-blank-outline'}
-              size={24}
-              color={acceptTerms ? theme.primary : theme.textSecondary}
-            />
-            <Text style={[styles.checkboxText, { color: theme.text }]}> 
-              I agree to the{' '}
-              <Text
-                style={{ color: theme.primary, fontWeight: '600', textDecorationLine: 'underline' }}
-                onPress={() => router.push('/terms')}
-              >
-                Terms and Conditions
-              </Text>
-            </Text>
-          </TouchableOpacity>
-
-          {/* Sign Up Button */}
-          <TouchableOpacity
-            style={[styles.signupButton, { backgroundColor: theme.primary }]}
-            onPress={handleSignUp}
-            disabled={loading}
-          >
-            <Text style={styles.signupButtonText}>
-              {loading ? 'Creating account...' : 'Sign Up'}
-            </Text>
-          </TouchableOpacity>
-
-          {/* Divider */}
-          <View style={styles.divider}>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-            <Text style={[styles.dividerText, { color: theme.textSecondary }]}>OR</Text>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-          </View>
-
-          {/* Login Link */}
-          <View style={styles.loginContainer}>
-            <Text style={[styles.loginText, { color: theme.textSecondary }]}>
-              Already have an account?{' '}
-            </Text>
-            <TouchableOpacity onPress={() => router.push('/login')}>
-              <Text style={[styles.loginLink, { color: theme.primary }]}>Sign In</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Back to Welcome
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
+        <ScrollView
+          style={[styles.container, { backgroundColor: theme.background }]}
+          contentContainerStyle={styles.contentContainer}
+          keyboardShouldPersistTaps="handled"
         >
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
-          <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
-        </TouchableOpacity> */}
-      </ScrollView>
-    </KeyboardAvoidingView>
+          {/* Header */}
+          <View style={styles.header}>
+            <View style={[styles.iconContainer, { backgroundColor: theme.primary }]}>
+              <MaterialCommunityIcons name="account-plus" size={48} color="#fff" />
+            </View>
+            <Text style={[styles.title, { color: theme.text }]}>Create Account</Text>
+            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
+              Join InnBalance today
+            </Text>
+          </View>
+
+          {/* Form */}
+          <View style={styles.form}>
+            {/* Name Input */}
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
+              <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
+                <MaterialCommunityIcons name="account-outline" size={20} color={theme.textSecondary} />
+                <TextInput
+                  style={[styles.input, { color: theme.text }]}
+                  placeholder="John Doe"
+                  placeholderTextColor={theme.textSecondary}
+                  value={name}
+                  onChangeText={setName}
+                  autoCapitalize="words"
+                />
+              </View>
+            </View>
+
+            {/* Password Input */}
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>Password</Text>
+              <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
+                <MaterialCommunityIcons name="lock-outline" size={20} color={theme.textSecondary} />
+                <TextInput
+                  style={[styles.input, { color: theme.text }]}
+                  placeholder="At least 6 characters"
+                  placeholderTextColor={theme.textSecondary}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                  <MaterialCommunityIcons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color={theme.textSecondary}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Confirm Password Input */}
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>Confirm Password</Text>
+              <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
+                <MaterialCommunityIcons name="lock-check-outline" size={20} color={theme.textSecondary} />
+                <TextInput
+                  style={[styles.input, { color: theme.text }]}
+                  placeholder="Re-enter password"
+                  placeholderTextColor={theme.textSecondary}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfirmPassword}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                  <MaterialCommunityIcons
+                    name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color={theme.textSecondary}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Terms and Conditions */}
+            <TouchableOpacity
+              style={styles.checkboxContainer}
+              onPress={() => setAcceptTerms(!acceptTerms)}
+            >
+              <MaterialCommunityIcons
+                name={acceptTerms ? 'checkbox-marked' : 'checkbox-blank-outline'}
+                size={24}
+                color={acceptTerms ? theme.primary : theme.textSecondary}
+              />
+              <Text style={[styles.checkboxText, { color: theme.text }]}> 
+                I agree to the{' '}
+                <Text
+                  style={{ color: theme.primary, fontWeight: '600', textDecorationLine: 'underline' }}
+                  onPress={() => router.push('/terms')}
+                >
+                  Terms and Conditions
+                </Text>
+              </Text>
+            </TouchableOpacity>
+
+            {/* Sign Up Button */}
+            <TouchableOpacity
+              style={[styles.signupButton, { backgroundColor: theme.primary }]}
+              onPress={handleSignUp}
+              disabled={loading}
+            >
+              <Text style={styles.signupButtonText}>
+                {loading ? 'Creating account...' : 'Sign Up'}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Divider */}
+            <View style={styles.divider}>
+              <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+              <Text style={[styles.dividerText, { color: theme.textSecondary }]}>OR</Text>
+              <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
+            </View>
+
+            {/* Login Link */}
+            <View style={styles.loginContainer}>
+              <Text style={[styles.loginText, { color: theme.textSecondary }]}>
+                Already have an account?{' '}
+              </Text>
+              <TouchableOpacity onPress={() => router.push('/login')}>
+                <Text style={[styles.loginLink, { color: theme.primary }]}>Sign In</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Back to Welcome
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <MaterialCommunityIcons name="arrow-left" size={20} color={theme.textSecondary} />
+            <Text style={[styles.backText, { color: theme.textSecondary }]}>Back</Text>
+          </TouchableOpacity> */}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

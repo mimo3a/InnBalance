@@ -8,6 +8,7 @@ export default function RecommendationsScreenRoute() {
         options={{
           title: '',
           headerShown: true,
+          headerTransparent: true,
         }}
       />
       <RecommendationsScreen />

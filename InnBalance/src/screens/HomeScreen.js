@@ -17,6 +17,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import WeatherCard from '@/src/components/WeatherCard';
 import { useState } from 'react';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 /**
  * HomeScreen Component
@@ -27,7 +28,7 @@ export default function HomeScreen() {
     // Track the currently selected mood state
     
     const [selectedState, setSelectedState] = useState(null);
-    const { theme } = useTheme();
+    const { theme, isDark } = useTheme();
     
 
     /**
@@ -47,102 +48,105 @@ export default function HomeScreen() {
     const router = useRouter();
 
     return (
-        <View style={[styles.container, { backgroundColor: theme.background }]}>
-            {/*Welcome Text*/}
-            <View style={{marginTop: '10', marginBottom: '10'}}>
-                <ThemedText type="title" style={{ color: theme.text }}>
-                Hello User,
-            </ThemedText>
-            <ThemedText type='subtitle'>
-                how are we feeling?
-            </ThemedText>
-            </View>
-            {/* Mood Selection Container */}
-            <ThemedView style={[styles.moodContainer, { backgroundColor: theme.cardBackground }]}>
-                <ThemedView style={[styles.moodBox, { backgroundColor: theme.cardBackground }]}>
+        <>    
+            <StatusBar style ={!isDark ? "dark" : "light"}/>
+            <View style={[styles.container, { backgroundColor: theme.background }]}>
+                {/*Welcome Text*/}
+                <View style={{marginTop: '10', marginBottom: '10'}}>
+                    <ThemedText type="title" style={{ color: theme.text }}>
+                    Hello User,
+                </ThemedText>
+                <ThemedText type='subtitle'>
+                    how are we feeling?
+                </ThemedText>
+                </View>
+                {/* Mood Selection Container */}
+                <ThemedView style={[styles.moodContainer, { backgroundColor: theme.cardBackground }]}>
+                    <ThemedView style={[styles.moodBox, { backgroundColor: theme.cardBackground }]}>
 
-                    {/* Mood Icons Grid */}
-                    <View style={styles.iconsRow}>
-                        {STATES.map(state => {
-                            // Check if this state is currently selected
-                            const isSelected = selectedState === state.key;
+                        {/* Mood Icons Grid */}
+                        <View style={styles.iconsRow}>
+                            {STATES.map(state => {
+                                // Check if this state is currently selected
+                                const isSelected = selectedState === state.key;
 
-                            return (
-                                <TouchableOpacity
-                                    key={state.key}
-                                    style={[
-                                        styles.touchableIcon,
-                                        { backgroundColor: isSelected ? theme.primary : theme.primary + '15' },
-                                    ]}
-                                    onPress={() => setSelectedState(state.key)}
-                                    activeOpacity={0.8}
-                                >
-                                    {/* Icon with dynamic color based on selection */}
-                                    <MaterialCommunityIcons
-                                        name={state.icon}
-                                        size={32}
-                                        color={isSelected ? '#ffffff' : theme.primary}
-                                    />
-                                    {/* Label with dynamic color */}
-                                    <ThemedText
+                                return (
+                                    <TouchableOpacity
+                                        key={state.key}
                                         style={[
-                                            styles.iconLabel,
-                                            { color: isSelected ? '#ffffff' : theme.text },
+                                            styles.touchableIcon,
+                                            { backgroundColor: isSelected ? theme.primary : theme.primary + '15' },
                                         ]}
+                                        onPress={() => setSelectedState(state.key)}
+                                        activeOpacity={0.8}
                                     >
-                                        {state.label}
-                                    </ThemedText>
-                                </TouchableOpacity>
-                            );
-                        })}
-                    </View>
+                                        {/* Icon with dynamic color based on selection */}
+                                        <MaterialCommunityIcons
+                                            name={state.icon}
+                                            size={32}
+                                            color={isSelected ? '#ffffff' : theme.primary}
+                                        />
+                                        {/* Label with dynamic color */}
+                                        <ThemedText
+                                            style={[
+                                                styles.iconLabel,
+                                                { color: isSelected ? '#ffffff' : theme.text },
+                                            ]}
+                                        >
+                                            {state.label}
+                                        </ThemedText>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
 
-                    {/* Visual separator */}
-                    <View style={[styles.divider, { backgroundColor: theme.border }]} />
+                        {/* Visual separator */}
+                        <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
-                    {/* Navigation Button */}
-                    <View style={styles.footer}>
-                        <TouchableOpacity
-                            style={[
-                                styles.nextButton,
-                                { backgroundColor: selectedState ? theme.primary : theme.border },
-                            ]}
-                            disabled={!selectedState}
-                            onPress={() => {
-                                // Navigate to recommendation screen with selected mood
-                                router.push(`recommendation?state=${selectedState}`);
-                            }}
-                        >
-                            <ThemedText style={styles.nextButtonText}>
-                                Next →
-                            </ThemedText>
-                        </TouchableOpacity>
-                    </View>
+                        {/* Navigation Button */}
+                        <View style={styles.footer}>
+                            <TouchableOpacity
+                                style={[
+                                    styles.nextButton,
+                                    { backgroundColor: selectedState ? theme.primary : theme.border },
+                                ]}
+                                disabled={!selectedState}
+                                onPress={() => {
+                                    // Navigate to recommendation screen with selected mood
+                                    router.push(`recommendation?state=${selectedState}`);
+                                }}
+                            >
+                                <ThemedText style={styles.nextButtonText}>
+                                    Next →
+                                </ThemedText>
+                            </TouchableOpacity>
+                        </View>
 
+
+                    </ThemedView>
 
                 </ThemedView>
-
-            </ThemedView>
-            
-            {/* Weather Widget */}
-            <ThemedView style={[styles.weatherContainer, { backgroundColor: theme.cardBackground }]} >
-                <View style={styles.widgetcontainer}>
-                    {/* Weather data for Innsbruck coordinates */}
-                    <WeatherCard
-                        lat={47.2692}   // Innsbruck latitude
-                        lon={11.4041}   // Innsbruck longitude
-                    />
-                </View>
                 
-            </ThemedView>
-            
-            {/* Information/Advance Section */}
-            {/* <ThemedView style={[styles.anvanceContainer, { backgroundColor: theme.cardBackground }]}>
-                <ThemedText style={{ color: theme.text }}>
-                    Choose your mood and get a preliminary recommendation for breathing exercises or a walk in the fresh air, depending on the weather.
-                </ThemedText>
-            </ThemedView> */}
-        </View>
+                {/* Weather Widget */}
+                <ThemedView style={[styles.weatherContainer, { backgroundColor: theme.cardBackground }]} >
+                    <View style={styles.widgetcontainer}>
+                        {/* Weather data for Innsbruck coordinates */}
+                        <WeatherCard
+                            lat={47.2692}   // Innsbruck latitude
+                            lon={11.4041}   // Innsbruck longitude
+                        />
+                    </View>
+                    
+                </ThemedView>
+                
+                {/* Information/Advance Section */}
+                {/* <ThemedView style={[styles.anvanceContainer, { backgroundColor: theme.cardBackground }]}>
+                    <ThemedText style={{ color: theme.text }}>
+                        Choose your mood and get a preliminary recommendation for breathing exercises or a walk in the fresh air, depending on the weather.
+                    </ThemedText>
+                </ThemedView> */}
+            </View>
+        </>
     );
 }
 
