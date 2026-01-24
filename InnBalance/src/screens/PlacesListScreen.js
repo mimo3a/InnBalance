@@ -12,7 +12,8 @@ export default function PlacesListScreen() {
     const [categoryFilters, setCategoryFilters] = React.useState([]);
 
     const router = useRouter();
-    const { places, loading } = usePlaces();
+    const { location: userLocation } = useCurrentLocation();
+    const { places, loading } = usePlaces(userLocation);
     const { theme, isDark } = useTheme();
 
     const categories = [...new Set(places.map((p) => p.category))];
