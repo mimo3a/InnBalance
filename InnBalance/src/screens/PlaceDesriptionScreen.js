@@ -83,8 +83,11 @@ export default function PlaceDescriptionScreen() {
         <ScrollView contentContainerStyle={[styles.card, { backgroundColor: theme.cardBackground }]}> 
           
           
-          <View style={styles.imageWrapper}> 
-            <Image source={place.image} style={styles.image} />
+          <View style={styles.imageWrapper}>
+            <Image
+              source={typeof place.image === 'string' ? { uri: place.image } : place.image}
+              style={styles.image}
+            />
 
             
             <TouchableOpacity 

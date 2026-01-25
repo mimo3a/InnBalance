@@ -13,6 +13,15 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { StatusBar } from 'expo-status-bar';
 
 export default function AddPlaceScreen() {
+    // Required fields and their error messages
+    const requiredFields = {
+      name: 'Name is required.',
+      info: 'Description is required.',
+      category: 'Category is required.',
+      lat: 'Latitude is required.',
+      lng: 'Longitude is required.'
+      // Add more fields if needed
+    };
   const router = useRouter();
   const { addPlace } = usePlaces();
   const { theme, isDark } = useTheme();
@@ -265,7 +274,7 @@ export default function AddPlaceScreen() {
           </TouchableOpacity>
 
           <View style={styles.row}>
-            <View style={styles.halfInput}>
+            {/* <View style={styles.halfInput}>
               <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
               <TextInput
                 style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
@@ -274,9 +283,9 @@ export default function AddPlaceScreen() {
                 keyboardType="numeric"
                 placeholderTextColor={theme.textSecondary}
               />
-            </View>
+            </View> */}
 
-            <View style={styles.halfInput}>
+            {/* <View style={styles.halfInput}>
               <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
               <TextInput
                 style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
@@ -285,7 +294,7 @@ export default function AddPlaceScreen() {
                 keyboardType="numeric"
                 placeholderTextColor={theme.textSecondary}
               />
-            </View>
+            </View> */}
           </View>
         </View>
 
