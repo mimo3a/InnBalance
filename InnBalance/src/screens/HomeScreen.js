@@ -18,6 +18,7 @@ import WeatherCard from '@/src/components/WeatherCard';
 import { useState } from 'react';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { StatusBar } from 'expo-status-bar';
+import { useUser } from '@/src/contexts/UserContext';
 
 /**
  * HomeScreen Component
@@ -29,7 +30,7 @@ export default function HomeScreen() {
     
     const [selectedState, setSelectedState] = useState(null);
     const { theme, isDark } = useTheme();
-    
+    const { user } = useUser();
 
     /**
      * Available mood states with their corresponding icons and labels
@@ -54,10 +55,10 @@ export default function HomeScreen() {
                 {/*Welcome Text*/}
                 <View style={{marginTop: '10', marginBottom: '10'}}>
                     <ThemedText type="title" style={{ color: theme.text }}>
-                    Hello User,
+                    Hello {user?.name || 'User'},
                 </ThemedText>
                 <ThemedText type='subtitle'>
-                    how are we feeling?
+                    how are you feeling?
                 </ThemedText>
                 </View>
                 {/* Mood Selection Container */}
