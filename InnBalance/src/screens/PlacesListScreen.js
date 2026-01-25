@@ -64,7 +64,7 @@ export default function PlacesListScreen() {
                                     backgroundColor: isActive ? theme.primary : theme.cardBackground
                                 }}
                             >
-                                <Text style={{ color: isActive ? '#fff' : '#003300' }}>
+                                <Text style={{ color: isActive ? '#fff' : theme.primary }}>
                                     {cat}
                                 </Text>
                             </View>

@@ -9,7 +9,6 @@ import { useTheme } from '@/src/contexts/ThemeContext';
 import { StatusBar } from 'expo-status-bar';
 
 export default function PlaceDescriptionScreen() {
-  // ...весь существующий код компонента (до styles)
 
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -153,9 +152,8 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-
   card: {
-    marginTop: 90,
+    marginTop: 130,
     borderTopLeftRadius: 26,
     borderTopRightRadius: 26,
     paddingBottom: 40,
@@ -165,22 +163,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: -2 },
     elevation: 6,
   },
-
   imageWrapper: {
-  position: "relative",
-  marginTop: -40,
-  borderRadius: 18,
-  overflow: "hidden",
-  width: "100%",
-  aspectRatio: 16 / 9, // ⬅️ магия
-},
-
+    position: "relative",
+    marginTop: -40,
+    borderRadius: 18,
+    overflow: "hidden",
+    width: "100%",
+    aspectRatio: 16 / 9,
+  },
   image: {
     width: "100%",
     height: "100%",
-  resizeMode: "cover",
-},
-
+    resizeMode: "cover",
+  },
   closeButton: {
     position: "absolute",
     top: 12,
@@ -192,19 +187,16 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
   },
-
   titleRow: {
     marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-
   title: {
     fontSize: 24,
     fontWeight: "bold",
   },
-
   distancePill: {
     flexDirection: "row",
     alignItems: "center",
@@ -212,44 +204,36 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 14,
   },
-
   distanceText: {
     marginLeft: 4,
     fontSize: 14,
   },
-
   ratingRow: {
     flexDirection: "row",
     marginTop: 6,
   },
-
   star: {
     fontSize: 16,
   },
-
   category: {
     fontSize: 16,
     marginLeft: 6,
   },
-
   description: {
     marginTop: 16,
     fontSize: 18,
     lineHeight: 26,
   },
-
   rateTitle: {
     marginTop: 20,
     fontSize: 16,
     fontWeight: "600",
   },
-
   starsRow: {
     flexDirection: "row",
     marginTop: 8,
     gap: 6,
   },
-
   button: {
     marginTop: 26,
     paddingVertical: 16,
@@ -262,13 +246,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     elevation: 4,
   },
-
   buttonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "600",
   },
-
   center: {
     flex: 1,
     alignItems: "center",

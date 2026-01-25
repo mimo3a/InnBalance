@@ -122,7 +122,7 @@ export default function SignUpScreen() {
           <View style={styles.form}>
             {/* Name Input */}
             <View style={styles.inputContainer}>
-              <Text style={[styles.label, { color: theme.text }]}>Full Name</Text>
+              <Text style={[styles.label, { color: theme.text }]}>Username</Text>
               <View style={[styles.inputWrapper, { backgroundColor: theme.cardBackground, borderColor: theme.border }]}>
                 <MaterialCommunityIcons name="account-outline" size={20} color={theme.textSecondary} />
                 <TextInput

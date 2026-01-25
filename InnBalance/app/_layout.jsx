@@ -29,9 +29,8 @@ export default function RootLayout() {
 function RootNavigator() {
   const { user, loading } = useUser();
 
-  // ⏳ Ждём, пока загрузится пользователь
   if (loading) {
-    return null; // или SplashScreen
+    return null; // SplashScreen
   }
 
   const isAuthenticated = !!user;
