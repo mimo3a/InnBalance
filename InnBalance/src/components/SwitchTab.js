@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   tabContent: {
   flexDirection: 'row',
   alignItems: 'center',
-  gap: 6, // расстояние между иконкой и текстом
+  gap: 6, 
 
 },
 });
