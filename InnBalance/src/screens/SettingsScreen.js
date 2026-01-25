@@ -191,6 +191,38 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </ThemedView>
 
+        {/* ABOUT US SECTION */}
+<ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+  <TouchableOpacity style={styles.settingRow} onPress={handleAbout}>
+    <View style={styles.settingLeft}>
+      <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
+      <View style={styles.settingTextContainer}>
+        <Text style={[styles.settingTitle, { color: theme.text }]}>About Us</Text>
+        <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
+          Learn more about InnBalance
+        </Text>
+      </View>
+    </View>
+    <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
+  </TouchableOpacity>
+</ThemedView>
+
+        {/* HELP SECTION */}
+<ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+  <TouchableOpacity style={styles.settingRow} onPress={handleTutorial}>
+    <View style={styles.settingLeft}>
+      <MaterialCommunityIcons name="help-circle" size={24} color={theme.primary} />
+      <View style={styles.settingTextContainer}>
+        <Text style={[styles.settingTitle, { color: theme.text }]}>Help</Text>
+        <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
+          How to use the app
+        </Text>
+      </View>
+    </View>
+    <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
+  </TouchableOpacity>
+</ThemedView>
+
         {/* RESET ALL */}
         <Text style={[styles.categoryTitle, { color: theme.text }]}>Reset</Text>
 
