@@ -27,6 +27,34 @@ import { getWeatherLabel, getWeatherIcon } from '@/src/utils/weatherCodes';
  * WeatherCard Component
  * Displays current weather conditions in a styled card
  */
+
+
+export const getSmartWeatherRecommendation = (temp, weathercode) => {
+  const isRainy = (weathercode >= 51 && weathercode <= 67) || (weathercode >= 80 && weathercode <= 99);
+  const isSunny = weathercode === 0;
+
+  if (isRainy && temp < 5) {
+    return 'Cold and rainy — a warm jacket and an umbrella would be ideal.';
+  }
+  if (isRainy) {
+    return 'Rainy weather today. Don’t forget an umbrella.';
+  }
+  if (isSunny && temp > 15) {
+    return 'Sunny and warm — perfect weather to enjoy the outdoors.';
+  }
+  if (temp < 5) {
+    return 'It’s quite cold outside. Consider wearing a warm jacket.';
+  }
+  if (temp >= 5 && temp <= 15) {
+    return 'It’s a little chilly. A light jacket might feel nice.';
+  }
+  if (temp > 15) {
+    return 'It should be comfortably warm. Enjoy the fresh air.';
+  }
+  return '';
+};
+
+
 export default function WeatherCard({ lat, lon }) {
   // Fetch weather data using custom hook
   // Fetch weather data using custom hook
@@ -91,9 +119,16 @@ export default function WeatherCard({ lat, lon }) {
           Wind {Math.round(weather.windspeed)} km/h
         </Text>
       </View>
+      <Text style={[styles.recommendation, { color: theme.textSecondary }]}>
+        {getSmartWeatherRecommendation(
+          weather.temperature,
+          weather.weathercode
+        )}
+      </Text>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   card: {
@@ -140,6 +175,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 
+  recommendation: {
+    marginTop: 10,
+    fontSize: 13,
+    lineHeight: 18,
+  },
   error: {
     fontSize: 14,
   },
