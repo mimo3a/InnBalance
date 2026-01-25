@@ -64,7 +64,7 @@ export default function PlacesListScreen() {
                                     backgroundColor: isActive ? theme.primary : theme.cardBackground
                                 }}
                             >
-                                <Text style={{ color: isActive ? '#fff' : '#003300' }}>
+                                <Text style={{ color: isActive ? '#fff' : theme.primary }}>
                                     {cat}
                                 </Text>
                             </View>
@@ -79,7 +79,7 @@ export default function PlacesListScreen() {
                 >
                 {filteredPlaces.map((place) => (
                     <PlaceCard 
-                        key={`${place.id}-${place.rating}`}
+                        key={`${place.id}-${place.rating}-${place.distance}`}
                         name={place.name}
                         info={place.info}
                         rating={place.rating}

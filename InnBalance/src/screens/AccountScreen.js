@@ -65,7 +65,6 @@ export default function AccountScreen() {
     router.replace('/login');
   };
 
-  // удалено дублирующее объявление setUser
   const handleDeleteAccount = () => {
     Alert.alert(
       'Delete Account',

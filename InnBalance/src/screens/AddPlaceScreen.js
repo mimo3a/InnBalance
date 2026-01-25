@@ -38,6 +38,10 @@ export default function AddPlaceScreen() {
           { label: 'Park', value: 'Park' },
           { label: 'Museum', value: 'Museum' },
           { label: 'Café', value: 'Cafe' },
+          { label: 'Garden', value: 'Garden' },
+          { label: 'Promenade', value: 'Promenade' },
+          { label: 'Mountain', value: 'Mountain' },
+          { label: 'District', value: 'District' },
         ]);
 
   // Update coordinates when returning from map picker
@@ -140,20 +144,15 @@ export default function AddPlaceScreen() {
     }
   };
 
-  {/**Pflichtfelder */}
+  //We need to check all of the possibilities. Checking, that every field is not default.
+  //...maybe using a switch case?
+  //#defensivesProgrammieren
   const handleSubmit = async () => {
-    if (!formData.name.trim()){
-      Alert.alert('Error', 'Please enter a valid name for the place.');
-      return;
-    } else if (!formData.info.trim()){
-      Alert.alert('Error', 'Please select a valid description for the place.');
-      return;
-    } else if (!formData.category.trim()){
-      Alert.alert('Error', 'Please select a valid category for the place.');
-      return;
-    } else if (formData.image === null){
-      Alert.alert('Error', 'Please give your place an image.');
-      return;
+    for (const key in requiredFields) {
+      if(!formData[key] || formData[key].toString().trim() === ""){
+        Alert.alert('Error', requiredFields[key]);
+        return;
+      }
     }
 
     try {
@@ -227,69 +226,68 @@ export default function AddPlaceScreen() {
             numberOfLines={4}
           />
 
-          <Text style={[styles.label, { color: theme.text }]}>Category</Text>
-          {/**Dropdown Menue for choosing category */}
-          <DropDownPicker
-            open={open}
-            value={formData.category}
-            items={items}
-            setOpen={setOpen}
-            setItems={setItems}
-            setValue={(callback) =>
-              setFormData({ ...formData, category: callback(formData.category) })
-            }
-            listMode='SCROLLVIEW' //Without this, we receive an error, because it is used within the ScrollView.
-            style={{
-              backgroundColor: theme.cardBackground,
-              borderColor: theme.border,
-            }}
-            textStyle={{
-              color: theme.text,
-            }}
-            dropDownContainerStyle={{
-              backgroundColor: theme.cardBackground,
-              borderColor: theme.border,
-            }}
-          />
-          {/**Location Selection */}
-          <View style={styles.coordinatesSection}>
-            <Text style={[styles.label, { color: theme.text }]}>Location</Text>
-            
-            <TouchableOpacity 
-              style={[styles.mapButton, { backgroundColor: theme.primary }]}
-              onPress={() => router.push({
-                pathname: '/map-picker',
-                params: { lat: formData.lat, lng: formData.lng }
-              })}
-            >
-              <Ionicons name="map" size={20} color="#fff" />
-              <Text style={styles.mapButtonText}>Select on Map</Text>
-            </TouchableOpacity>
+        <Text style={[styles.label, { color: theme.text }]}>Category</Text>
+        
+        <DropDownPicker
+          open={open}
+          value={formData.category}
+          items={items}
+          setOpen={setOpen}
+          setItems={setItems}
+          setValue={(callback) =>
+            setFormData({ ...formData, category: callback(formData.category) })
+          }
+          listMode='SCROLLVIEW' //Without this, we receive an error, because it is used within the ScrollView.
+          style={{
+            backgroundColor: theme.cardBackground,
+            borderColor: theme.border,
+          }}
+          textStyle={{
+            color: theme.text,
+          }}
+          dropDownContainerStyle={{
+            backgroundColor: theme.cardBackground,
+            borderColor: theme.border,
+          }}
+        />
+        <View style={styles.coordinatesSection}>
+          <Text style={[styles.label, { color: theme.text }]}>Location</Text>
+          
+          <TouchableOpacity 
+            style={[styles.mapButton, { backgroundColor: theme.primary }]}
+            onPress={() => router.push({
+              pathname: '/map-picker',
+              params: { lat: formData.lat, lng: formData.lng }
+            })}
+          >
+            <Ionicons name="map" size={20} color="#fff" />
+            <Text style={styles.mapButtonText}>Select on Map</Text>
+          </TouchableOpacity>
 
-            <View style={styles.row}>
-              <View style={styles.halfInput}>
-                <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
-                <TextInput
-                  style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                  value={String(formData.lat.toFixed(6))}
-                  onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
-                  keyboardType="numeric"
-                  placeholderTextColor={theme.textSecondary}
-                />
-              </View>
+          <View style={styles.row}>
+            <View style={styles.halfInput}>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
+              <TextInput
+                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                value={String(formData.lat.toFixed(6))}
+                onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
+                keyboardType="numeric"
+                placeholderTextColor={theme.textSecondary}
+              />
+            </View>
 
-              <View style={styles.halfInput}>
-                <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
-                <TextInput
-                  style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                  value={String(formData.lng.toFixed(6))}
-                  onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
-                  keyboardType="numeric"
-                  placeholderTextColor={theme.textSecondary}
-                />
-              </View>
+            <View style={styles.halfInput}>
+              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
+              <TextInput
+                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
+                value={String(formData.lng.toFixed(6))}
+                onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
+                keyboardType="numeric"
+                placeholderTextColor={theme.textSecondary}
+              />
             </View>
           </View>
+        </View>
 
           <TouchableOpacity style={[styles.submitButton, { backgroundColor: theme.primary }]} onPress={handleSubmit}>
             <Text style={styles.submitButtonText}>Add Place</Text>
@@ -324,14 +322,16 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top'
   },
   coordinatesSection: {
-    marginBottom: 16,
+    marginTop: 16,
+    marginBottom: 8,
+
   },
   mapButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 14,
-    borderRadius: 12,
+    borderRadius: 16,
     marginBottom: 16,
     gap: 8,
   },
@@ -357,9 +357,9 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#2f6f5f',
     padding: 16,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 15,
     marginBottom: 40,
   },
   submitButtonText: {
@@ -368,17 +368,33 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   buttonContainer: {
-  position: 'absolute',
-  bottom: 20,
-  right: 20,
-  flexDirection: 'row',
-  gap: 16, // Abstand zwischen Buttons
-  alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    flexDirection: 'row',
+    gap: 16, // Abstand zwischen Buttons
+    alignItems: 'center',
   },
-
   iconButton: {
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 10,
     borderRadius: 50,
   },
+  dropDownClosed: {
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+  },
+  dropDownOpened: {
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 4,
+  }
+
 });

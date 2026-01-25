@@ -4,7 +4,12 @@ import { Stack } from "expo-router";
 export default function DescriptionRoute() {
   return (
     <>
-    <Stack.Screen options={{ headerShown: true, headerTitle: '' }} />
+    <Stack.Screen
+      options={{
+        headerShown: true,
+        headerTitle: '',
+        headerTransparent: true,
+        }} />
     <PlaceDescriptionScreen />
     </>
   )
