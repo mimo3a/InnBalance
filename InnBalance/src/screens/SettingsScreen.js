@@ -171,11 +171,11 @@ export default function SettingsScreen() {
         <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
           <View style={styles.settingHeader}>
             <MaterialCommunityIcons name="map-marker" size={24} color={theme.primary} />
-            <Text style={[styles.sectionTitle, { color: theme.primary }]}>Orte verwalten</Text>
+            <Text style={[styles.sectionTitle, { color: theme.primary }]}>Manage Places</Text>
           </View>
           <TouchableOpacity style={styles.deleteButton} onPress={handleResetOrte}>
             <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-            <Text style={styles.deleteButtonText}>Meine Orte löschen</Text>
+            <Text style={styles.deleteButtonText}>Delete My Places</Text>
           </TouchableOpacity>
         </ThemedView>
 
@@ -183,13 +183,45 @@ export default function SettingsScreen() {
         <ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}> 
           <View style={styles.settingHeader}>
             <MaterialCommunityIcons name="chart-bar" size={24} color={theme.primary} />
-            <Text style={[styles.sectionTitle, { color: theme.primary }]}>Statistiken verwalten</Text>
+            <Text style={[styles.sectionTitle, { color: theme.primary }]}>Manage Statistics</Text>
           </View>
           <TouchableOpacity style={styles.deleteButton} onPress={handleResetStatistics}>
             <MaterialCommunityIcons name="delete" size={20} color="#fff" />
-            <Text style={styles.deleteButtonText}>Meine Statistiken löschen</Text>
+            <Text style={styles.deleteButtonText}>Delete My Statistics</Text>
           </TouchableOpacity>
         </ThemedView>
+
+        {/* ABOUT US SECTION */}
+<ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+  <TouchableOpacity style={styles.settingRow} onPress={handleAbout}>
+    <View style={styles.settingLeft}>
+      <MaterialCommunityIcons name="information" size={24} color={theme.primary} />
+      <View style={styles.settingTextContainer}>
+        <Text style={[styles.settingTitle, { color: theme.text }]}>About Us</Text>
+        <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
+          Learn more about InnBalance
+        </Text>
+      </View>
+    </View>
+    <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
+  </TouchableOpacity>
+</ThemedView>
+
+        {/* HELP SECTION */}
+<ThemedView style={[styles.settingBox, { backgroundColor: theme.cardBackground }]}>
+  <TouchableOpacity style={styles.settingRow} onPress={handleTutorial}>
+    <View style={styles.settingLeft}>
+      <MaterialCommunityIcons name="help-circle" size={24} color={theme.primary} />
+      <View style={styles.settingTextContainer}>
+        <Text style={[styles.settingTitle, { color: theme.text }]}>Help</Text>
+        <Text style={[styles.settingSubtitle, { color: theme.textSecondary }]}>
+          How to use the app
+        </Text>
+      </View>
+    </View>
+    <MaterialCommunityIcons name="chevron-right" size={24} color="#999" />
+  </TouchableOpacity>
+</ThemedView>
 
         {/* RESET ALL */}
         <Text style={[styles.categoryTitle, { color: theme.text }]}>Reset</Text>

@@ -18,6 +18,7 @@ import WeatherCard from '@/src/components/WeatherCard';
 import { useState } from 'react';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { StatusBar } from 'expo-status-bar';
+import { useUser } from '@/src/contexts/UserContext';
 
     /**
      * HomeScreen Component

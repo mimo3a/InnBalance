@@ -46,7 +46,7 @@ export default function PlaceBottomSheet({ place, visible, onClose, onOpen }) {
           <View style={common.rowStart}>
             
             {place?.image ? (
-              <Image source={place.image} style={styles.image} />
+              <Image source={typeof place.image === 'string' ? { uri: place.image } : place.image} style={styles.image} />
             ) : (
               <View style={[styles.image, styles.imageFallback]}>
                 <Ionicons name="image-outline" size={22} color={tokens.colors.primary} />
