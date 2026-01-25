@@ -35,10 +35,10 @@ export default function LoginScreen() {
     }
 
     setLoading(true);
-    // Имитация задержки
+
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setLoading(false);
-    // Проверка совпадения с сохранёнными данными
+
     if (name !== user.name || password !== user.password) {
       Alert.alert('Error', 'Invalid name or password');
       return;

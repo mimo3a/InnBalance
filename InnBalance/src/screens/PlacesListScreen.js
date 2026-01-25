@@ -64,7 +64,7 @@ export default function PlacesListScreen() {
                                     backgroundColor: isActive ? theme.primary : theme.cardBackground
                                 }}
                             >
-                                <Text style={{ color: isActive ? '#fff' : '#003300' }}>
+                                <Text style={{ color: isActive ? '#fff' : theme.primary }}>
                                     {cat}
                                 </Text>
                             </View>
@@ -97,7 +97,7 @@ export default function PlacesListScreen() {
                 style={styles.addButton}
                 onPress={() => router.push('/add-place')}
             >
-                <Ionicons name="add-circle" size={70    } color={theme.primary}  />
+                <Ionicons name="add-circle" size={70} color={theme.primary}  />
             </TouchableOpacity>
         </View>
         

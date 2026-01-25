@@ -29,6 +29,9 @@ export default function TabLayout() {
       screenOptions={{
         // Apply theme-based color to active tabs
         tabBarActiveTintColor: theme.primary,
+        tabBarStyle: {
+          backgroundColor: theme.background,
+        },
         // Hide header for cleaner UI
         headerShown: false,
         // Enable haptic feedback on tab press
