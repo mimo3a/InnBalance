@@ -7,11 +7,7 @@ import { usePlaces } from '@/src/hooks/usePlaces';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import useCurrentLocation from '@/src/hooks/useCurrentLocation';
 import { StatusBar } from 'expo-status-bar';
-<<<<<<< HEAD
-
-=======
 import { AddPlaceButton } from '../components/AddPlaceButton';
->>>>>>> main
 export default function PlacesListScreen() {
     const [categoryFilters, setCategoryFilters] = React.useState([]);
 
@@ -97,16 +93,7 @@ export default function PlacesListScreen() {
 
             {/* Add Place Button */}
             <View style={styles.fillView}/>{/**making the plus-symbol white, instead of transparent */}
-<<<<<<< HEAD
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => router.push('/add-place')}
-            >
-                <Ionicons name="add-circle" size={70    } color={theme.primary}  />
-            </TouchableOpacity>
-=======
             <AddPlaceButton style={styles.addButton}/>
->>>>>>> main
         </View>
         
     );
