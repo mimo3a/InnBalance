@@ -19,18 +19,26 @@ import { useState } from 'react';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { StatusBar } from 'expo-status-bar';
 import { useUser } from '@/src/contexts/UserContext';
-
+//only uncomment to restore Database :)
+//import { uploadAllPlaces } from '../utils/firebaseUtil';
+import { getAllPlaces } from '../utils/firebaseUtil';
     /**
      * HomeScreen Component
      * Primary screen for mood selection and weather display
      */
     export default function HomeScreen() {
+        //only uncomment to restore Database :)
+        //uploadAllPlaces();
+        //currently we are not actively using Firebase. This is still work in progress.
+        //getAllPlaces();
+
         // Track the currently selected mood state
         // Track the currently selected mood state
 
         const [selectedState, setSelectedState] = useState(null);
         const { theme, isDark } = useTheme();
 
+        const { user } = useUser();
          function getGreeting() {
              const hour = new Date().getHours();
              if (hour >= 4 && hour < 13)
@@ -62,12 +70,13 @@ import { useUser } from '@/src/contexts/UserContext';
 
         return (
             <>
+            
                 <StatusBar style ={!isDark ? "dark" : "light"}/>
                 <View style={[styles.container, { backgroundColor: theme.background }]}>
                     {/*Welcome Text*/}
                     <View style={{ marginTop: 10, marginBottom: 10 }}>
                      <ThemedText type="title" style={{ color: theme.text }}>
-                       {getGreeting()}, User
+                       {getGreeting()}, {user?.name}
                      </ThemedText>
                      <ThemedText type="subtitle">
                       How are we feeling?

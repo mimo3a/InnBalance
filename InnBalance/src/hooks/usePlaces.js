@@ -4,6 +4,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { places as defaultPlaces } from '@/src/data/places';
 import { getDistanceFromLatLonInKm } from '@/src/utils/distance';
 
+import { getAllPlaces } from '../utils/firebaseUtil';
+
 const STORAGE_KEY = '@innbalance_user_places';
 const INITIALIZED_KEY = '@innbalance_places_initialized';
 
@@ -11,6 +13,15 @@ export function usePlaces(userLocation) {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const imageMap= {
+    "BotanischeGarten.png": require("../Images/Places/BotanischeGarten.png"),
+    "mci.png": require("../Images/Places/mci.png"),
+    "Hofgarten.png": require("../Images/Places/Hofgarten.png"),
+    "Rapoldi.png": require("../Images/Places/Rapoldi.png"),
+    "Innpromenade.png": require("../Images/Places/Innpromenade.png"),
+    "Nordkette.png": require("../Images/Places/Nordkette.png"),
+    "Vill.png": require("../Images/Places/Vill.png"),
+  }
   // Load places initially and when userLocation changes
   useEffect(() => {
     loadPlaces();
@@ -33,6 +44,7 @@ export function usePlaces(userLocation) {
       }
 
       // Add distance if location available
+      //FYI: When adding own places, the distance indicator does take a few seconds to load the distance. Be patient.
       if (userLocation) {
         storedPlaces = storedPlaces.map(place => ({
           ...place,

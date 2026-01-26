@@ -19,8 +19,8 @@ export default function AddPlaceScreen() {
       info: 'Description is required.',
       category: 'Category is required.',
       lat: 'Latitude is required.',
-      lng: 'Longitude is required.'
-      // Add more fields if needed
+      lng: 'Longitude is required.',
+      image: 'Please select an image for your place.',
     };
   const router = useRouter();
   const { addPlace } = usePlaces();
@@ -41,7 +41,7 @@ export default function AddPlaceScreen() {
     image: null,
   });
 
-  {/*Used for dropdown menue*/}
+  {/*Categories, used for dropdown menue*/}
   const [open, setOpen] = useState(false);
         const [items, setItems] = useState([
           { label: 'Park', value: 'Park' },
@@ -51,6 +51,7 @@ export default function AddPlaceScreen() {
           { label: 'Promenade', value: 'Promenade' },
           { label: 'Mountain', value: 'Mountain' },
           { label: 'District', value: 'District' },
+          { label: 'Sea', value: 'Sea' },
         ]);
 
   // Update coordinates when returning from map picker
@@ -153,9 +154,8 @@ export default function AddPlaceScreen() {
     }
   };
 
-  //We need to check all of the possibilities. Checking, that every field is not default.
-  //...maybe using a switch case?
-  //#defensivesProgrammieren
+  
+  //checking for required fields.
   const handleSubmit = async () => {
     for (const key in requiredFields) {
       if(!formData[key] || formData[key].toString().trim() === ""){
@@ -247,17 +247,16 @@ export default function AddPlaceScreen() {
             setFormData({ ...formData, category: callback(formData.category) })
           }
           listMode='SCROLLVIEW' //Without this, we receive an error, because it is used within the ScrollView.
-          style={{
+          style={[styles.dropDownClosed, {
             backgroundColor: theme.cardBackground,
-            borderColor: theme.border,
-          }}
+            borderColor: theme.border,}]}
           textStyle={{
             color: theme.text,
           }}
-          dropDownContainerStyle={{
+          dropDownContainerStyle={[styles.dropDownOpened, {
             backgroundColor: theme.cardBackground,
-            borderColor: theme.border,
-          }}
+            borderColor: theme.border}]}
+
         />
         <View style={styles.coordinatesSection}>
           <Text style={[styles.label, { color: theme.text }]}>Location</Text>
@@ -274,27 +273,7 @@ export default function AddPlaceScreen() {
           </TouchableOpacity>
 
           <View style={styles.row}>
-            {/* <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
-              <TextInput
-                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                value={String(formData.lat.toFixed(6))}
-                onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
-                keyboardType="numeric"
-                placeholderTextColor={theme.textSecondary}
-              />
-            </View> */}
-
-            {/* <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
-              <TextInput
-                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                value={String(formData.lng.toFixed(6))}
-                onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
-                keyboardType="numeric"
-                placeholderTextColor={theme.textSecondary}
-              />
-            </View> */}
+            
           </View>
         </View>
 

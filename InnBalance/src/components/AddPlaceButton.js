@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
 
+<<<<<<< HEAD
 const { theme, isDark } = useTheme();
 const router = useRouter();
 export function AddPlaceButton() {
@@ -16,10 +17,21 @@ export function AddPlaceButton() {
                 onPress={() => router.push('/add-place')}
             >
                 <Ionicons name="add-circle" size={70} color={theme.primary}  />
+=======
+export function AddPlaceButton({ style }) {
+    const { theme } = useTheme();
+    const router = useRouter();
+
+    return (
+        <View style={style}>
+            <TouchableOpacity onPress={() => router.push('/add-place')}>
+                <Ionicons name="add-circle" size={70} color={theme.primary} />
+>>>>>>> main
             </TouchableOpacity>
         </View>
     );
 }
+<<<<<<< HEAD
 
 const styles = StyleSheet.create({
     addButton: {
@@ -38,3 +50,5 @@ const styles = StyleSheet.create({
 
 });
 
+=======
+>>>>>>> main

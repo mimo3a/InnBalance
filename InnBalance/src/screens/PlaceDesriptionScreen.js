@@ -79,73 +79,75 @@ export default function PlaceDescriptionScreen() {
   return (
     <>
       <StatusBar style ={!isDark ? "dark" : "light"}/>
-      <View style={[styles.screen, { backgroundColor: theme.background }]}> 
-        <ScrollView contentContainerStyle={[styles.card, { backgroundColor: theme.cardBackground }]}> 
-          
-          
-          <View style={styles.imageWrapper}>
-            <Image
-              source={typeof place.image === 'string' ? { uri: place.image } : place.image}
-              style={styles.image}
-            />
+      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+  <ScrollView 
+    style={{ flex: 1 }}
+    contentContainerStyle={{ paddingBottom: 40 }}
+    showsVerticalScrollIndicator={false}
+  >
+    
+    <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
+      
+      <View style={styles.imageWrapper}>
+        <Image
+          source={typeof place.image === 'string' ? { uri: place.image } : place.image}
+          style={styles.image}
+        />
 
-            
-            <TouchableOpacity 
-              style={[styles.closeButton, { backgroundColor: theme.cardBackground }]} 
-              onPress={() => router.back()}
-            >
-              <Ionicons name="close" size={24} color={theme.text} />
-            </TouchableOpacity>
-          </View>
-
-        
-          <View style={styles.titleRow}> 
-            <Text style={[styles.title, { color: theme.text }]}>{place.name}</Text>
-
-            <View style={[styles.distancePill, { backgroundColor: theme.primary + '20' }]}> 
-              <Ionicons name="navigate-outline" size={14} color={theme.primary} />
-              <Text style={[styles.distanceText, { color: theme.text }]}>{place.distance} km</Text>
-            </View>
-          </View>
-
-          
-          <View style={styles.ratingRow}> 
-            <Text style={[styles.star, { color: theme.text }]}>⭐ {userRating.toFixed(1)}</Text>
-            <Text style={[styles.category, { color: theme.textSecondary }]}>· {place.category}</Text>
-          </View>
-
-          
-          <Text style={[styles.description, { color: theme.text }]}>{place.info}</Text>
-
-          
-          <Text style={[styles.rateTitle, { color: theme.text }]}>Bewerte diesen Ort</Text>
-          <View style={styles.starsRow}> 
-            {Array.from({ length: 5 }).map((_, idx) => {
-              const starValue = idx + 1;
-              const isFilled = starValue <= Math.round(userRating);
-              return (
-                <TouchableOpacity key={idx} onPress={() => handleRating(starValue)}>
-                  <Ionicons 
-                    name={isFilled ? "star" : "star-outline"} 
-                    size={32} 
-                    color={isFilled ? "#F4C430" : theme.textSecondary} 
-                  />
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          
-          <TouchableOpacity 
-            style={[styles.button, { backgroundColor: theme.primary }]}
-            onPress={openNavigation}
-          >
-            <Ionicons name="navigate" size={20} color="#fff" style={{ marginRight: 8 }} />
-            <Text style={styles.buttonText}>Navigation starten</Text>
-          </TouchableOpacity>
-
-        </ScrollView>
+        <TouchableOpacity 
+          style={[styles.closeButton, { backgroundColor: theme.cardBackground }]} 
+          onPress={() => router.back()}
+        >
+          <Ionicons name="close" size={24} color={theme.text} />
+        </TouchableOpacity>
       </View>
+
+      <View style={styles.titleRow}> 
+        <Text style={[styles.title, { color: theme.text }]}>{place.name}</Text>
+
+        <View style={[styles.distancePill, { backgroundColor: theme.primary + '20' }]}> 
+          <Ionicons name="navigate-outline" size={14} color={theme.primary} />
+          <Text style={[styles.distanceText, { color: theme.text }]}>{place.distance} km</Text>
+        </View>
+      </View>
+
+      <View style={styles.ratingRow}> 
+        <Text style={[styles.star, { color: theme.text }]}>⭐ {userRating.toFixed(1)}</Text>
+        <Text style={[styles.category, { color: theme.textSecondary }]}>· {place.category}</Text>
+      </View>
+
+      <Text style={[styles.description, { color: theme.text }]}>{place.info}</Text>
+
+      <Text style={[styles.rateTitle, { color: theme.text }]}>Bewerte diesen Ort</Text>
+
+      <View style={styles.starsRow}> 
+        {Array.from({ length: 5 }).map((_, idx) => {
+          const starValue = idx + 1;
+          const isFilled = starValue <= Math.round(userRating);
+          return (
+            <TouchableOpacity key={idx} onPress={() => handleRating(starValue)}>
+              <Ionicons 
+                name={isFilled ? "star" : "star-outline"} 
+                size={32} 
+                color={isFilled ? "#F4C430" : theme.textSecondary} 
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      <TouchableOpacity 
+        style={[styles.button, { backgroundColor: theme.primary }]}
+        onPress={openNavigation}
+      >
+        <Ionicons name="navigate" size={20} color="#fff" style={{ marginRight: 8 }} />
+        <Text style={styles.buttonText}>Navigation starten</Text>
+      </TouchableOpacity>
+
+    </View>
+  </ScrollView>
+</View>
+
     </>
   );
 }

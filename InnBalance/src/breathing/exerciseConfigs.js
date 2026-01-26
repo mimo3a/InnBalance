@@ -34,7 +34,7 @@ export const BREATHING_EXERCISES = {
       exhale: 'Exhale',
     },
     title: 'Stress Relief',
-    description: 'Pattern: 4–2–6–2\nSlow exhale longer than inhale.\n\nDescription:\nEven breathing with an extended exhale helps the body transition from "tension" mode to "recovery" mode.\n\nWhy it works for stress:\n\nLong exhale activates the parasympathetic nervous system\n\nReduces cortisol levels\n\nStabilizes heart rate\n\nCreates a sense of control and grounding\n\n➡️ Ideal for work pressure, overload, and burnout.'
+    description: 'Pattern: 4–2–6–2\nSlow exhale longer than inhale.\n\nDescription:\nEven breathing with an extended exhale helps the body transition from "tension" mode to "recovery" mode.\n\nWhy it works for stress:\n\t\t~Long exhale activates the\n\t\t   parasympathetic nervous system\n\t\t~Reduces cortisol levels\n\t\t~Stabilizes heart rate\n\t\t~Creates a sense of control and\n\t\tgrounding\n\n➡️ Ideal for work pressure, overload, and burnout.'
   },
   
   // For depression - energizing with deeper holds
@@ -50,7 +50,7 @@ export const BREATHING_EXERCISES = {
       exhale: 'Exhale',
     },
     title: 'Support for Depression',
-    description: 'Pattern: 4–4–8–4\nDeep inhale + prolonged hold + very long exhale.\n\nDescription:\nDeep, conscious breathing with holds promotes blood oxygenation and a bodily sense of "presence".\n\nWhy it works for depression:\n\nHolding after inhale enhances brain oxygenation\n\nLong exhale reduces internal tension\n\nHelps overcome apathy and disconnection\n\nCreates a sense of depth and stability\n\n➡️ Suitable for fatigue, apathy, and emotional emptiness.'
+    description: 'Pattern: 4–4–8–4\nDeep inhale + prolonged hold + very long exhale.\n\nDescription:\nDeep, conscious breathing with holds promotes blood oxygenation and a bodily sense of "presence".\n\nWhy it works for depression:\n\t\t~Holding after inhale enhances brain\n\t\t   oxygenation\n\t\t~Long exhale reduces internal tension\n\t\t~Helps overcome apathy and\n\t\t   disconnection\n\t\t~Creates a sense of depth and stability\n\n➡️ Suitable for fatigue, apathy, and emotional emptiness.'
   },
   
   // For anxiety - quick cycles with extended exhale
@@ -66,7 +66,7 @@ export const BREATHING_EXERCISES = {
       exhale: 'Exhale',
     },
     title: 'Reducing Anxiety and Panic',
-    description: 'Pattern: 3–3–6–3\nShort cycles, exhale twice as long as inhale.\n\nDescription:\nQuick but controlled breathing with emphasis on exhale helps interrupt the anxiety cycle.\n\nWhy it works for anxiety:\n\nPrevents hyperventilation\n\nExtended exhale reduces sympathetic nervous system activity\n\nQuick cycles keep attention "here and now"\n\nHelps with feeling of breathlessness\n\n➡️ Effective for panic attacks, internal tension, and fear.'
+    description: 'Pattern: 3–3–6–3\nShort cycles, exhale twice as long as inhale.\n\nDescription:\nQuick but controlled breathing with emphasis on exhale helps interrupt the anxiety cycle.\n\nWhy it works for anxiety:\n\t\t~Prevents hyperventilation\n\t\t~Extended exhale reduces sympathetic\n\t\t\t\tnervous system activity\n\t\t~Quick cycles keep attention "here\n\t\t\t\tand now"\n\t\t~Helps with feeling of breathlessness\n\n➡️ Effective for panic attacks, internal tension, and fear.'
   },
   
   // For anger - very slow breathing to calm down
@@ -82,7 +82,7 @@ export const BREATHING_EXERCISES = {
       exhale: 'Exhale',
     },
     title: 'Managing Anger and Irritation',
-    description: 'Pattern: 5–5–10–5\nVery slow, deep breathing.\n\nDescription:\nMaximally slowed breathing reduces the physiological activation associated with anger.\n\nWhy it works for anger:\n\nAnger = sudden nervous system activation\n\nLong exhale "dampens" impulsive reactions\n\nHolds restore body control\n\nReduces muscle tension\n\n➡️ Helpful for irritation, aggression, and anger outbursts.'
+    description: 'Pattern: 5–5–10–5\nVery slow, deep breathing.\n\nDescription:\nMaximally slowed breathing reduces the physiological activation associated with anger.\n\nWhy it works for anger:\n\t\t~Anger = sudden nervous system\n\t\t\t\tactivation\n\t\t~Long exhale "dampens" impulsive\n\t\t\t\treactions\n\t\t~Holds restore body control\n\t\t~Reduces muscle tension\n\n➡️ Helpful for irritation, aggression, and anger outbursts.'
   },
   
   // For low energy - balanced energizing pattern
@@ -98,7 +98,7 @@ export const BREATHING_EXERCISES = {
       exhale: 'Exhale',
     },
     title: 'Energy Boost',
-    description: 'Pattern: 4–4–8–4\nBalance between depth and rhythm.\n\nDescription:\nDeep breathing with holds helps gently activate the body without stress.\n\nWhy it works for low energy:\n\nImproves tissue oxygen supply\n\nStimulates alertness without overstimulation\n\nSupports mental clarity\n\nDoesn\'t deplete, unlike fast techniques\n\n➡️ Suitable for fatigue, drowsiness, and reduced concentration.'
+    description: 'Pattern: 4–4–8–4\nBalance between depth and rhythm.\n\nDescription:\nDeep breathing with holds helps gently activate the body without stress.\n\nWhy it works for low energy:\n\t\t~Improves tissue oxygen supply\n\t\t~Stimulates alertness without\n\t\t\t\toverstimulation\n\t\t~Supports mental clarity\n\t\t~Doesn\'t deplete, unlike fast\n\t\t\t\ttechniques\n\n➡️ Suitable for fatigue, drowsiness, and reduced concentration.'
   },
   
   // For balance - harmonious pattern
@@ -114,6 +114,6 @@ export const BREATHING_EXERCISES = {
       exhale: 'Exhale',
     },
     title: 'Overall Balance',
-    description: 'Pattern: 5–5–10–5\nHarmonious, symmetrical rhythm.\n\nDescription:\nEven breathing with equal phases creates a sense of stability and wholeness.\n\nWhy it works for balance:\n\nSynchronizes breathing and heart rate\n\nSuitable for any state\n\nSupports emotional balance\n\nExcellent for daily practice\n\n➡️ Universal mode for stress prevention and self-regulation.'
+    description: 'Pattern: 5–5–10–5\nHarmonious, symmetrical rhythm.\n\nDescription:\nEven breathing with equal phases creates a sense of stability and wholeness.\n\nWhy it works for balance:\n\t\t~Synchronizes breathing and heart rate\n\t\t~Suitable for any state\n\t\t~Supports emotional balance\n\t\t~Excellent for daily practice\n\n➡️ Universal mode for stress prevention and self-regulation.'
   },
 };

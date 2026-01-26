@@ -33,7 +33,7 @@ export default function useCurrentLocation(forceInnsbruck = false) {
     setLocation(innsbruckCoords);
     return;
   }
-
+//FYI: When adding own places, the distance indicator does take a few seconds to load the distance. Be patient.
   console.log('USING REAL GPS');
 
   (async () => {

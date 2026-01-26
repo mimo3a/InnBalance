@@ -2,7 +2,7 @@ export const places = [
     {
         id: 1,
         name: 'Botanic park',
-        info: 'Seit über 100 Jahren befindet sich der Botanische Garten nunmehr in Hötting und ist nicht nur unverzichtbar als Lehr- und Forschungsstätte des Institutes für Botanik der Universität Innsbruck, sondern auch Bildungs- und Erholungsort für Kinder, Jugendliche und Erwachsene. Über 7000 Pflanzenarten aus den verschiedensten Lebensräumen der Erde werden hier kultiviert.',
+        info: 'For over 100 years, the Botanical Garden has been located in Hötting and is not only essential as a teaching and research facility for the Institute of Botany at the University of Innsbruck, but also a place of education and recreation for children, young people, and adults. More than 7,000 plant species from various habitats around the world are cultivated here.',
         rating: 4.5,
         image: require('../Images/Places/BotanischeGarten.png'),
         category: 'Park',
@@ -93,7 +93,7 @@ export const places = [
     {
         id: 8,
         name: 'Ambraser Schlosspark',
-        info: 'Weitläufige Parkanlage im englischen Stil rund um das Schloss Ambras. Besonders ruhig sind die versteckten Wege im oberen Teil des Gartens.',
+        info: 'Extensive park in the English style around Ambras Castle. The hidden paths in the upper part of the garden are particularly quiet.',
         rating: 4.7,
         image: require('../Images/Places/Schlosspark.png'),
         category: 'Park',
@@ -105,7 +105,7 @@ export const places = [
     {
         id: 9,
         name: 'Tiroler Volkskunstmuseum',
-        info: 'Ein Ort der Stille. Die detaillierten Bauernstuben und das angeschlossene Kloster bieten eine fast meditative Atmosphäre abseits der Touristenströme.',
+        info: 'A place of silence. The detailed farmhouse parlors and the adjoining monastery offer an almost meditative atmosphere away from the tourist crowds.',
         rating: 4.6,
         image: require('../Images/Places/Volkskunstmuseum.png'),
         category: 'Museum',
@@ -117,7 +117,7 @@ export const places = [
     {
         id: 10,
         name: 'Audioversum',
-        info: 'Ein interaktives Museum zum Thema Hören. Viele Installationen sind sehr beruhigend gestaltet und laden zum bewussten Wahrnehmen von Klängen ein.',
+        info: 'An interactive museum about hearing. Many installations are designed to be very calming and invite you to consciously perceive sounds.',
         rating: 4.4,
         image: require('../Images/Places/Audioversum.png'),
         category: 'Museum',
@@ -129,7 +129,7 @@ export const places = [
     {
         id: 11,
         name: 'haepinest',
-        info: 'Dieses minimalistisch eingerichtete Café bietet exzellenten Specialty Coffee und eine sehr entspannte, ruhige Akustik – ideal zum Lesen oder Nachdenken.',
+        info: 'This minimally furnished café offers excellent specialty coffee and a very relaxed, quiet acoustic—ideal for reading or thinking.',
         rating: 4.7,
         image: require('../Images/Places/Haepinest.png'),
         category: 'Cafe',
@@ -141,7 +141,7 @@ export const places = [
     {
         id: 12,
         name: 'Café Konditorei Munding',
-        info: 'Das älteste Café Tirols liegt in einer ruhigen Gasse der Altstadt. Es verströmt gemütlichen Charme und bietet hausgemachte Pralinen in historischem Ambiente.',
+        info: 'The oldest café in Tyrol is located in a quiet alley in the old town. It exudes cozy charm and offers homemade pralines in a historic setting.',
         rating: 4.3,
         image: require('../Images/Places/Munding.png'),
         category: 'Cafe',
@@ -153,7 +153,7 @@ export const places = [
     {
         id: 13,
         name: 'Café Arkadenhof',
-        info: 'Ein verborgener Juwel in einem Innenhof der Maria-Theresien-Straße. Die grüne Terrasse ist eine wahre Ruheinsel mitten im lebhaften Zentrum.',
+        info: 'A hidden gem in a courtyard on Maria-Theresien-Straße. The green terrace is a true oasis of calm in the lively center.',
         rating: 4.5,
         image: require('../Images/Places/Arkadenhof.png'),
         category: 'Cafe',
@@ -165,7 +165,7 @@ export const places = [
     {
         id: 14,
         name: 'Restaurant Sitzwohl',
-        info: 'Helle, klare Architektur und viel Platz zwischen den Tischen sorgen hier für ein sehr entspanntes und unaufgeregtes Speiseerlebnis auf hohem Niveau.',
+        info: 'Bright, clear architecture and plenty of space between tables ensure a very relaxed and unhurried dining experience at a high level.',
         rating: 4.5,
         image: require('../Images/Places/Sitzwohl.png'),
         category: 'Restaurant',
@@ -177,13 +177,25 @@ export const places = [
     {
         id: 15,
         name: 'Restaurant Ottoburg',
-        info: 'In einem der ältesten Gebäude der Stadt speist man in gemütlichen, kleinen Stuben mit Blick auf den Inn – eine sehr heimelige und ruhige Atmosphäre.',
+        info: 'In one of the oldest buildings in the city, you dine in cozy, small parlors with a view of the Inn—a very homely and quiet atmosphere.',
         rating: 4.6,
         image: require('../Images/Places/Ottoburg.png'),
         category: 'Restaurant',
         distance: 0.1,
         lat: 47.2683,
         lng: 11.3919,
+        acces: 'Public'
+    },
+    {
+        id: 16,
+        name: 'Lanser See',
+        info: 'A lake at 840m altitude, inviting you to linger and relax. It is easily accessible by bus, tram, or via the hiking trail.',
+        rating: 4.6,
+        image: require('../Images/Places/LanserSee.png'),
+        category: 'Sea',
+        distance: 0.1,
+        lat: 47.24026,
+        lng: 11.41834,
         acces: 'Public'
     }
 

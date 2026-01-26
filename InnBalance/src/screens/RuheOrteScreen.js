@@ -21,10 +21,10 @@ import { useTheme } from '@/src/contexts/ThemeContext';
 
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-
+import { AddPlaceButton } from '../components/AddPlaceButton';
 /**
  * RuheOrteScreen Component
- * Display relaxation places in either map or list format
+ * Display relaxation places in either map or list format 
  */
 export default function RuheOrteScreen() {
   // Track which tab is currently active ('map' or 'list')
@@ -46,12 +46,7 @@ export default function RuheOrteScreen() {
         {activeTab === 'map' ? <PlacesMap /> : <PlacesListScreen />}
         {/* Add Place Button */}
         <View style={styles.fillView}/>{/**making the plus-symbol white, instead of transparent */}
-        <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => router.push('/add-place')}
-        >
-            <Ionicons name="add-circle" size={70} color={theme.primary}  />
-        </TouchableOpacity>
+        <AddPlaceButton style={styles.addButton}/>
       </View>
 
     </View>
