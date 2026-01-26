@@ -15,22 +15,23 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import { HapticTab } from '@/src/components/haptic-tab';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/src/hooks/use-color-scheme';
+import { useTheme } from '@/src/contexts/ThemeContext';
 
 /**
  * TabLayout Component
  * Sets up the bottom tab navigation with themed icons and haptic feedback
  */
 export default function TabLayout() {
-  // Get current color scheme for theming
-  const colorScheme = useColorScheme();
+  const { theme } = useTheme();
 
   return (
     <Tabs
       screenOptions={{
         // Apply theme-based color to active tabs
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: theme.primary,
+        tabBarStyle: {
+          backgroundColor: theme.background,
+        },
         // Hide header for cleaner UI
         headerShown: false,
         // Enable haptic feedback on tab press

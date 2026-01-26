@@ -21,11 +21,14 @@ import BreathingExercise from '../components/BreathingExercise';
 import TimerControls from '../components/ui/timerControls';
 import { saveSession } from '../services/statisticsService';
 import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { StatusBar } from 'expo-status-bar';
 
 export default function BreathingScreen() {
   const { state } = useLocalSearchParams();
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionSeconds, setSessionSeconds] = useState(0);
+  const { theme, isDark } = useTheme();
 
   // Select config based on mood state
   const getConfig = () => {
@@ -125,29 +128,35 @@ export default function BreathingScreen() {
     }, [state])
   );
 
+  // Render the breathing screenc
+
   return (
-  <View style={styles.screen}>
-    {/* Header showing current mood */}
-    <View style={styles.headerContainer}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold' }}>{state}</Text>
-    </View>
+    <>
+      <StatusBar style ={!isDark ? "dark" : "light"}/>
+        
+      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+        {/* Header showing current mood */}
+        <View style={styles.headerContainer}>
+          <Text style={[{ fontSize: 24, fontWeight: 'bold' }, { color: theme.text }]}>{config.title}</Text>
+        </View>
 
-    <View style={styles.exerciseContainer}>
-      <BreathingExercise
-        isPlaying={isPlaying}
-        config={config}
-      />
-    </View>
+        <View style={styles.exerciseContainer}>
+          <BreathingExercise
+            isPlaying={isPlaying}
+            config={config}
+          />
+        </View>
 
-    {/* Timer and controls at bottom */}
-    <View style={styles.timerContainer}>
-      <TimerControls
-        seconds={sessionSeconds}
-        isPlaying={isPlaying}
-        onPress={handleToggle}
-      />
-    </View>
-  </View>
+        {/* Timer and controls at bottom */}
+        <View style={styles.timerContainer}>
+          <TimerControls
+            seconds={sessionSeconds}
+            isPlaying={isPlaying}
+            onPress={handleToggle}
+          />
+        </View>
+      </View>
+  </>
 );
 
 }
