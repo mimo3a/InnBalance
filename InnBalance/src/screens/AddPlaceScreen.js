@@ -51,6 +51,7 @@ export default function AddPlaceScreen() {
           { label: 'Promenade', value: 'Promenade' },
           { label: 'Mountain', value: 'Mountain' },
           { label: 'District', value: 'District' },
+          { label: 'Sea', value: 'Sea' },
         ]);
 
   // Update coordinates when returning from map picker
@@ -272,27 +273,7 @@ export default function AddPlaceScreen() {
           </TouchableOpacity>
 
           <View style={styles.row}>
-            {/* <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Latitude</Text>
-              <TextInput
-                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                value={String(formData.lat.toFixed(6))}
-                onChangeText={(text) => setFormData({ ...formData, lat: parseFloat(text) || 0 })}
-                keyboardType="numeric"
-                placeholderTextColor={theme.textSecondary}
-              />
-            </View> */}
-
-            {/* <View style={styles.halfInput}>
-              <Text style={[styles.subLabel, { color: theme.textSecondary }]}>Longitude</Text>
-              <TextInput
-                style={[styles.input, styles.coordInput, { backgroundColor: theme.cardBackground, color: theme.text, borderColor: theme.border }]}
-                value={String(formData.lng.toFixed(6))}
-                onChangeText={(text) => setFormData({ ...formData, lng: parseFloat(text) || 0 })}
-                keyboardType="numeric"
-                placeholderTextColor={theme.textSecondary}
-              />
-            </View> */}
+            
           </View>
         </View>
 
