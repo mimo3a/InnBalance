@@ -8,7 +8,10 @@ const { theme, isDark } = useTheme();
     <>
     <Stack.Screen
       options={{
+<<<<<<< HEAD
+=======
         headerTintColor: isDark ? theme.white : theme.text,
+>>>>>>> main
         headerShown: true,
         headerTitle: '',
         headerTransparent: true,
