@@ -1,0 +1,72 @@
+[
+  {
+    "date": "2026-01-01",
+    "exercise": "Breathing Praxis 1",
+    "sessions": [
+      { "duration": 10 },
+      { "duration": 12 }
+    ]
+  },
+  {
+    "date": "2026-01-01",
+    "exercise": "Breathing Praxis 2",
+    "sessions": [
+      { "duration": 8 }
+    ]
+  },
+  {
+    "date": "2026-01-02",
+    "exercise": "Relaxation",
+    "sessions": [
+      { "duration": 15 },
+      { "duration": 20 },
+      { "duration": 10 }
+    ]
+  },
+  {
+    "date": "2026-01-03",
+    "exercise": "Breathing Praxis 1",
+    "sessions": [
+      { "duration": 9 }
+    ]
+  },
+  {
+    "date": "2026-01-03",
+    "exercise": "Breathing Praxis 2",
+    "sessions": [
+      { "duration": 7 },
+      { "duration": 11 }
+    ]
+  },
+  {
+    "date": "2026-01-04",
+    "exercise": "Relaxation",
+    "sessions": [
+      { "duration": 18 }
+    ]
+  },
+  {
+    "date": "2026-01-05",
+    "exercise": "Breathing Praxis 1",
+    "sessions": [
+      { "duration": 10 },
+      { "duration": 10 },
+      { "duration": 10 }
+    ]
+  },
+  {
+    "date": "2026-01-06",
+    "exercise": "Breathing Praxis 2",
+    "sessions": [
+      { "duration": 12 }
+    ]
+  },
+  {
+    "date": "2026-01-07",
+    "exercise": "Relaxation",
+    "sessions": [
+      { "duration": 20 },
+      { "duration": 15 }
+    ]
+  }
+]

@@ -11,8 +11,13 @@ import { ThemeProvider } from '@/src/contexts/ThemeContext';
 import { UserProvider, useUser } from '@/src/contexts/UserContext';
 import { MapPickerProvider } from '@/src/contexts/MapPickerContext';
 import { LocationProvider } from '@/src/contexts/LocationContext';
+import { initializeStatisticsIfEmpty } from '@/src/services/statisticsService';
 
 export default function RootLayout() {
+  React.useEffect(() => {
+    initializeStatisticsIfEmpty();
+  }, []);
+
   return (
     <LocationProvider>
       <ThemeProvider>
