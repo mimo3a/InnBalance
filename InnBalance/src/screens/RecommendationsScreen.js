@@ -47,11 +47,7 @@ export default function RecommendationsScreen() {
             </Text>
           </View>
 
-<<<<<<< HEAD
-          {/* DESCRIPTION — РАСТЯГИВАЕТСЯ */}
-=======
           {/* DESCRIPTION */}
->>>>>>> main
           <ThemedView style={[styles.descriptionBox, { backgroundColor: theme.cardBackground }]}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text style={[styles.description, { color: theme.text }]}>
@@ -60,11 +56,7 @@ export default function RecommendationsScreen() {
             </ScrollView>
           </ThemedView>
 
-<<<<<<< HEAD
-          {/* ACTIONS — ПРИЖАТЫ К НИЗУ */}
-=======
           {/* ACTIONS */}
->>>>>>> main
           <ThemedView style={[styles.actionBox, { backgroundColor: theme.cardBackground }]}>
             <Text style={[styles.actionTitle, { color: theme.text }]}>
               What would you like to do?
@@ -131,14 +123,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
-<<<<<<< HEAD
-  // ⬇️ РАСТЯГИВАЕТСЯ
-  descriptionBox: {
-    flex: 1,                // 🔥 ключевая строка
-=======
   descriptionBox: {
     flex: 1,
->>>>>>> main
     backgroundColor: '#dbeee9ff',
     borderRadius: 14,
     padding: 18,
@@ -151,19 +137,11 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
 
-<<<<<<< HEAD
-  // ⬇️ УЕЗЖАЕТ ВНИЗ
-=======
->>>>>>> main
   actionBox: {
     backgroundColor: '#dbeee9ff',
     borderRadius: 14,
     padding: 18,
-<<<<<<< HEAD
-    marginTop: 'auto',      // 🔥 прижимает вниз
-=======
     marginTop: 'auto',
->>>>>>> main
     // iOS
   shadowColor: '#000',
   shadowOpacity: 0.12,
@@ -191,17 +169,10 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   paddingVertical: 18,
   paddingHorizontal: 16,
-<<<<<<< HEAD
-  borderRadius: 14,          // как у descriptionBox
-  width: 130,
-
-  backgroundColor: '#dbeee9ff', // тот же фон, что сверху
-=======
   borderRadius: 14,
   width: 130,
 
   backgroundColor: '#dbeee9ff',
->>>>>>> main
   
 },
   actionText: {
