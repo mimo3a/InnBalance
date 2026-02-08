@@ -1,5 +1,16 @@
-import AddPlaceScreen from '@/src/screens/AddPlaceScreen';
 
+import { Stack } from 'expo-router';
+import AddPlaceScreen from '@/src/screens/AddPlaceScreen';
 export default function AddPlaceRoute() {
-  return <AddPlaceScreen />;
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTitle: '',
+          headerTransparent: true,
+          }} />
+      <AddPlaceScreen />
+    </>
+  );
 }

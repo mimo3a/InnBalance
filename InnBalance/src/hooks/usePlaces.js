@@ -1,25 +1,63 @@
 import { useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system/legacy';
 import { places as defaultPlaces } from '@/src/data/places';
+import { getDistanceFromLatLonInKm } from '@/src/utils/distance';
+
+import { getAllPlaces } from '../utils/firebaseUtil';
 
 const STORAGE_KEY = '@innbalance_user_places';
+const INITIALIZED_KEY = '@innbalance_places_initialized';
 
-export function usePlaces() {
+export function usePlaces(userLocation) {
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Load places on mount
+  const imageMap= {
+    "BotanischeGarten.png": require("../Images/Places/BotanischeGarten.png"),
+    "mci.png": require("../Images/Places/mci.png"),
+    "Hofgarten.png": require("../Images/Places/Hofgarten.png"),
+    "Rapoldi.png": require("../Images/Places/Rapoldi.png"),
+    "Innpromenade.png": require("../Images/Places/Innpromenade.png"),
+    "Nordkette.png": require("../Images/Places/Nordkette.png"),
+    "Vill.png": require("../Images/Places/Vill.png"),
+  }
+  // Load places initially and when userLocation changes
   useEffect(() => {
     loadPlaces();
-  }, []);
+  }, [userLocation?.latitude, userLocation?.longitude]);
 
+  // Load or initialize places
   const loadPlaces = async () => {
     try {
-      const storedUserPlaces = await AsyncStorage.getItem(STORAGE_KEY);
-      const userPlaces = storedUserPlaces ? JSON.parse(storedUserPlaces) : [];
-      
-      // Combine default places with user places
-      setPlaces([...defaultPlaces, ...userPlaces]);
+      let storedPlaces;
+
+      const isInitialized = await AsyncStorage.getItem(INITIALIZED_KEY);
+
+      if (!isInitialized) {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultPlaces));
+        await AsyncStorage.setItem(INITIALIZED_KEY, 'true');
+        storedPlaces = defaultPlaces;
+      } else {
+        const data = await AsyncStorage.getItem(STORAGE_KEY);
+        storedPlaces = data ? JSON.parse(data) : defaultPlaces;
+      }
+
+      // Add distance if location available
+      //FYI: When adding own places, the distance indicator does take a few seconds to load the distance. Be patient.
+      if (userLocation) {
+        storedPlaces = storedPlaces.map(place => ({
+          ...place,
+          distance: getDistanceFromLatLonInKm(
+            userLocation.latitude,
+            userLocation.longitude,
+            place.lat,
+            place.lng
+          ).toFixed(2),
+        }));
+      }
+
+      setPlaces(storedPlaces);
     } catch (error) {
       console.error('Error loading places:', error);
       setPlaces(defaultPlaces);
@@ -28,69 +66,66 @@ export function usePlaces() {
     }
   };
 
-  const saveUserPlaces = async (userPlaces) => {
+  const savePlaces = async updated => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(userPlaces));
-    } catch (error) {
-      console.error('Error saving places:', error);
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error('Error saving places:', e);
     }
   };
 
-  const getUserPlaces = () => {
-    // Filter only user places (those not in default places)
-    const defaultIds = new Set(defaultPlaces.map(p => p.id));
-    return places.filter(place => !defaultIds.has(place.id));
-  };
-
-  const addPlace = async (newPlace) => {
+  const addPlace = async newPlace => {
     const newPlaceWithId = { ...newPlace, id: Date.now() };
-    const updatedPlaces = [...places, newPlaceWithId];
-    setPlaces(updatedPlaces);
-    
-    const userPlaces = [...getUserPlaces(), newPlaceWithId];
-    await saveUserPlaces(userPlaces);
+    const updated = [...places, newPlaceWithId];
+    setPlaces(updated);
+    savePlaces(updated);
   };
 
-  const updatePlace = async (id, updatedData) => {
-    const updatedPlaces = places.map(place => 
-      place.id === id ? { ...place, ...updatedData } : place
-    );
-    setPlaces(updatedPlaces);
-    
-    // Save only if it's a user place
-    const defaultIds = new Set(defaultPlaces.map(p => p.id));
-    if (!defaultIds.has(id)) {
-      const userPlaces = updatedPlaces.filter(place => !defaultIds.has(place.id));
-      await saveUserPlaces(userPlaces);
-    }
+  const updatePlace = async (id, update) => {
+    const updated = places.map(p => (p.id === id ? { ...p, ...update } : p));
+    setPlaces(updated);
+    savePlaces(updated);
   };
 
-  const deletePlace = async (id) => {
-    // Check that it's not a default place
-    const defaultIds = new Set(defaultPlaces.map(p => p.id));
-    if (defaultIds.has(id)) {
-      console.warn('Cannot delete default place');
-      return;
+  const deletePlace = async id => {
+    const place = places.find(p => p.id === id);
+
+    // Delete image file if local file
+    if (place?.image?.startsWith('file://')) {
+      try {
+        await FileSystem.deleteAsync(place.image, { idempotent: true });
+      } catch (e) {
+        console.error('Error deleting image file:', e);
+      }
     }
 
-    const updatedPlaces = places.filter(place => place.id !== id);
-    setPlaces(updatedPlaces);
-    
-    const userPlaces = updatedPlaces.filter(place => !defaultIds.has(place.id));
-    await saveUserPlaces(userPlaces);
+    const updated = places.filter(p => p.id !== id);
+    setPlaces(updated);
+    savePlaces(updated);
   };
 
   const resetUserPlaces = async () => {
+    // Remove uploaded images (only if image is a string path)
+    for (const p of places) {
+      if (typeof p.image === 'string' && p.image.startsWith('file://')) {
+        try {
+          await FileSystem.deleteAsync(p.image, { idempotent: true });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultPlaces));
     setPlaces(defaultPlaces);
-    await AsyncStorage.removeItem(STORAGE_KEY);
   };
 
-  return { 
-    places, 
-    loading, 
-    addPlace, 
-    updatePlace, 
-    deletePlace, 
-    resetUserPlaces 
+  return {
+    places,
+    loading,
+    addPlace,
+    updatePlace,
+    deletePlace,
+    resetUserPlaces,
   };
 }

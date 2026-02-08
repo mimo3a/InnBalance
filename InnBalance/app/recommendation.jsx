@@ -1,4 +1,28 @@
-import RecommendationsScreen from "@/src/screens/RecommendationsScreen";
+import { Stack, useNavigation } from 'expo-router';
+import RecommendationsScreen from '@/src/screens/RecommendationsScreen';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { useEffect } from 'react';
+
 export default function RecommendationsScreenRoute() {
-  return <RecommendationsScreen />;
+  const { theme, isDark } = useTheme();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTintColor: isDark ? theme.white : theme.text,
+    });
+  }, [isDark, theme.white, theme.text, navigation]);
+
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          title: '',
+          headerShown: true,
+          headerTransparent: true,
+        }}
+      />
+      <RecommendationsScreen />
+    </>
+  );
 }

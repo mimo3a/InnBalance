@@ -1,28 +1,85 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import PlaceCard from '@/src/components/PlaceCard';
 import { usePlaces } from '@/src/hooks/usePlaces';
-
-
+import { useTheme } from '@/src/contexts/ThemeContext';
+import useCurrentLocation from '@/src/hooks/useCurrentLocation';
+import { StatusBar } from 'expo-status-bar';
+import { AddPlaceButton } from '../components/AddPlaceButton';
 export default function PlacesListScreen() {
+    const [categoryFilters, setCategoryFilters] = React.useState([]);
+
     const router = useRouter();
-    const { places, loading } = usePlaces();
+    const { location: userLocation } = useCurrentLocation();
+    const { places, loading } = usePlaces(userLocation);
+    const { theme, isDark } = useTheme();
+
+    const categories = [...new Set(places.map((p) => p.category))];
+
+    const toggleCategory = (cat) => {
+        setCategoryFilters((prev) =>
+            prev.includes(cat)
+                ? prev.filter((c) => c !== cat)
+                : [...prev, cat]
+        );
+    };
+
+    const filteredPlaces =
+        categoryFilters.length === 0
+            ? places
+            : places.filter((p) => categoryFilters.includes(p.category));
+
 
     if (loading) {
         return (
-            <View style={[styles.wrapper, { justifyContent: 'center', alignItems: 'center' }]}>
-                <ActivityIndicator size="large" color="#1d16f4ff" />
+            <View style={[styles.wrapper, { justifyContent: 'center', alignItems: 'center', backgroundColor: theme.background }]}>
+                <ActivityIndicator size="large" color={theme.primary} />
             </View>
         );
     }
 
     return (
-        <View style={styles.wrapper}>
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                {places.map((place) => (
-                    <PlaceCard key={place.id}
+        <View style={[styles.wrapper, { backgroundColor: theme.background }]}>
+            <StatusBar style ={!isDark ? "dark" : "light"}/>
+            {/* FILTER-BAR */}
+            <View style={{ flexDirection: 'row', gap: 10, padding: 10, flexWrap: 'wrap' }}>
+                
+                {/* Reset Button */}
+                <TouchableOpacity onPress={() => setCategoryFilters([])}>
+                    <Ionicons name="filter" size={24} color={theme.primary} />
+                </TouchableOpacity>
+
+                {/* Dynamische Kategorie-Chips */}
+                {categories.map((cat) => {
+                    const isActive = categoryFilters.includes(cat);
+
+                    return (
+                        <TouchableOpacity key={cat} onPress={() => toggleCategory(cat)}>
+                            <View
+                                style={{
+                                    padding: 8,
+                                    borderRadius: 8,
+                                    backgroundColor: isActive ? theme.primary : theme.cardBackground
+                                }}
+                            >
+                                <Text style={{ color: isActive ? '#fff' : theme.primary }}>
+                                    {cat}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                contentInsetAdjustmentBehavior = 'automatic'
+                >
+                {filteredPlaces.map((place) => (
+                    <PlaceCard 
+                        key={`${place.id}-${place.rating}-${place.distance}`}
                         name={place.name}
                         info={place.info}
                         rating={place.rating}
@@ -30,18 +87,15 @@ export default function PlacesListScreen() {
                         distance={place.distance}
                         category={place.category}
                         onPress={() => router.push({ pathname: '/description', params: { id: place.id } })}
-                         />
+                    />
                 ))}
             </ScrollView>
 
             {/* Add Place Button */}
-            <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => router.push('/add-place')}
-            >
-                <Ionicons name="add-circle" size={70} color="#2f6f5f"  />
-            </TouchableOpacity>
+            <View style={styles.fillView}/>{/**making the plus-symbol white, instead of transparent */}
+            <AddPlaceButton style={styles.addButton}/>
         </View>
+        
     );
 }
 
@@ -60,4 +114,13 @@ const styles = StyleSheet.create({
         bottom: 10,
         right: 10,
     },
+    fillView:{
+        position:'absolute',
+        width:30,
+        height:30,
+        bottom:30,
+        right:30,
+        backgroundColor:'#fff'
+    },
+
 });

@@ -22,7 +22,7 @@ export default function SwitchTabs({ selected, onChange }) {
               selected === 'map' && styles.activeText,
             ]}
           >
-            Karte
+            Map
           </Text>
         </View>
       </TouchableOpacity>
@@ -44,7 +44,7 @@ export default function SwitchTabs({ selected, onChange }) {
               selected === 'list' && styles.activeText,
             ]}
           >
-            Liste
+            List
           </Text>
         </View>
       </TouchableOpacity>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   tabContent: {
   flexDirection: 'row',
   alignItems: 'center',
-  gap: 6, // расстояние между иконкой и текстом
+  gap: 6, 
 
 },
 });
