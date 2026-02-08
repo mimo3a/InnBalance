@@ -10,10 +10,10 @@
  * @param {Function} onPress - Callback for play/stop button press
  */
 
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/src/contexts/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 /**
  * TimerControls Component
@@ -36,7 +36,7 @@ export default function TimerControls({ seconds, isPlaying, onPress }) {
       {/* Play/Stop toggle button */}
       <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary }]} onPress={onPress}>
         <Ionicons
-          name={isPlaying ? 'stop' : 'play'}
+          name={isPlaying ? 'pause' : 'play'}
           size={26}
           color="#fff"
         />

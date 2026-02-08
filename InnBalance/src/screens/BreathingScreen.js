@@ -12,23 +12,51 @@
  * The screen automatically saves completed sessions when pausing or exiting.
  */
 
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { getSessions, getSummary, saveSession } from '@/src/services/statisticsService';
+import { StatusBar } from 'expo-status-bar';
+import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
 import BreathingExercise from '../components/BreathingExercise';
 import TimerControls from '../components/ui/timerControls';
-import { saveSession } from '../services/statisticsService';
-import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
-import { useTheme } from '@/src/contexts/ThemeContext';
-import { StatusBar } from 'expo-status-bar';
+
 
 export default function BreathingScreen() {
   const { state } = useLocalSearchParams();
   const [isPlaying, setIsPlaying] = useState(false);
   const [sessionSeconds, setSessionSeconds] = useState(0);
   const { theme, isDark } = useTheme();
+  const sessionSavedRef = useRef(false);
+
+ 
+
+
+// test code to verify statistics service integration - can be removed in production
+useEffect(() => {
+  async function test() {
+    const sessionsBefore = await getSessions();
+    console.log('BEFORE:', sessionsBefore);
+
+    await saveSession({
+      duration: 120,
+      state: 'balance',
+      date: new Date().toISOString(),
+    });
+
+    const sessionsAfter = await getSessions();
+    console.log('AFTER:', sessionsAfter);
+
+    const summary = await getSummary();
+    console.log('SUMMARY:', summary);
+  }
+
+  test();
+}, []);
+// Test code to verify statistics service integration - can be removed in production
 
   // Select config based on mood state
   const getConfig = () => {
@@ -88,21 +116,13 @@ export default function BreathingScreen() {
 
   // Handle Play/Pause button press
   const handleToggle = async () => {
+    // Toggle between play and pause without resetting the timer.
+    // Session saving is handled when navigating away from this screen.
     if (isPlaying) {
-      // PAUSE - Save current session and stop
-      if (sessionSeconds > 0) {
-        console.log('Saving session on pause:', sessionSeconds);
-        await saveSession({
-          duration: sessionSeconds,
-          date: new Date().toISOString(),
-          state: state // Pass the mood for statistics
-        });
-      }
+      // PAUSE
       setIsPlaying(false);
-      setSessionSeconds(0);
     } else {
-      // PLAY - Start new session
-      setSessionSeconds(0);
+      // PLAY / RESUME
       setIsPlaying(true);
     }
   };
@@ -116,12 +136,15 @@ export default function BreathingScreen() {
           intervalRef.current = null;
         }
 
-        if (isPlayingRef.current && sessionSecondsRef.current > 0) {
+        // Save the session if there is recorded time that hasn't been saved yet,
+        // regardless of whether the animation is currently playing or paused.
+        if (sessionSecondsRef.current > 0 && !sessionSavedRef.current) {
           saveSession({
             duration: sessionSecondsRef.current,
             date: new Date().toISOString(),
             state: state // Pass the mood for statistics
           });
+          sessionSavedRef.current = true;
           sessionSecondsRef.current = 0;
         }
       };
@@ -129,6 +152,8 @@ export default function BreathingScreen() {
   );
 
   // Render the breathing screenc
+  // example
+
 
   return (
     <>

@@ -61,9 +61,15 @@ export default function AccountScreen() {
   };
 
   const handleLogout = async () => {
-    await AsyncStorage.removeItem('authToken');
-    router.replace('/login');
-  };
+  try {
+    await AsyncStorage.removeItem('token'); // ✅ JWT
+    await AsyncStorage.removeItem('user');  // ✅ user context
+  } catch {}
+
+  setUser(null);               // ✅ очистка контекста
+  router.replace('/login');    // ✅ редирект
+};
+
 
   const handleDeleteAccount = () => {
     Alert.alert(
