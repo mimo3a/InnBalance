@@ -1,34 +1,53 @@
 /**
- * StatisticScreen Component
- *
- * Safe statistics screen with charts (week / month)
+ * StatisticScreen
+ * Stable production version
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import React, { useCallback, useMemo, useState } from 'react';
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-import { getSessions } from '@/src/services/statisticsService';
-import { useTheme } from '@/src/contexts/ThemeContext';
 import { ThemedText } from '@/src/components/themed-text';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { getSessions } from '@/src/services/statisticsService';
 
-/* =========================
-   SAFE DATE HELPER
-========================= */
-const getSessionDate = (s) => {
+/* ---------- SAFE DATE ---------- */
+const safeDate = (s) => {
   const raw = s?.createdAt || s?.date;
   if (!raw) return null;
   const d = new Date(raw);
   return isNaN(d.getTime()) ? null : d;
+};
+
+/* ---------- ICON BY EXERCISE TYPE ---------- */
+const getExerciseIcon = (session) => {
+  const type = session?.state || session?.exerciseType || 'default';
+
+  switch (type) {
+    case 'depression':
+      return 'emoticon-dead-outline';
+    case 'anxiety':
+      return 'alert-circle-outline';
+    case 'anger':
+      return 'emoticon-angry-outline';
+    case 'stress':
+      return 'lightning-bolt';
+    case 'low_energy':
+      return 'battery-low';
+    case 'balance':
+      return 'scale-balance';
+    default:
+      return 'meditation';
+  }
 };
 
 export default function StatisticScreen() {
@@ -36,22 +55,19 @@ export default function StatisticScreen() {
 
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('week'); // week | month
+  const [viewMode, setViewMode] = useState('week');
   const [offset, setOffset] = useState(0);
 
-  /* =========================
-     LOAD SESSIONS
-  ========================= */
+  /* ---------- LOAD ---------- */
   const loadSessions = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getSessions();
       const normalized = (data || [])
-        .map((s) => ({ ...s, _date: getSessionDate(s) }))
-        .filter((s) => s._date);
+        .map(s => ({ ...s, _date: safeDate(s) }))
+        .filter(s => s._date);
       setSessions(normalized);
-    } catch (e) {
-      console.error('Failed to load sessions', e);
+    } catch {
       setSessions([]);
     } finally {
       setLoading(false);
@@ -60,37 +76,22 @@ export default function StatisticScreen() {
 
   useFocusEffect(useCallback(() => { loadSessions(); }, [loadSessions]));
 
-  /* =========================
-     SUMMARY
-  ========================= */
+  /* ---------- SUMMARY ---------- */
   const totalSessions = sessions.length;
-  const totalDurationSeconds = sessions.reduce(
-    (sum, s) => sum + (s.duration || 0),
-    0
-  );
-  const totalDurationMinutes = Math.round(totalDurationSeconds / 60);
+  const totalSeconds = sessions.reduce((s, x) => s + (x.duration || 0), 0);
+  const totalMinutes = Math.round(totalSeconds / 60);
 
-  const firstSessionDate =
-    sessions.length > 0
-      ? sessions.reduce(
-          (min, s) => (s._date < min ? s._date : min),
-          sessions[0]._date
-        )
-      : new Date();
+  const firstDate = sessions.length
+    ? sessions.reduce((a, b) => (a._date < b._date ? a : b))._date
+    : new Date();
 
-  const diffInDays = Math.max(
-    1,
-    Math.ceil((Date.now() - firstSessionDate.getTime()) / 86400000)
-  );
+  const days = Math.max(1, Math.ceil((Date.now() - firstDate.getTime()) / 86400000));
+  const avgMinDay = (totalMinutes / days).toFixed(1);
+  const avgSessDay = (totalSessions / days).toFixed(1);
 
-  const avgMinutesPerDay = (totalDurationMinutes / diffInDays).toFixed(1);
-  const avgSessionsPerDay = (totalSessions / diffInDays).toFixed(1);
-
-  /* =========================
-     CHART DATA
-  ========================= */
+  /* ---------- CHART DATA ---------- */
   const chartData = useMemo(() => {
-    const dataPoints = [];
+    const points = [];
     const now = new Date();
 
     if (viewMode === 'week') {
@@ -100,118 +101,114 @@ export default function StatisticScreen() {
       for (let i = 6; i >= 0; i--) {
         const d = new Date(base);
         d.setDate(d.getDate() - i);
-        dataPoints.push({
-          date: d.toISOString().split('T')[0],
+        points.push({
+          iso: d.toISOString().split('T')[0],
           label: d.toLocaleDateString('en-US', { weekday: 'short' }),
           count: 0,
           seconds: 0,
         });
       }
 
-      sessions.forEach((s) => {
+      sessions.forEach(s => {
         const iso = s._date.toISOString().split('T')[0];
-        const p = dataPoints.find((x) => x.date === iso);
+        const p = points.find(x => x.iso === iso);
         if (p) {
-          p.count += 1;
+          p.count++;
           p.seconds += s.duration || 0;
         }
       });
     }
 
-    dataPoints.forEach((p) => {
-      p.minutes = Math.round(p.seconds / 60);
-    });
-
-    return dataPoints;
+    points.forEach(p => p.minutes = Math.round(p.seconds / 60));
+    return points;
   }, [sessions, viewMode, offset]);
 
-  const maxCount = Math.max(...chartData.map((d) => d.count), 1);
-  const maxMinutes = Math.max(...chartData.map((d) => d.minutes), 1);
+  const maxCount = Math.max(...chartData.map(x => x.count), 1);
+  const maxMinutes = Math.max(...chartData.map(x => x.minutes), 1);
 
-  /* =========================
-     RENDER
-  ========================= */
+  /* ---------- LOADING ---------- */
   if (loading) {
     return (
       <View style={[styles.center, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" color={theme.primary} />
-        <Text style={{ marginTop: 10, color: theme.primary }}>
-          Loading statistics…
-        </Text>
       </View>
     );
   }
 
+  /* ---------- RENDER ---------- */
   return (
     <>
       <StatusBar style={!isDark ? 'dark' : 'light'} />
-
-      <ScrollView style={{ flex: 1, backgroundColor: theme.background }}>
+      <ScrollView style={{ backgroundColor: theme.background }}>
         <View style={styles.container}>
-          <ThemedText type="title" style={{ marginBottom: 20 }}>
-            Statistics
-          </ThemedText>
+
+          <ThemedText type="title">Statistics</ThemedText>
 
           {/* SUMMARY */}
           <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
             <Text style={styles.section}>Summary</Text>
-            <Text>Total Minutes: {totalDurationMinutes}</Text>
-            <Text>Total Sessions: {totalSessions}</Text>
-            <Text>Avg. Minutes / Day: {avgMinutesPerDay}</Text>
-            <Text>Avg. Sessions / Day: {avgSessionsPerDay}</Text>
+
+            <View style={styles.row}>
+              <View style={[styles.boxLight]}>
+                <Text style={styles.value}>{totalMinutes}</Text>
+                <Text>Total Minutes</Text>
+              </View>
+              <View style={[styles.boxDark]}>
+                <Text style={styles.value}>{totalSessions}</Text>
+                <Text>Total Sessions</Text>
+              </View>
+            </View>
+
+            <View style={styles.row}>
+              <View style={[styles.boxLight]}>
+                <Text style={styles.valueSmall}>{avgMinDay}</Text>
+                <Text>Avg. Min/Day</Text>
+              </View>
+              <View style={[styles.boxDark]}>
+                <Text style={styles.valueSmall}>{avgSessDay}</Text>
+                <Text>Avg. Sess/Day</Text>
+              </View>
+            </View>
           </View>
 
           {/* CHART */}
           <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
             <View style={styles.chartHeader}>
               <Text style={styles.section}>Last 7 Days</Text>
-              <TouchableOpacity
-                onPress={() =>
-                  setViewMode(viewMode === 'week' ? 'month' : 'week')
-                }
-              >
+              <TouchableOpacity onPress={() => setViewMode(viewMode === 'week' ? 'month' : 'week')}>
                 <MaterialCommunityIcons
-                  name={
-                    viewMode === 'week'
-                      ? 'calendar-month'
-                      : 'calendar-week'
-                  }
-                  size={24}
+                  name={viewMode === 'week' ? 'calendar-month' : 'calendar-week'}
+                  size={22}
                   color={theme.primary}
                 />
               </TouchableOpacity>
             </View>
 
-            <View style={styles.chartArea}>
-              {chartData.map((item, idx) => (
-                <View key={idx} style={styles.chartColumn}>
-                  <View style={styles.barsWrapper}>
-                    <View style={styles.barContainer}>
-                      <View
-                        style={[
-                          styles.bar,
-                          {
-                            backgroundColor: '#8baea4',
-                            height: `${(item.minutes / maxMinutes) * 100}%`,
-                          },
-                        ]}
-                      />
-                    </View>
+            <View style={styles.legend}>
+              <View style={styles.legendItem}>
+                <View style={[styles.dot, { backgroundColor: '#8baea4' }]} />
+                <Text>Minutes</Text>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.dot, { backgroundColor: '#2f6f5f' }]} />
+                <Text>Sessions</Text>
+              </View>
+            </View>
 
-                    <View style={styles.barContainer}>
-                      <View
-                        style={[
-                          styles.bar,
-                          {
-                            backgroundColor: '#2f6f5f',
-                            height: `${(item.count / maxCount) * 100}%`,
-                          },
-                        ]}
-                      />
-                    </View>
+            <View style={styles.chart}>
+              {chartData.map((d, i) => (
+                <View key={i} style={styles.col}>
+                  <View style={styles.bars}>
+                    <View style={[styles.bar, {
+                      backgroundColor: '#8baea4',
+                      height: `${(d.minutes / maxMinutes) * 100}%`
+                    }]} />
+                    <View style={[styles.bar, {
+                      backgroundColor: '#2f6f5f',
+                      height: `${(d.count / maxCount) * 100}%`
+                    }]} />
                   </View>
-
-                  <Text style={styles.dayLabel}>{item.label}</Text>
+                  <Text style={styles.day}>{d.label}</Text>
                 </View>
               ))}
             </View>
@@ -222,48 +219,76 @@ export default function StatisticScreen() {
             <Text style={styles.section}>History</Text>
 
             {sessions.map((s, i) => (
-              <View key={i} style={styles.historyRow}>
-                <Text>{s._date.toLocaleDateString()}</Text>
-                <Text>{s.duration} sec</Text>
+              <View key={i} style={styles.history}>
+                <View style={styles.historyLeft}>
+                  <MaterialCommunityIcons
+                    name={getExerciseIcon(s)}
+                    size={18}
+                    color={theme.primary}
+                  />
+                  <Text>{s._date.toLocaleDateString()}</Text>
+                </View>
+                <Text style={styles.historyTime}>{s.duration} sec</Text>
               </View>
             ))}
           </View>
+
         </View>
       </ScrollView>
     </>
   );
 }
 
-/* =========================
-   STYLES
-========================= */
+/* ---------- STYLES ---------- */
 const styles = StyleSheet.create({
   container: { padding: 16 },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  card: { padding: 16, borderRadius: 16, marginBottom: 20 },
-  section: { fontSize: 18, fontWeight: '600', marginBottom: 10 },
 
-  historyRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 6,
+  card: { borderRadius: 16, padding: 16, marginBottom: 20 },
+  section: { fontSize: 18, fontWeight: '600', marginBottom: 12 },
+
+  row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+
+  boxLight: {
+    width: '48%',
+    backgroundColor: '#8baea4',
+    padding: 14,
+    borderRadius: 14,
+    alignItems: 'center',
   },
+  boxDark: {
+    width: '48%',
+    backgroundColor: '#2f6f5f',
+    padding: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+  },
+  value: { fontSize: 30, color: '#fff', fontWeight: '700' },
+  valueSmall: { fontSize: 20, color: '#fff', fontWeight: '700' },
 
-  chartHeader: {
+  chartHeader: { flexDirection: 'row', justifyContent: 'space-between' },
+  legend: { flexDirection: 'row', justifyContent: 'flex-end', gap: 16 },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  dot: { width: 8, height: 8, borderRadius: 4 },
+
+  chart: { flexDirection: 'row', height: 180, marginTop: 10 },
+  col: { flex: 1, alignItems: 'center' },
+  bars: { flexDirection: 'row', gap: 6, height: '100%', alignItems: 'flex-end' },
+  bar: { width: 14, borderRadius: 4 },
+  day: { marginTop: 6, fontSize: 12 },
+
+  history: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    paddingVertical: 6,
   },
-  chartArea: { flexDirection: 'row', height: 180, alignItems: 'flex-end' },
-  chartColumn: { flex: 1, alignItems: 'center' },
-  barsWrapper: {
+  historyLeft: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    height: '100%',
-    gap: 6,
+    alignItems: 'center',
+    gap: 8,
   },
-  barContainer: { width: 14, height: '100%', justifyContent: 'flex-end' },
-  bar: { width: '100%', borderRadius: 4 },
-  dayLabel: { marginTop: 6, fontSize: 12, color: '#666' },
+  historyTime: {
+    fontSize: 14,
+  },
 });

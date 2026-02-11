@@ -61,7 +61,8 @@ export default function SignUpScreen() {
       });
 
       await AsyncStorage.setItem('token', res.token);
-      setUser({ username: res.username });
+      // Save user with unified `name` field
+      setUser({ name: res.username, username: res.username });
 
       router.replace('/(tabs)');
     } catch (e) {
@@ -150,6 +151,16 @@ export default function SignUpScreen() {
               {loading ? 'Creating…' : 'Sign Up'}
             </Text>
           </TouchableOpacity>
+
+          {/* Link to Login */}
+          <View style={styles.loginLinkContainer}>
+            <Text style={[styles.loginLinkText, { color: theme.textSecondary }]}>
+              Already have an account?{' '}
+            </Text>
+            <TouchableOpacity onPress={() => router.push('/login')}>
+              <Text style={[styles.loginLink, { color: theme.primary }]}>Log In</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </>
@@ -216,4 +227,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: { color: '#fff', fontSize: 18, fontWeight: '600' },
+  loginLinkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  loginLinkText: {
+    fontSize: 15,
+  },
+  loginLink: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
 });

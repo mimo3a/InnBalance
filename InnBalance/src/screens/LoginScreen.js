@@ -56,8 +56,9 @@ export default function LoginScreen() {
       // Save JWT token
       await AsyncStorage.setItem('token', res.token);
 
-      // Save user in context
+      // Save user in context (unified `name` field)
       await setUser({
+        name: res.username,
         username: res.username,
       });
 

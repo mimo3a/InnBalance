@@ -9,19 +9,18 @@
      * The selected state is passed to the recommendation screen for personalized suggestions.
      */
 
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
-import { useRouter } from 'expo-router';
 import { ThemedText } from '@/src/components/themed-text';
 import { ThemedView } from '@/src/components/themed-view';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import WeatherCard from '@/src/components/WeatherCard';
-import { useState } from 'react';
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { StatusBar } from 'expo-status-bar';
 import { useUser } from '@/src/contexts/UserContext';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 //only uncomment to restore Database :)
 //import { uploadAllPlaces } from '../utils/firebaseUtil';
-import { getAllPlaces } from '../utils/firebaseUtil';
     /**
      * HomeScreen Component
      * Primary screen for mood selection and weather display
@@ -74,10 +73,10 @@ import { getAllPlaces } from '../utils/firebaseUtil';
                 <StatusBar style ={!isDark ? "dark" : "light"}/>
                 <View style={[styles.container, { backgroundColor: theme.background }]}>
                     {/*Welcome Text*/}
-                    <View style={{ marginTop: 10, marginBottom: 10 }}>
-                     <ThemedText type="title" style={{ color: theme.text }}>
-                       {getGreeting()}, {user?.name}
-                     </ThemedText>
+                                        <View style={{ marginTop: 10, marginBottom: 10 }}>
+                                         <ThemedText type="title" style={{ color: theme.text }}>
+                                             {getGreeting()}, {user?.name || user?.username || 'User'}
+                                         </ThemedText>
                      <ThemedText type="subtitle">
                       How are we feeling?
                      </ThemedText>

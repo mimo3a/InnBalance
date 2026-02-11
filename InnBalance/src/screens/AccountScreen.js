@@ -7,39 +7,48 @@
  * - Account actions (log out, delete account)
  */
 
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { useUser } from '@/src/contexts/UserContext';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useUser } from '@/src/contexts/UserContext';
-import { useTheme } from '@/src/contexts/ThemeContext';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function AccountScreen() {
   const { theme, isDark } = useTheme();
   const router = useRouter();
   const { user, setUser } = useUser();
 
-  const [username, setUsername] = useState(user?.name || 'User');
+  const displayName = user?.name || user?.username || 'User';
+  const [username, setUsername] = useState(displayName);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
+  // Keep input field in sync when user data loads or changes
+  useEffect(() => {
+    setUsername(displayName);
+  }, [displayName]);
+
   const handleSaveProfile = () => {
-    setUser({ ...user, name: username });
+    // Persist updated name in both `name` and `username` for compatibility
+    setUser({ ...user, name: username, username: username });
     Alert.alert('Success', 'Profile updated successfully');
   };
 
-  const handlePasswordSave = () => {
+  const API_URL = 'http://10.0.2.2:9000'; // adjust for your backend host if needed
+
+  const handlePasswordSave = async () => {
     if (!oldPassword || !newPassword) {
       Alert.alert('Error', 'Please fill in both fields');
       return;
@@ -48,16 +57,32 @@ export default function AccountScreen() {
       Alert.alert('Error', 'New password must be at least 6 characters');
       return;
     }
-    if (oldPassword !== user?.password) {
-      Alert.alert('Error', 'Current password is incorrect');
-      return;
-    }
 
-    setUser({ ...user, password: newPassword });
-    setShowPasswordModal(false);
-    setOldPassword('');
-    setNewPassword('');
-    Alert.alert('Success', 'Password changed successfully');
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const res = await fetch(`${API_URL}/api/account/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ oldPassword, newPassword }),
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        Alert.alert('Error', msg || 'Failed to change password');
+        return;
+      }
+
+      // don’t store password in user context anymore
+      setShowPasswordModal(false);
+      setOldPassword('');
+      setNewPassword('');
+      Alert.alert('Success', 'Password changed successfully');
+    } catch (e) {
+      Alert.alert('Error', 'Network error while changing password');
+    }
   };
 
   const handleLogout = async () => {
@@ -99,12 +124,9 @@ export default function AccountScreen() {
           <View style={[styles.avatar, { backgroundColor: theme.primary }]}>
             <MaterialCommunityIcons name="account" size={48} color="#fff" />
           </View>
-          <Text style={[styles.title, { color: theme.text }]}>
-            Account Settings
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-            Manage your profile and security
-          </Text>
+          <Text style={[styles.userName, { color: theme.text }]}>{displayName}</Text>
+          <Text style={[styles.title, { color: theme.text }]}>Account Settings</Text>
+          <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Manage your profile and security</Text>
         </View>
 
         {/* Profile */}
@@ -247,6 +269,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12,
   },
+  userName: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
   title: { fontSize: 20, fontWeight: '700' },
   subtitle: { fontSize: 14, marginTop: 4 },
   sectionLabel: { marginLeft: 20, marginTop: 24, fontWeight: '600' },

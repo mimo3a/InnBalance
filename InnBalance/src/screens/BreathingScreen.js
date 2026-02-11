@@ -18,7 +18,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { useTheme } from '@/src/contexts/ThemeContext';
-import { getSessions, getSummary, saveSession } from '@/src/services/statisticsService';
+import { saveSession } from '@/src/services/statisticsService';
 import { StatusBar } from 'expo-status-bar';
 import { BREATHING_EXERCISES } from '../breathing/exerciseConfigs';
 import BreathingExercise from '../components/BreathingExercise';
@@ -31,32 +31,6 @@ export default function BreathingScreen() {
   const [sessionSeconds, setSessionSeconds] = useState(0);
   const { theme, isDark } = useTheme();
   const sessionSavedRef = useRef(false);
-
- 
-
-
-// test code to verify statistics service integration - can be removed in production
-useEffect(() => {
-  async function test() {
-    const sessionsBefore = await getSessions();
-    console.log('BEFORE:', sessionsBefore);
-
-    await saveSession({
-      duration: 120,
-      state: 'balance',
-      date: new Date().toISOString(),
-    });
-
-    const sessionsAfter = await getSessions();
-    console.log('AFTER:', sessionsAfter);
-
-    const summary = await getSummary();
-    console.log('SUMMARY:', summary);
-  }
-
-  test();
-}, []);
-// Test code to verify statistics service integration - can be removed in production
 
   // Select config based on mood state
   const getConfig = () => {
