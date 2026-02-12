@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system/legacy';
+import { deletePlace as deletePlaceApi, getMyPlaces, updatePlace as updatePlaceApi } from '@/src/api/placesApi';
 import { places as defaultPlaces } from '@/src/data/places';
 import { getDistanceFromLatLonInKm } from '@/src/utils/distance';
-
-import { getAllPlaces } from '../utils/firebaseUtil';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system/legacy';
+import { useEffect, useState } from 'react';
 
 const STORAGE_KEY = '@innbalance_user_places';
 const INITIALIZED_KEY = '@innbalance_places_initialized';
@@ -43,10 +42,36 @@ export function usePlaces(userLocation) {
         storedPlaces = data ? JSON.parse(data) : defaultPlaces;
       }
 
+      // Load user-specific places from backend and merge with local/default ones
+      let allPlaces = storedPlaces;
+      try {
+        const remote = await getMyPlaces();
+        if (Array.isArray(remote) && remote.length > 0) {
+          const mappedRemote = remote.map(p => ({
+            // use a high offset to avoid id collisions with static places
+            id: 1000000 + (p.id ?? 0),
+            backendId: p.id,
+            name: p.name,
+            info: p.description,
+            rating: p.rating ?? 0,
+            image: require('../Images/Places/missingPicture.png'),
+            category: p.category ?? 'User place',
+            distance: 0,
+            lat: p.latitude,
+            lng: p.longitude,
+            acces: 'Public',
+          }));
+          allPlaces = [...storedPlaces, ...mappedRemote];
+        }
+      } catch (e) {
+        console.error('Error loading backend places:', e);
+        allPlaces = storedPlaces;
+      }
+
       // Add distance if location available
-      //FYI: When adding own places, the distance indicator does take a few seconds to load the distance. Be patient.
+      // FYI: When adding own places, the distance indicator can take a few seconds to load.
       if (userLocation) {
-        storedPlaces = storedPlaces.map(place => ({
+        allPlaces = allPlaces.map(place => ({
           ...place,
           distance: getDistanceFromLatLonInKm(
             userLocation.latitude,
@@ -57,7 +82,7 @@ export function usePlaces(userLocation) {
         }));
       }
 
-      setPlaces(storedPlaces);
+      setPlaces(allPlaces);
     } catch (error) {
       console.error('Error loading places:', error);
       setPlaces(defaultPlaces);
@@ -82,6 +107,20 @@ export function usePlaces(userLocation) {
   };
 
   const updatePlace = async (id, update) => {
+    const target = places.find(p => p.id === id);
+
+    // If this place comes from backend, send update there (e.g. rating)
+    if (target?.backendId) {
+      try {
+        await updatePlaceApi(target.backendId, {
+          // currently we only use rating from the app UI
+          rating: update.rating,
+        });
+      } catch (e) {
+        console.error('Error updating place on backend:', e);
+      }
+    }
+
     const updated = places.map(p => (p.id === id ? { ...p, ...update } : p));
     setPlaces(updated);
     savePlaces(updated);
@@ -89,6 +128,15 @@ export function usePlaces(userLocation) {
 
   const deletePlace = async id => {
     const place = places.find(p => p.id === id);
+
+    // Delete on backend as well if this is a server place
+    if (place?.backendId) {
+      try {
+        await deletePlaceApi(place.backendId);
+      } catch (e) {
+        console.error('Error deleting place on backend:', e);
+      }
+    }
 
     // Delete image file if local file
     if (place?.image?.startsWith('file://')) {

@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ImageBackground } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { usePlaces } from '@/src/hooks/usePlaces';
-import { LinearGradient } from "expo-linear-gradient";
-import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system/legacy';
-import { useTheme } from '@/src/contexts/ThemeContext';
+import { addPlace as addPlaceApi } from '@/src/api/placesApi';
 import { useMapPicker } from '@/src/contexts/MapPickerContext';
-//import { Picker } from '@react-native-picker/picker';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { useTheme } from '@/src/contexts/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as ImagePicker from 'expo-image-picker';
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React, { useEffect, useState } from 'react';
+import { Alert, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 export default function AddPlaceScreen() {
     // Required fields and their error messages
@@ -23,7 +22,6 @@ export default function AddPlaceScreen() {
       image: 'Please select an image for your place.',
     };
   const router = useRouter();
-  const { addPlace } = usePlaces();
   const { theme, isDark } = useTheme();
   const { selectedCoordinates, clearCoordinates } = useMapPicker();
 
@@ -165,9 +163,14 @@ export default function AddPlaceScreen() {
     }
 
     try {
-      await addPlace({
-        ...formData,
-        image: formData.image || require('../Images/Places/missingPicture.png'),
+      // Send new place to backend API
+      await addPlaceApi({
+        name: formData.name,
+        description: formData.info,
+        latitude: formData.lat,
+        longitude: formData.lng,
+        // image is stored locally on device; backend imageUrl can be null for now
+        imageUrl: null,
       });
 
       Alert.alert('Success!', 'Place has been added successfully', [

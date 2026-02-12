@@ -13,3 +13,11 @@ export function addPlace(place) {
     imageUrl: place.imageUrl ?? null,
   });
 }
+
+export function updatePlace(id, update) {
+  return api.put(`/places/${id}`, update);
+}
+
+export function deletePlace(id) {
+  return api.delete(`/places/${id}`);
+}
