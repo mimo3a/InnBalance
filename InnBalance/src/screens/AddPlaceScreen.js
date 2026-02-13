@@ -1,4 +1,4 @@
-import { addPlace as addPlaceApi } from '@/src/api/placesApi';
+import { addPlace as addPlaceApi, uploadPlaceImage } from '@/src/api/placesApi';
 import { useMapPicker } from '@/src/contexts/MapPickerContext';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
@@ -163,14 +163,28 @@ export default function AddPlaceScreen() {
     }
 
     try {
-      // Send new place to backend API
+      let imageUrl = null;
+
+      // Upload image to backend if we have a local file path
+      if (formData.image && typeof formData.image === 'string') {
+        try {
+          const uploadResult = await uploadPlaceImage(formData.image);
+          imageUrl = uploadResult?.url || uploadResult?.imageUrl || null;
+        } catch (e) {
+          console.error('Error uploading image:', e);
+          Alert.alert('Error', 'Could not upload image.');
+          return;
+        }
+      }
+
+      // Send new place to backend API (including imageUrl if available)
       await addPlaceApi({
         name: formData.name,
         description: formData.info,
         latitude: formData.lat,
         longitude: formData.lng,
-        // image is stored locally on device; backend imageUrl can be null for now
-        imageUrl: null,
+        category: formData.category,
+        imageUrl,
       });
 
       Alert.alert('Success!', 'Place has been added successfully', [

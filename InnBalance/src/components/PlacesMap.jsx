@@ -4,14 +4,14 @@
  * Displays an interactive map showing all saved relaxation places.
  */
 
-import React, { useState } from 'react';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 
+import PlaceBottomSheet from '@/src/components/PlaceBottomSheet';
 import { useLocation } from '@/src/contexts/LocationContext';
 import { usePlaces } from '@/src/hooks/usePlaces';
-import PlaceBottomSheet from '@/src/components/PlaceBottomSheet';
 
 export default function PlacesMap() {
   const router = useRouter();
@@ -66,9 +66,9 @@ export default function PlacesMap() {
         }}
         showsUserLocation
       >
-        {places.map((place) => (
+        {places.map((place, index) => (
           <Marker
-            key={place.id}
+            key={`${place.backendId ?? 'local'}-${place.id}-${index}`}
             coordinate={{
               latitude: place.lat,
               longitude: place.lng,

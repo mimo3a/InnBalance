@@ -42,6 +42,9 @@ export function usePlaces(userLocation) {
         storedPlaces = data ? JSON.parse(data) : defaultPlaces;
       }
 
+      // Ensure we don't keep backend places in AsyncStorage to avoid duplicates
+      storedPlaces = (storedPlaces || []).filter(p => !p.backendId);
+
       // Load user-specific places from backend and merge with local/default ones
       let allPlaces = storedPlaces;
       try {
@@ -54,7 +57,8 @@ export function usePlaces(userLocation) {
             name: p.name,
             info: p.description,
             rating: p.rating ?? 0,
-            image: require('../Images/Places/missingPicture.png'),
+            // if backend provides imageUrl, use it; otherwise fallback image
+            image: p.imageUrl || require('../Images/Places/missingPicture.png'),
             category: p.category ?? 'User place',
             distance: 0,
             lat: p.latitude,
@@ -93,7 +97,9 @@ export function usePlaces(userLocation) {
 
   const savePlaces = async updated => {
     try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      // Only persist local/static places; backend places will be re-fetched
+      const localOnly = (updated || []).filter(p => !p.backendId);
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(localOnly));
     } catch (e) {
       console.error('Error saving places:', e);
     }
@@ -153,8 +159,18 @@ export function usePlaces(userLocation) {
   };
 
   const resetUserPlaces = async () => {
-    // Remove uploaded images (only if image is a string path)
+    // Remove backend places and uploaded images for this user
     for (const p of places) {
+      // Delete on backend if this place was stored there
+      if (p.backendId) {
+        try {
+          await deletePlaceApi(p.backendId);
+        } catch (e) {
+          console.error('Error deleting backend place during reset:', e);
+        }
+      }
+
+      // Remove uploaded image files (only if image is a string path)
       if (typeof p.image === 'string' && p.image.startsWith('file://')) {
         try {
           await FileSystem.deleteAsync(p.image, { idempotent: true });

@@ -46,7 +46,7 @@ export default function AccountScreen() {
     Alert.alert('Success', 'Profile updated successfully');
   };
 
-  const API_URL = 'http://10.0.2.2:9000'; // adjust for your backend host if needed
+  const API_URL = 'http://46.224.147.217:8082';
 
   const handlePasswordSave = async () => {
     if (!oldPassword || !newPassword) {

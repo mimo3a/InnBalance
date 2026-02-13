@@ -1,12 +1,12 @@
-import React from 'react';
-import { Text, View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import PlaceCard from '@/src/components/PlaceCard';
-import { usePlaces } from '@/src/hooks/usePlaces';
 import { useTheme } from '@/src/contexts/ThemeContext';
 import useCurrentLocation from '@/src/hooks/useCurrentLocation';
+import { usePlaces } from '@/src/hooks/usePlaces';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { AddPlaceButton } from '../components/AddPlaceButton';
 export default function PlacesListScreen() {
     const [categoryFilters, setCategoryFilters] = React.useState([]);
@@ -79,7 +79,7 @@ export default function PlacesListScreen() {
                 >
                 {filteredPlaces.map((place) => (
                     <PlaceCard 
-                        key={`${place.id}-${place.rating}-${place.distance}`}
+                        key={place.backendId ? `b-${place.backendId}` : `l-${place.id}`}
                         name={place.name}
                         info={place.info}
                         rating={place.rating}
