@@ -5,11 +5,10 @@
  */
 
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 
-import PlaceBottomSheet from '@/src/components/PlaceBottomSheet';
 import { useLocation } from '@/src/contexts/LocationContext';
 import { usePlaces } from '@/src/hooks/usePlaces';
 
@@ -19,72 +18,59 @@ export default function PlacesMap() {
   // ✅ get location from context
   const { location, loading: locationLoading } = useLocation();
 
-  // ✅ get places based on location
-  const { places, loading: placesLoading } = usePlaces(location);
+  const placesHook = usePlaces(location && location.latitude ? location : null);
 
-  // Bottom sheet state
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [sheetVisible, setSheetVisible] = useState(false);
+  const places = placesHook?.places ?? [];
+  const placesLoading = placesHook?.loading ?? true;
 
   // Combined loading state
-  if (locationLoading || placesLoading || !location) {
-    return (
-      <View style={[styles.container, styles.center]}>
-        <ActivityIndicator size="large" color="#1d16f4" />
-      </View>
-    );
-  }
-
-  const openSheet = (place) => {
-    setSelectedPlace(place);
-    setSheetVisible(true);
-  };
-
-  const closeSheet = () => {
-    setSheetVisible(false);
-    setTimeout(() => setSelectedPlace(null), 250);
-  };
-
-  const openDetails = () => {
-    if (!selectedPlace) return;
-    closeSheet();
-    router.push({
-      pathname: '/description',
-      params: { id: selectedPlace.id },
-    });
-  };
+  if (!location || locationLoading || placesLoading) {
+  return (
+    <View style={[styles.container, styles.center]}>
+      <ActivityIndicator size="large" color="#1d16f4" />
+    </View>
+  );
+}
 
   return (
     <View style={styles.container}>
+      
       <MapView
         style={styles.map}
         region={{
-          latitude: location.latitude,
-          longitude: location.longitude,
+          latitude: Number(location.latitude) || 48.2082,
+          longitude: Number(location.longitude) || 16.3738,
           latitudeDelta: 0.06,
           longitudeDelta: 0.06,
-        }}
+}}
         showsUserLocation
       >
-        {places.map((place, index) => (
-          <Marker
-            key={`${place.backendId ?? 'local'}-${place.id}-${index}`}
-            coordinate={{
-              latitude: place.lat,
-              longitude: place.lng,
-            }}
-            title={place.name}
-            onPress={() => openSheet(place)}
-          />
-        ))}
-      </MapView>
+       {places?.map?.((place, index) => {
+  if (
+    typeof place.lat !== "number" ||
+    typeof place.lng !== "number"
+  ) {
+    return null;
+  }
 
-      <PlaceBottomSheet
-        place={selectedPlace}
-        visible={sheetVisible}
-        onClose={closeSheet}
-        onOpen={openDetails}
-      />
+  return (
+    <Marker
+      key={`${place.backendId ?? 'local'}-${place.id}-${index}`}
+      coordinate={{
+        latitude: place.lat,
+        longitude: place.lng,
+      }}
+      title={place.name}
+      onPress={() =>
+        router.push({
+          pathname: '/description',
+          params: { id: place.id },
+        })
+      }
+    />
+  );
+})}
+      </MapView>
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Production / remote API base
-const API_URL = 'http://46.224.147.217:8082/api';
+const API_URL = 'https://mimozalab.com/api';
 console.log("API_URL =", API_URL);
 alert(API_URL)
 
@@ -25,7 +25,14 @@ async function request(path, options = {}) {
 
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `HTTP error ${response.status}`);
+    // throw new Error(text || `HTTP error ${response.status}`);
+    let message = text;
+try {
+  const json = JSON.parse(text);
+  message = json.message || json.error || text;
+} catch {}
+
+throw new Error(message || `HTTP error ${response.status}`);
   }
 
   if (response.status === 204) return null;

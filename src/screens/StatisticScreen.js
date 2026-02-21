@@ -139,8 +139,11 @@ export default function StatisticScreen() {
   return (
     <>
       <StatusBar style={!isDark ? 'dark' : 'light'} />
-      <View style={{ flex: 1, backgroundColor: theme.background }}>
-        <View style={styles.container}>
+      <ScrollView
+        style={{ flex: 1, backgroundColor: theme.background }}
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
 
           <ThemedText type="title">Statistics</ThemedText>
 
@@ -218,27 +221,22 @@ export default function StatisticScreen() {
           <View style={[styles.card, { backgroundColor: theme.cardBackground }]}>
             <Text style={styles.section}>History</Text>
 
-            <View style={styles.historyScrollContainer}>
-              <ScrollView>
-                {sessions.map((s, i) => (
-                  <View key={i} style={styles.history}>
-                    <View style={styles.historyLeft}>
-                      <MaterialCommunityIcons
-                        name={getExerciseIcon(s)}
-                        size={18}
-                        color={theme.primary}
-                      />
-                      <Text>{s._date.toLocaleDateString()}</Text>
-                    </View>
-                    <Text style={styles.historyTime}>{s.duration} sec</Text>
-                  </View>
-                ))}
-              </ScrollView>
-            </View>
+            {sessions.map((s, i) => (
+              <View key={i} style={styles.history}>
+                <View style={styles.historyLeft}>
+                  <MaterialCommunityIcons
+                    name={getExerciseIcon(s)}
+                    size={18}
+                    color={theme.primary}
+                  />
+                  <Text>{s._date.toLocaleDateString()}</Text>
+                </View>
+                <Text style={styles.historyTime}>{s.duration} sec</Text>
+              </View>
+            ))}
           </View>
 
-        </View>
-      </View>
+      </ScrollView>
     </>
   );
 }
@@ -280,11 +278,6 @@ const styles = StyleSheet.create({
   bars: { flexDirection: 'row', gap: 6, height: '100%', alignItems: 'flex-end' },
   bar: { width: 14, borderRadius: 4 },
   day: { marginTop: 6, fontSize: 12 },
-
-  historyScrollContainer: {
-    maxHeight: 240,
-  },
-
   history: {
     flexDirection: 'row',
     justifyContent: 'space-between',
