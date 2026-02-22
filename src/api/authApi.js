@@ -2,7 +2,12 @@ import { api } from './apiClient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export async function login(email, password) {
-  const res = await api.post('/auth/login', { email, password });
+  const body = { email, password };
+  await AsyncStorage.clear();
+
+  console.log("LOGIN BODY:", body);   // ← ВОТ СЮДА
+
+  const res = await api.post('/auth/login', body);
 
   await AsyncStorage.setItem('token', res.token);
   await AsyncStorage.setItem('username', res.username);

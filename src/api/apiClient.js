@@ -1,9 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Production / remote API base
-const API_URL = 'https://mimozalab.com/api';
-console.log("API_URL =", API_URL);
-alert(API_URL)
+const API_URL = 'https://api.innbalance.mimozalab.com/api';
 
 async function getAuthHeaders() {
   const token = await AsyncStorage.getItem('token');
@@ -13,7 +11,9 @@ async function getAuthHeaders() {
 }
 
 async function request(path, options = {}) {
-  const authHeaders = await getAuthHeaders();
+  // Do not send Authorization header for auth endpoints (login/signup)
+  const isAuthEndpoint = path.startsWith('/auth/');
+  const authHeaders = isAuthEndpoint ? {} : await getAuthHeaders();
 
   const response = await fetch(`${API_URL}${path}`, {
     ...options,

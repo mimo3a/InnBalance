@@ -49,8 +49,8 @@ export default function LoginScreen() {
 
     try {
       const res = await api.post('/auth/login', {
-        email,
-        password,
+        email:'alex@test.com',
+        password:'123456',
       });
 
       // Save JWT token
